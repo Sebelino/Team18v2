@@ -20,16 +20,16 @@ Här är lite MVK-fasoner som jag kladdade ned:
 11. Rapport
 12. Presentation + opposition
 
-Steg 5: Programskelettet som vi får är mycket litet. Vi behöver implementera en hel kodbas som vi se'n kopplar till ett AI, gärna med samma fina arkitektur som Checkers-programmet. Kan ta ett tag men det är viktigt att vi får det rätt till redan i början.
-Steg 7-8 = Utvecklingsfasen.
+* Steg 5: Programskelettet som vi får är mycket litet. Vi behöver implementera en hel kodbas som vi se'n kopplar till ett AI, gärna med samma fina arkitektur som Checkers-programmet. Kan ta ett tag men det är viktigt att vi får det rätt till redan i början.
+* Steg 7-8 = Utvecklingsfasen.
 
 #### Roller
-Projektledare
-Forskare
-Arkitekt
-Specificatör
-Implementatör
-Enhetstestare/Testrapportskrivare
+* Projektledare
+* Forskare
+* Arkitekt
+* Specificatör
+* Implementatör
+* Enhetstestare/Testrapportskrivare
 ###### Till senare
-Rapportskrivare
-Presentatör
+* Rapportskrivare
+* Presentatör
