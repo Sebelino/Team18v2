@@ -5,7 +5,7 @@ Filer för projektet i AI-kursen.
 
 Här är lite MVK-fasoner som jag kladdade ned:
 
-Projektplan:
+#### Projektplan
 
 1. Forskning: tors-fre
 2. Presentation av forskningsmaterial: lör?
@@ -23,13 +23,13 @@ Projektplan:
 Steg 5: Programskelettet som vi får är mycket litet. Vi behöver implementera en hel kodbas som vi se'n kopplar till ett AI, gärna med samma fina arkitektur som Checkers-programmet. Kan ta ett tag men det är viktigt att vi får det rätt till redan i början.
 Steg 7-8 = Utvecklingsfasen.
 
-Roller:
+#### Roller
 Projektledare
 Forskare
 Arkitekt
 Specificatör
 Implementatör
 Enhetstestare/Testrapportskrivare
-Till senare:
+###### Till senare
 Rapportskrivare
 Presentatör
