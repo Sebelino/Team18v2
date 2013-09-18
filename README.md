@@ -6,6 +6,7 @@ Filer för projektet i AI-kursen.
 Här är lite MVK-fasoner som jag kladdade ned:
 
 Projektplan:
+
 1. Forskning: tors-fre
 2. Presentation av forskningsmaterial: lör?
 3. Tidsplanering: lör?
