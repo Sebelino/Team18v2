@@ -13,9 +13,11 @@ public:
 
     std::vector<std::vector<char> > map;
 	GameState pushBox(const struct move& m);
+	bool isValid(const struct move& m);
 
     int playerX;
     int playerY;
 };
 
 #endif
+
