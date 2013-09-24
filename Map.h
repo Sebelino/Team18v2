@@ -1,5 +1,6 @@
 #include <utility>
 #include <vector>
+#include <string>
 
 #ifndef _MAP_H__
 #define _MAP_H__
