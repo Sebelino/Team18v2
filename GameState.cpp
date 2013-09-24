@@ -19,7 +19,7 @@ GameState::GameState(Map * canvas) {
 Create a new GameState from a previous GameState, assuming a box was moved
 from box_move.start to box_move.end. Also updates player position to box_move.start.
 */
-GameState::GameState(GameState * prev, struct move * box_move) {
+GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	boxes = prev->boxes;
 	boxes.erase(box_move->start);
 	boxes.insert(pair<int,int>(box_move->end));
@@ -65,7 +65,7 @@ GameState GameState::pushBox(const struct move & m){
 
 //kommentera please
 /*
-bool GameState::isValid(const struct move & m){
+bool GameState::isValid(const struct boxMove & m){
     // Testing relative positions.
     if(!(abs(m.start.first-m.end.first) == 1 && abs(m.start.second-m.end.second) == 0
       || abs(m.start.first-m.end.first) == 0 && abs(m.start.second-m.end.second) == 1)){
@@ -103,10 +103,15 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 */
 
 
+//set<boxMove> moves(pair<int,int> boxPos){
+//    boxMove up ();
+//}
+
 // Returns a set of all succeeding states.
 set<GameState> findNextMoves(){
     set<GameState> successors;
 //    for (x,y) in map.boxes:
-//        if()
+//        set<boxMove> ms = moves(x,y);
+//        if isValid(move)
     return successors;
 }
