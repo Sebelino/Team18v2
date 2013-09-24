@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "GameState.cpp"
-#include "AI.cpp"
+#include "GameState.h"
+//#include "AI.cpp"
 
 using namespace std;
 
