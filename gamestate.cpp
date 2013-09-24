@@ -1,17 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "gamestate.h"
 
 using namespace std;
 
-class GameState{
-public:
-    GameState(vector<string> stringmap,int width,int height);
-    ~GameState();
-    vector<vector<char> > map;
-    int playerX;
-    int playerY;
-};
 GameState::GameState(vector<string> stringmap,int width,int height){
     for(int i = 0;i < stringmap.size();i++){
         vector<char> line;
