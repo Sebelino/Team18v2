@@ -47,4 +47,3 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     }
     return stream;
 }
-
