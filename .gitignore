@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+#misc files
+*.filters
+*.vcxproj
+*.rc
+*.aps
