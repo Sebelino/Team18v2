@@ -1,12 +1,12 @@
 //include stuff
-#include <cstdio>
-#include <cstdlib>
+//#include <cstdio>
+//#include <cstdlib>
 
 
 #ifndef _AI_CPP__
 #define _AI_CPP__
 //TODO Make sense of this function
-int solve(void) {
+int solve_pas(void) {
 	return 42;
 }
 

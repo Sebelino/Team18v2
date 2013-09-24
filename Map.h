@@ -9,21 +9,21 @@
 class Map
 {
 public:
-	Map(std::vector<std::string> stringmap,int width,int height);
+	Map(std::vector<std::string> stringmap,unsigned int width, unsigned int height);
 	~Map(void);
 
 	bool isWall(const std::pair<int,int> & coords);
 	bool isGoal(const std::pair<int,int> & coords);
 
-	int getWidth();
-	int getHeight();
+	unsigned int getWidth();
+	unsigned int getHeight();
 
 	std::vector<std::vector<char> >* getOriginalMap();
 
 private:
 	std::vector<std::vector<char> > map;
-	int width;
-	int height;
+	unsigned int width;
+	unsigned int height;
 };
 
 #endif
