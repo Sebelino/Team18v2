@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 	int height = 0;
 	for (string line; getline(cin, line);) {
 		board.push_back(line);
-		if(line.length > width)
+		if(line.length() > width)
 			width = line.length();
 	}
 	height = board.size();

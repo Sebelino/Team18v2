@@ -1,10 +1,13 @@
 #include <iostream>
+#include <cstdlib>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include "gamestate.h"
 
 using namespace std;
 
+// TODO: Pair.
 struct move{
     int startX;
     int startY;
@@ -31,6 +34,9 @@ GameState::GameState(vector<vector<char> > stringmap,int width,int height){
     }
 }
 
+// Destructor.
+GameState::~GameState(){}
+
 GameState GameState::pushBox(const struct move & m){
     vector<vector<char> > stringmap = map;
     stringmap[m.startY][m.startX] = ' ';
@@ -38,32 +44,30 @@ GameState GameState::pushBox(const struct move & m){
     return GameState(stringmap,0,0);
 }
 
-// Destructor.
-GameState::~GameState(){}
-
 // Returns true iff the move is valid
-bool GameState::isValid(move m){
+bool GameState::isValid(const struct move & m){
     // Testing relative positions.
     if(!(abs(m.startX-m.endX) == 1 && abs(m.startY-m.endY) == 0
       || abs(m.startX-m.endX) == 0 && abs(m.startY-m.endY) == 1)){
         return false;
     }
     // Testing bounds.
-    if(min(m.startX,m.endX,m.startY,m.endY) < 0
+    if(min(min(min(m.startX,m.endX),m.startY),m.endY) < 0
     || max(m.startY,m.endY) > map.size()
     || max(m.startX,m.endX) > map[m.startY].size()){
         return false;
     }
     // Testing starting position chars.
-    if(!(map[startY][startX] == '$' || map[startY][startX] == '*')){
+    if(!(map[m.startY][m.startX] == '$' || map[m.startY][m.startX] == '*')){
         return false;
     }
     // Testing destination position chars.
-    if(!(map[startY][startX] == ' ' || map[startY][startX] == '.')){
+    if(!(map[m.startY][m.startX] == ' ' || map[m.startY][m.startX] == '.')){
         return false;
     }
     return true;
 }
+
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(int i = 0;i < state.map.size();i++){
@@ -75,20 +79,20 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     return stream;
 }
 
-int main(){
-    vector<string> lines;
-    lines.push_back("######");
-    lines.push_back("#    #");
-    lines.push_back("# $  #");
-    lines.push_back("######");
-    GameState gs (lines,6,lines.size());
-    cout << gs << endl;
-    move m;
-    m.startX = 2;
-    m.startY = 2;
-    m.endX = 3;
-    m.endY = 2;
-    GameState moved = gs.pushBox(m);
-    cout << moved << endl;
-    return 0;
-}
+//int main(){
+//    vector<string> lines;
+//    lines.push_back("######");
+//    lines.push_back("#    #");
+//    lines.push_back("# $  #");
+//    lines.push_back("######");
+//    GameState gs (lines,6,lines.size());
+//    cout << gs << endl;
+//    move m;
+//    m.startX = 2;
+//    m.startY = 2;
+//    m.endX = 3;
+//    m.endY = 2;
+//    GameState moved = gs.pushBox(m);
+//    cout << moved << endl;
+//    return 0;
+//}
