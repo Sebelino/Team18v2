@@ -1,20 +1,26 @@
-//Denna klarar Kattis tester på 0,03s
-
 #include <stack>
+#include <set>
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
-
-#define SIZE 1004
+#include "../GameState.cpp"
+#include "../Map.cpp"
 
 using namespace std;
-
-using std::stack;
 
 struct pos {
     int x;
     int y;
+    pos operator-(pos other) const {
+    	return {x-other.x, y-other.y};
+    }
+    pos operator+(pos other) const {
+    	return {x+other.x, y+other.y};
+    }
+    pos operator-() const {
+    	return {-x, -y};
+    }
 };
 
 struct dirEntry {
@@ -23,10 +29,9 @@ struct dirEntry {
 	bool operator<(dirEntry other) const {
 		return weight > other.weight;
 	}
+	
 };
 
-
-char map[SIZE][SIZE][2];
 
 pos direction(char ch) {
     switch (ch) {
@@ -60,62 +65,32 @@ char dirs(pos p) {
     }
 }
 
+void moveToPath (GameState gs, boxMove bm) {
 
-int main(int argc, char **argv)
-{
-    int x=0, y=0;
-    char inp;
-    pos startPos = {-1,-1};
-    pos goalPos = {-1,-1};
-
+	int h = gs.map->getHeight();
+	int w = gs.map->getWidth();
+	
+	pos startPos, endPos;
+	startPos.x = get<0>(gs.player);
+	startPos.y = get<1>(gs.player);
+	endPos.x = 2*(get<0>(bm.start))-(get<0>(bm.end));
+	endPos.y = 2*(get<1>(bm.start))-(get<1>(bm.end));
+	
 	std::vector<dirEntry> directions;
 	directions.push_back({{0,-1},0});
 	directions.push_back({{1, 0},0});
 	directions.push_back({{0, 1},0});
 	directions.push_back({{-1,0},0});
 	
-	/*
-	directions[0].p = {0,-1};
-	directions[1].p = {1, 0};
-	directions[2].p = {0, 1};
-	directions[3].p = {-1,0};
-	*/
-
-    //Fill with walls
-    for (int i=0;i<SIZE;i++) {
-        for (int j=0;j<SIZE;j++) {
-            map[i][j][0] = '#';
-            map[i][j][1] = '-';
+	char dirMap[w][h];
+	
+	for (int i=0;i<w;i++) {
+        for (int j=0;j<h;j++) {
+            dirMap[i][j] = '-';
         }
     }
-
-    bool emptyGoalFound = false;
-
-    // Read the board
-	while ((inp = getchar()) != EOF) {
-	    if (inp == '\n') {  //New row
-	        y++;
-	        x = 0;
-	        continue;
-	    } else if (inp == '+') {    //Player already on goal; we're done!
-	        printf("\n");
-	        return 0;
-	    } else if (inp == '@') {    //Player starting position
-	        startPos = {x,y};
-	    } else if (inp == '.') {
-		    goalPos = {x,y};
-	        emptyGoalFound = true;
-	    }
-	    map[x][y][0] = inp;
-	    x++;
-	}
 	
-	if (!emptyGoalFound) {
-	    printf("no path\n");
-	    return 0;
-	}
-	
-	map[startPos.x][startPos.y][1] = 'S';
+	dirMap[startPos.x][startPos.y] = 'S';
 	
 	bool goalReached = false;
 	
@@ -129,73 +104,46 @@ int main(int argc, char **argv)
 	    
 	    pos d;
 	    char dir;
-	    
-	    /*for (int i = 0;i<4;i++) {
-	    	directions[i].weight = (goalPos.x-curPos.x)*directions[i].p.x + (goalPos.y-curPos.y)*directions[i].p.y;
-	    }*/
-	    
+
 	    std::sort(directions.begin(), directions.end());
-	    
-	    //Debug
-	    for (int i = 0;i<4;i++) {
-	    	fprintf(stderr, "d = {%i, %i}, w = %i\n", directions[i].p.x, directions[i].p.y, directions[i].weight);
-	    }
-	    
 	    
 	    for (int i = 0;i<4;i++) {
 	    	d = directions[i].p;
 	        dir = dirs(d);
-	        //d = direction(dir);
-	    	//fprintf(stderr, "d = {%i, %i}\n", d.x, d.y);
 	        
 	        //Check if visited or unreachable
-	        char a = map[curPos.x+d.x][curPos.y+d.y][0];
-	        char b = map[curPos.x+d.x][curPos.y+d.y][1];
-	        if (a == ' ' && b == '-') {
+	        char a = dirMap[curPos.x+d.x][curPos.y+d.y];
+	        
+	        if (a == '-' && (gs.boxes.end() == gs.boxes.find(std::pair<int,int>(curPos.x+d.x,curPos.y+d.y))) && !gs.map->isWall(std::pair<int,int>(curPos.x+d.x,curPos.y+d.y))) { //If space is free
 	            //Visit
-	            map[curPos.x+d.x][curPos.y+d.y][1] = dirs(d);
+	            dirMap[curPos.x+d.x][curPos.y+d.y] = dirs(d);
 	            q.push({curPos.x+d.x, curPos.y+d.y});
 	        } else if (a == '.') {
 	            //Goal reached!
-	            map[curPos.x+d.x][curPos.y+d.y][1] = dirs(d);
+	            dirMap[curPos.x+d.x][curPos.y+d.y] = dirs(d);
 	            goalReached = true;
-	            goalPos = {curPos.x+d.x,curPos.y+d.y};
+	            endPos = {curPos.x+d.x,curPos.y+d.y};
 	            break;
 	        }
 	    }
 	}
 	
 	if (!goalReached) {
-	    //Couldn't reach the goal
+	    //Invalid move
 	    printf("no path\n");
-	    return 0;
-	}
-	
-	        //Print the map and dirmap
-        for (int i = 0;i<10;i++) {
-            for (int j = 0;j<10;j++) {
-                fprintf(stderr, "%c", map[j][i][0]);
-            }
-            fprintf(stderr, "\n");
-        }
- 
-        for (int i = 0;i<10;i++) {
-            for (int j = 0;j<10;j++) {
-                fprintf(stderr, "%c", map[j][i][1]);
-            }
-            fprintf(stderr, "\n");
-        }
+	    return;
+	}	
 	
 	//Else
-	pos curPos = goalPos;
-	char nd = map[goalPos.x][goalPos.y][1];
-	char path[SIZE*SIZE];
+	pos curPos = endPos;
+	char nd = dirMap[endPos.x][endPos.y];
+	std::vector<char> path;
 	int i = 0;
 	while (nd != 'S') {
 	    path[i] = nd;
 	    pos pnd = direction(nd);
 	    curPos = {curPos.x-pnd.x, curPos.y-pnd.y};
-	    nd = map[curPos.x][curPos.y][1];
+	    nd = dirMap[curPos.x][curPos.y];
 	    i++;
 	}
 
@@ -206,6 +154,16 @@ int main(int argc, char **argv)
 	}
 	printf("%c\n",path[0]);
 	
+	char finalMove = dirs(endPos-{(get<0>(bm.start))-(get<0>(bm.end)),(get<1>(bm.start))-(get<1>(bm.end))});
+	printf("%c\n",finalMove);
+}
+
+
+int main(int argc, char **argv)
+{
+	fprintf(stderr, "Well, it can at least run\n");
 	return 0;
 }
+
+
 
