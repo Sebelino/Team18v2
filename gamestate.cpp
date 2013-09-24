@@ -31,12 +31,39 @@ GameState::GameState(vector<vector<char> > stringmap,int width,int height){
     }
 }
 GameState GameState::pushBox(move m){
+    validateMove(m);
     vector<vector<char> > stringmap = map;
     stringmap[m.startY][m.startX] = ' ';
     stringmap[m.endY][m.endX] = '$';
     return GameState(stringmap,0,0);
 }
+
+// Destructor.
 GameState::~GameState(){}
+
+// Returns true iff the move is valid
+bool GameState::isValid(move m){
+    // Testing relative positions.
+    if(!(abs(m.startX-m.endX) == 1 && abs(m.startY-m.endY) == 0
+      || abs(m.startX-m.endX) == 0 && abs(m.startY-m.endY) == 1)){
+        return false;
+    }
+    // Testing bounds.
+    if(min(m.startX,m.endX,m.startY,m.endY) < 0
+    || max(m.startY,m.endY) > map.size()
+    || max(m.startX,m.endX) > map[m.startY].size()){
+        return false;
+    }
+    // Testing starting position chars.
+    if(!(map[startY][startX] == '$' || map[startY][startX] == '*')){
+        return false;
+    }
+    // Testing destination position chars.
+    if(!(map[startY][startX] == ' ' || map[startY][startX] == '.')){
+        return false;
+    }
+    return true;
+}
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(int i = 0;i < state.map.size();i++){
