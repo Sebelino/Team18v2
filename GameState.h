@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <set>
 
 #ifndef _GAMESTATE_H__
 #define _GAMESTATE_H__
@@ -14,6 +15,7 @@ public:
     std::vector<std::vector<char> > map;
 	GameState pushBox(const struct move& m);
 	bool isValid(const struct move& m);
+    std::set<GameState> findNextMoves();
 
     int playerX;
     int playerY;

@@ -12,6 +12,7 @@ struct move{
     int endY;
 };
 
+// Constructor.
 GameState::GameState(vector<string> stringmap,int width,int height){
     for(unsigned int i = 0;i < stringmap.size();i++){
         vector<char> line;
@@ -21,6 +22,7 @@ GameState::GameState(vector<string> stringmap,int width,int height){
         map.push_back(line);
     }
 }
+// Almost identical to above. ^
 GameState::GameState(vector<vector<char> > stringmap,int width,int height){
     for(unsigned int i = 0;i < stringmap.size();i++){
         vector<char> line;
@@ -30,13 +32,19 @@ GameState::GameState(vector<vector<char> > stringmap,int width,int height){
         map.push_back(line);
     }
 }
+
+// Destructor.
+GameState::~GameState(){}
+
+// Returns the state that results from pushing a box.
 GameState GameState::pushBox(const struct move & m){
     vector<vector<char> > stringmap = map;
     stringmap[m.startY][m.startX] = ' ';
     stringmap[m.endY][m.endX] = '$';
     return GameState(stringmap,0,0);
 }
-GameState::~GameState(){}
+
+// ToString for a game state.
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(unsigned int i = 0;i < state.map.size();i++){
@@ -46,4 +54,10 @@ ostream& operator<<(ostream &strm, const GameState &state) {
         stream << endl;
     }
     return stream;
+}
+
+// Returns a set of all succeeding states.
+set<GameState> findNextMoves(){
+    set<GameState> successors;
+    return successors;
 }
