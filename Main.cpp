@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include "GameState.h"
 //#include "AI.cpp"
 
@@ -31,3 +30,4 @@ int main(int argc, char **argv) {
 	std::cout << s << std::endl;
 	return 0;
 }
+

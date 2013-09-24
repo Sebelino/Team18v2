@@ -6,24 +6,44 @@
 #define _MAP_H__
 
 
+struct pos {
+    int x;
+    int y;
+    pos operator-(pos other) const {
+    	return {x-other.x, y-other.y};
+    }
+    pos operator+(pos other) const {
+    	return {x+other.x, y+other.y};
+    }
+    pos operator-() const {
+    	return {-x, -y};
+    }
+    pos operator*(int factor) const {
+    	return {x*factor, y*factor};
+    }
+    bool operator<(pos other) const {
+    	return x-other.x;
+    }
+};
+
 class Map
 {
 public:
-	Map(std::vector<std::string> stringmap,unsigned int width, unsigned int height);
+	Map(std::vector<std::string> stringmap, int width, int height);
 	~Map(void);
 
-	bool isWall(const std::pair<int,int> & coords);
-	bool isGoal(const std::pair<int,int> & coords);
+	bool isWall(pos coords);
+	bool isGoal(pos coords);
 
-	unsigned int getWidth();
-	unsigned int getHeight();
+	int getWidth();
+	int getHeight();
 
 	std::vector<std::vector<char> >* getOriginalMap();
 
 private:
 	std::vector<std::vector<char> > map;
-	unsigned int width;
-	unsigned int height;
+	int width;
+	int height;
 };
 
 #endif

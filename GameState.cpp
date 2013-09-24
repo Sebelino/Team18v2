@@ -22,8 +22,8 @@ from box_move.start to box_move.end. Also updates player position to box_move.st
 GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	boxes = prev->boxes;
 	boxes.erase(box_move->start);
-	boxes.insert(pair<int,int>(box_move->end));
-	player = pair<int,int>(box_move->start);
+	boxes.insert(box_move->end);
+	player = box_move->start;
 	map = prev->map;
 }
 
@@ -34,13 +34,13 @@ Only called from constructor.
 void GameState::setBoxes(vector<vector<char> > * stringmap) {
 	vector<vector<char> >& board = *stringmap;
 	
-	for(unsigned int i = 0; i < board.size(); i++) {
-		for(unsigned int j = 0; j < board[i].size(); j++) {
+	for(int i = 0; i < board.size(); i++) {
+		for(int j = 0; j < board[i].size(); j++) {
 			char c = board[i][j];
 			if(c == BOX) {
-				boxes.insert(pair<int,int>(i,j));
+				boxes.insert({i,j});
 			} else if(c == PLAYER || c == PLAYER_ON_GOAL) {
-				player = pair<int,int>(i,j);
+				player = {i,j};
 			}
 		}
 	}
@@ -53,7 +53,7 @@ GameState::~GameState(){}
 
 // Returns the state that results from pushing a box.
 /*
-GameState GameState::pushBox(const struct move & m){
+GameState GameState::pushBox(const struct boxMove & m){
     vector<vector<char> > stringmap = map;
     stringmap[m.startY][m.startX] = ' ';
     stringmap[m.endY][m.endX] = '$';
@@ -67,22 +67,22 @@ GameState GameState::pushBox(const struct move & m){
 /*
 bool GameState::isValid(const struct boxMove & m){
     // Testing relative positions.
-    if(!(abs(m.start.first-m.end.first) == 1 && abs(m.start.second-m.end.second) == 0
-      || abs(m.start.first-m.end.first) == 0 && abs(m.start.second-m.end.second) == 1)){
+    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
+      || abs(m.start.x-m.end.x) == 0 && abs(m.start.y-m.end.y) == 1)){
         return false;
     }
     // Testing bounds.
-    if(min(min(min(m.start.first,m.end.first),m.start.second),m.end.second) < 0
-		|| max(m.start.second,m.end.second) > map->getHeight()
-    || max(m.start.first,m.end.first) > map[m.start.second].getHeight()){
+    if(min(min(min(m.start.x,m.end.x),m.start.y),m.end.y) < 0
+		|| max(m.start.y,m.end.y) > map->getHeight()
+    || max(m.start.x,m.end.x) > map[m.start.y].getHeight()){
         return false;
     }
     // Testing starting position chars.
-    if(!(map[m.start.second][m.start.first] == '$' || map[m.start.second][m.start.first] == '*')){
+    if(!(map[m.start.y][m.start.x] == '$' || map[m.start.y][m.start.x] == '*')){
         return false;
     }
     // Testing destination position chars.
-    if(!(map[m.start.second][m.start.first] == ' ' || map[m.start.second][m.start.first] == '.')){
+    if(!(map[m.start.y][m.start.x] == ' ' || map[m.start.y][m.start.x] == '.')){
         return false;
     }
     return true;
@@ -91,8 +91,8 @@ bool GameState::isValid(const struct boxMove & m){
 // ToString for a game state.
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
-    for(unsigned int i = 0;i < state.map->getHeight();i++){
-		for(unsigned int j = 0;j < state.map->getWidth();j++){
+    for(int i = 0;i < state.map->getHeight();i++){
+		for(int j = 0;j < state.map->getWidth();j++){
             stream << state.map->getOriginalMap();
         }
         stream << endl;
@@ -101,7 +101,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 }
 
 
-//set<boxMove> moves(pair<int,int> boxPos){
+//set<boxMove> moves(pos boxPos){
 //    boxMove up ();
 //}
 

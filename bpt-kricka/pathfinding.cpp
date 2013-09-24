@@ -9,19 +9,6 @@
 
 using namespace std;
 
-struct pos {
-    int x;
-    int y;
-    pos operator-(pos other) const {
-    	return {x-other.x, y-other.y};
-    }
-    pos operator+(pos other) const {
-    	return {x+other.x, y+other.y};
-    }
-    pos operator-() const {
-    	return {-x, -y};
-    }
-};
 
 struct dirEntry {
 	pos p;
@@ -71,10 +58,9 @@ void moveToPath (GameState gs, boxMove bm) {
 	int w = gs.map->getWidth();
 	
 	pos startPos, endPos;
-	startPos.x = get<0>(gs.player);
-	startPos.y = get<1>(gs.player);
-	endPos.x = 2*(get<0>(bm.start))-(get<0>(bm.end));
-	endPos.y = 2*(get<1>(bm.start))-(get<1>(bm.end));
+	startPos = gs.player;	
+	endPos = bm.start*2-bm.end;
+
 	
 	std::vector<dirEntry> directions;
 	directions.push_back({{0,-1},0});
@@ -114,7 +100,7 @@ void moveToPath (GameState gs, boxMove bm) {
 	        //Check if visited or unreachable
 	        char a = dirMap[curPos.x+d.x][curPos.y+d.y];
 	        
-	        if (a == '-' && (gs.boxes.end() == gs.boxes.find(std::pair<int,int>(curPos.x+d.x,curPos.y+d.y))) && !gs.map->isWall(std::pair<int,int>(curPos.x+d.x,curPos.y+d.y))) { //If space is free
+	        if (a == '-' && (gs.boxes.end() == gs.boxes.find({curPos.x+d.x,curPos.y+d.y})) && !gs.map->isWall({curPos.x+d.x,curPos.y+d.y})) { //If space is free
 	            //Visit
 	            dirMap[curPos.x+d.x][curPos.y+d.y] = dirs(d);
 	            q.push({curPos.x+d.x, curPos.y+d.y});
@@ -153,9 +139,8 @@ void moveToPath (GameState gs, boxMove bm) {
 	    printf("%c ",path[i]);
 	}
 	printf("%c\n",path[0]);
-	
-	pos diff = {(get<0>(bm.start))-(get<0>(bm.end)),(get<1>(bm.start))-(get<1>(bm.end))};
-	char finalMove = dirs(endPos-diff);
+
+	char finalMove = dirs(endPos*2-bm.start);
 	printf("%c\n",finalMove);
 }
 

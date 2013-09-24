@@ -7,9 +7,10 @@
 #ifndef _GAMESTATE_H__
 #define _GAMESTATE_H__
 
+
 struct boxMove{
-    std::pair<int,int> start;
-    std::pair<int,int> end;
+	pos start;
+	pos end;
 };
 
 class GameState{
@@ -24,8 +25,8 @@ public:
 	bool isValid(const struct boxMove& m);
     std::set<GameState> findNextMoves();
 
-    std::pair<int,int> player;
-	std::set<std::pair<int,int> > boxes;
+    pos player;
+	std::set<pos> boxes;
 	Map * map;
 
 private:
