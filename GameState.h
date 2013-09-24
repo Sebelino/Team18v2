@@ -17,6 +17,7 @@ public:
 
 	GameState pushBox(const struct move& m);
 	bool isValid(const struct move& m);
+    std::set<GameState> findNextMoves();
 
     std::pair<int,int> player;
 	std::set<std::pair<int,int> > boxes;

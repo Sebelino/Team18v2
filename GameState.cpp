@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <string>
 #include <set>
 #include "gamestate.h"
@@ -50,19 +51,54 @@ void GameState::setBoxes(vector<vector<char> > * stringmap) {
 	}
 }
 
+
+
+// Destructor.
+GameState::~GameState(){}
+
+// Returns the state that results from pushing a box.
 /*
 GameState GameState::pushBox(const struct move & m){
     vector<vector<char> > stringmap = map;
     stringmap[m.startY][m.startX] = ' ';
     stringmap[m.endY][m.endX] = '$';
     return GameState(stringmap,0,0);
+
 }*/
-GameState::~GameState(){}
+
+
+
+//kommentera please
+/*
+bool GameState::isValid(const struct move & m){
+    // Testing relative positions.
+    if(!(abs(m.start.first-m.end.first) == 1 && abs(m.start.second-m.end.second) == 0
+      || abs(m.start.first-m.end.first) == 0 && abs(m.start.second-m.end.second) == 1)){
+        return false;
+    }
+    // Testing bounds.
+    if(min(min(min(m.start.first,m.end.first),m.start.second),m.end.second) < 0
+		|| max(m.start.second,m.end.second) > map->getHeight()
+    || max(m.start.first,m.end.first) > map[m.start.second].getHeight()){
+        return false;
+    }
+    // Testing starting position chars.
+    if(!(map[m.start.second][m.start.first] == '$' || map[m.start.second][m.start.first] == '*')){
+        return false;
+    }
+    // Testing destination position chars.
+    if(!(map[m.start.second][m.start.first] == ' ' || map[m.start.second][m.start.first] == '.')){
+        return false;
+    }
+    return true;
+}*/
+
+// ToString for a game state.
 /*
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
-    for(unsigned int i = 0;i < state.map.size();i++){
-        for(unsigned int j = 0;j < state.map[i].size();j++){
+    for(unsigned int i = 0;i < state.map->getHeight();i++){
+		for(unsigned int j = 0;j < state.map->getOriginalMap()->at(i)[j];j++){
             stream << state.map[i][j];
         }
         stream << endl;
@@ -70,3 +106,12 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     return stream;
 }
 */
+
+
+// Returns a set of all succeeding states.
+set<GameState> findNextMoves(){
+    set<GameState> successors;
+//    for (x,y) in map.boxes:
+//        if()
+    return successors;
+}
