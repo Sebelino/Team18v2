@@ -56,7 +56,7 @@ int main(){
     lines.push_back("######");
     GameState gs (lines,6,lines.size());
     cout << gs << endl;
-    move m;
+    struct move m;
     m.startX = 2;
     m.startY = 2;
     m.endX = 3;
