@@ -4,10 +4,19 @@
 
 using namespace std;
 
+struct move{
+    int startX;
+    int startY;
+    int endX;
+    int endY;
+};
+
 class GameState{
 public:
+    GameState(vector<vector<char> > stringmap,int width,int height);
     GameState(vector<string> stringmap,int width,int height);
     ~GameState();
+    GameState pushBox(move m);
     vector<vector<char> > map;
     int playerX;
     int playerY;
@@ -20,6 +29,21 @@ GameState::GameState(vector<string> stringmap,int width,int height){
         }
         map.push_back(line);
     }
+}
+GameState::GameState(vector<vector<char> > stringmap,int width,int height){
+    for(int i = 0;i < stringmap.size();i++){
+        vector<char> line;
+        for(int j = 0;j < stringmap[i].size();j++){
+            line.push_back(stringmap[i][j]);
+        }
+        map.push_back(line);
+    }
+}
+GameState GameState::pushBox(move m){
+    vector<vector<char> > stringmap = map;
+    stringmap[m.startY][m.startX] = ' ';
+    stringmap[m.endY][m.endX] = '$';
+    return GameState(stringmap,0,0);
 }
 GameState::~GameState(){}
 ostream& operator<<(ostream &strm, const GameState &state) {
@@ -35,10 +59,18 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 
 int main(){
     vector<string> lines;
-    lines.push_back("hej");
-    lines.push_back("halloj");
-    lines.push_back("yo");
-    GameState gs (lines,5,lines.size());
+    lines.push_back("######");
+    lines.push_back("#    #");
+    lines.push_back("# $  #");
+    lines.push_back("######");
+    GameState gs (lines,6,lines.size());
     cout << gs << endl;
+    move m;
+    m.startX = 2;
+    m.startY = 2;
+    m.endX = 3;
+    m.endY = 2;
+    GameState moved = gs.pushBox(m);
+    cout << moved << endl;
     return 0;
 }
