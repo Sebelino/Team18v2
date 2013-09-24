@@ -2,6 +2,11 @@
 #include "constants.cpp"
 
 using namespace std;
+/*
+A Map represents the static parts of the map.
+*/
+
+
 
 /**
  * Creates a Map from a vector of strings. Width and height are set but has 
@@ -36,7 +41,7 @@ bool Map::isWall(const pair<int,int>& coords ) {
  * as defined by constans.cpp, false otherwise.
  */
 bool Map::isGoal(const pair<int,int>& coords ) {
-	return (map[coords.first][coords.second] == GOAL);
+	return (map[coords.first][coords.second] == GOAL || map[coords.first][coords.second] == BOX_ON_GOAL);
 }
 
 /* Getters for width and height */
