@@ -154,7 +154,8 @@ void moveToPath (GameState gs, boxMove bm) {
 	}
 	printf("%c\n",path[0]);
 	
-	char finalMove = dirs(endPos-{(get<0>(bm.start))-(get<0>(bm.end)),(get<1>(bm.start))-(get<1>(bm.end))});
+	pos diff = {(get<0>(bm.start))-(get<0>(bm.end)),(get<1>(bm.start))-(get<1>(bm.end))};
+	char finalMove = dirs(endPos-diff);
 	printf("%c\n",finalMove);
 }
 
