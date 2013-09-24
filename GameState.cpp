@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <string>
 #include "GameState.h"
 
@@ -44,6 +45,29 @@ GameState GameState::pushBox(const struct move & m){
     return GameState(stringmap,0,0);
 }
 
+bool GameState::isValid(const struct move & m){
+    // Testing relative positions.
+    if(!(abs(m.startX-m.endX) == 1 && abs(m.startY-m.endY) == 0
+      || abs(m.startX-m.endX) == 0 && abs(m.startY-m.endY) == 1)){
+        return false;
+    }
+    // Testing bounds.
+    if(min(min(min(m.startX,m.endX),m.startY),m.endY) < 0
+    || max(m.startY,m.endY) > map.size()
+    || max(m.startX,m.endX) > map[m.startY].size()){
+        return false;
+    }
+    // Testing starting position chars.
+    if(!(map[m.startY][m.startX] == '$' || map[m.startY][m.startX] == '*')){
+        return false;
+    }
+    // Testing destination position chars.
+    if(!(map[m.startY][m.startX] == ' ' || map[m.startY][m.startX] == '.')){
+        return false;
+    }
+    return true;
+}
+
 // ToString for a game state.
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
@@ -59,5 +83,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 // Returns a set of all succeeding states.
 set<GameState> findNextMoves(){
     set<GameState> successors;
+//    for (x,y) in map.boxes:
+//        if()
     return successors;
 }
