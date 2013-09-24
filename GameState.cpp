@@ -48,6 +48,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     return stream;
 }
 
+/*
 int main(){
     vector<string> lines;
     lines.push_back("######");
@@ -65,3 +66,5 @@ int main(){
     cout << moved << endl;
     return 0;
 }
+*/
+
