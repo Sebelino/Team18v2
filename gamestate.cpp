@@ -30,8 +30,8 @@ GameState::GameState(vector<vector<char> > stringmap,int width,int height){
         map.push_back(line);
     }
 }
-GameState GameState::pushBox(move m){
-    validateMove(m);
+
+GameState GameState::pushBox(const struct move & m){
     vector<vector<char> > stringmap = map;
     stringmap[m.startY][m.startX] = ' ';
     stringmap[m.endY][m.endX] = '$';
