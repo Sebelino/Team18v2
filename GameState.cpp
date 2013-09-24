@@ -6,13 +6,6 @@
 
 using namespace std;
 
-struct move{
-    int startX;
-    int startY;
-    int endX;
-    int endY;
-};
-
 // Constructor.
 GameState::GameState(vector<string> stringmap,int width,int height){
     for(unsigned int i = 0;i < stringmap.size();i++){

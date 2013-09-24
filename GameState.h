@@ -6,6 +6,13 @@
 #ifndef _GAMESTATE_H__
 #define _GAMESTATE_H__
 
+struct move{
+    int startX;
+    int startY;
+    int endX;
+    int endY;
+};
+
 class GameState{
 public:
     GameState(std::vector<std::string> stringmap,int width,int height);
