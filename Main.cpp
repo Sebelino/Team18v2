@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "GameState.cpp"
+#include "gamestate.h"
 #include "AI.cpp"
 
 using namespace std;
@@ -10,8 +10,8 @@ int main(int argc, char **argv) {
 	
 	// Read the board
 	vector<string> board;
-	int width = 0;
-	int height = 0;
+	unsigned int width = 0;
+	unsigned int height = 0;
 	for (string line; getline(cin, line);) {
 		board.push_back(line);
 		if(line.length() > width)
