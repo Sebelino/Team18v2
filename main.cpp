@@ -19,6 +19,8 @@ int main(int argc, char **argv) {
 
 	// Create gamestate
 
+	// FUNKAR DETTA???
+
 	//GameState
 	string s = "U R R U";
 
