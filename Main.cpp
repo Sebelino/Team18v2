@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "gamestate.h"
-
+#include "AI.cpp"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 	height = board.size();
 
 	// Create gamestate
-	GameState gs = GameState(board,width,height);
+	//GameState gs = GameState(board,width,height);
 
 	//call the solver
 	string s = "U R R U";
