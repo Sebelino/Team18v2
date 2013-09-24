@@ -3,15 +3,10 @@
 #include <cstdlib>
 #include <string>
 #include <set>
-#include "gamestate.h"
-#include "constants.cpp"
+#include "GameState.h"
+#include "Constants.cpp"
 
 using namespace std;
-
-struct move{
-    pair<int,int> start;
-    pair<int,int> end;
-};
 
 GameState::GameState(Map * canvas) {
 	map = canvas;

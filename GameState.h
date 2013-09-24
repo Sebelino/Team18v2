@@ -7,6 +7,11 @@
 #ifndef _GAMESTATE_H__
 #define _GAMESTATE_H__
 
+struct move{
+    std::pair<int,int> start;
+    std::pair<int,int> end;
+};
+
 class GameState{
 public:
 	GameState(Map * canvas);
