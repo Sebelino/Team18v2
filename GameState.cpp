@@ -89,18 +89,16 @@ bool GameState::isValid(const struct boxMove & m){
 }*/
 
 // ToString for a game state.
-/*
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(unsigned int i = 0;i < state.map->getHeight();i++){
-		for(unsigned int j = 0;j < state.map->getOriginalMap()->at(i)[j];j++){
-            stream << state.map[i][j];
+		for(unsigned int j = 0;j < state.map->getWidth();j++){
+            stream << state.map->getOriginalMap();
         }
         stream << endl;
     }
     return stream;
 }
-*/
 
 
 //set<boxMove> moves(pair<int,int> boxPos){

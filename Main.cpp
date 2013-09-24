@@ -20,8 +20,9 @@ int main(int argc, char **argv) {
 	}
 	height = board.size();
 
+    Map map = Map(board,width,height);
 	// Create gamestate
-	//GameState gs = GameState(board,width,height);
+	GameState gs = GameState(&map);
 
 	//call the solver
 	string s = "U R R U";
