@@ -1,4 +1,5 @@
 #include <stack>
+#include <string>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -9,16 +10,13 @@
 
 using namespace std;
 
-
 struct dirEntry {
 	pos p;
 	int weight;
 	bool operator<(dirEntry other) const {
 		return weight > other.weight;
 	}
-	
 };
-
 
 pos direction(char ch) {
     switch (ch) {
@@ -52,7 +50,7 @@ char dirs(pos p) {
     }
 }
 
-void moveToPath (GameState gs, boxMove bm) {
+std::vector<char> moveToPath (GameState gs, boxMove bm) {
 
 	int h = gs.map->getHeight();
 	int w = gs.map->getWidth();
@@ -116,32 +114,27 @@ void moveToPath (GameState gs, boxMove bm) {
 	
 	if (!goalReached) {
 	    //Invalid move
-	    printf("no path\n");
-	    return;
+	    return std::vector<char>('X');
 	}	
 	
+	
 	//Else
+	char finalMove = dirs(endPos*2-bm.start);
 	pos curPos = endPos;
 	char nd = dirMap[endPos.x][endPos.y];
 	std::vector<char> path;
-	int i = 0;
+	path.push_back(finalMove);
 	while (nd != 'S') {
-	    path[i] = nd;
+	    path.push_back(nd);
 	    pos pnd = direction(nd);
 	    curPos = {curPos.x-pnd.x, curPos.y-pnd.y};
 	    nd = dirMap[curPos.x][curPos.y];
-	    i++;
 	}
-
-	// Output answer
-	i--;
-	for (;i > 0;i--) {
-	    printf("%c ",path[i]);
-	}
-	printf("%c\n",path[0]);
-
-	char finalMove = dirs(endPos*2-bm.start);
-	printf("%c\n",finalMove);
+	
+	//std::reverse(path.begin(),path.end());
+	//Or just let main print them in reverse order.
+	
+	return path;
 }
 
 
