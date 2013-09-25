@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
+#include "PathFinding.h"
 #include "GameState.h"
 #include "Map.h"
 

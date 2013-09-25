@@ -1,10 +1,9 @@
-#include <utility>
-#include <vector>
-#include <string>
-
 #ifndef _MAP_H__
 #define _MAP_H__
 
+#include <utility>
+#include <vector>
+#include <string>
 
 struct pos {
     int x;

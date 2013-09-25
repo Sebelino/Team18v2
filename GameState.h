@@ -1,12 +1,12 @@
+#ifndef _GAMESTATE_H__
+#define _GAMESTATE_H__
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <set>
 #include "Map.h"
-
-#ifndef _GAMESTATE_H__
-#define _GAMESTATE_H__
-
+#include "PathFinding.cpp"
 
 struct boxMove{
 	pos start;
