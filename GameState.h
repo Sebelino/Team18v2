@@ -39,6 +39,7 @@ public:
 	bool isValid(const struct boxMove& m);
     std::set<boxMove> moves(pos boxPos);
     std::set<GameState> findNextMoves();
+    bool operator<(GameState other) const;
 
     pos player;
 	std::set<pos> boxes;

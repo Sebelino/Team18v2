@@ -62,14 +62,21 @@ GameState GameState::pushBox(const struct boxMove & m){
 
 }*/
 
+bool GameState::operator<(GameState other) const {
+    if(player < other.player){
+        return true;
+    }else{
+        return false;
+    }
+}
 
 
 //kommentera please
 bool GameState::isValid(const struct boxMove & m){
-    vector<char> path = moveToPath(*this,m);
-    if(path[0] == 'X'){
-        return false;
-    }
+//    vector<char> path = moveToPath(*this,m);
+//    if(path[0] == 'X'){
+//        return false;
+//    }
     return true;
 //    // Testing relative positions.
 //    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
@@ -130,8 +137,12 @@ set<boxMove> GameState::moves(pos boxPos){
 // Returns a set of all succeeding states.
 set<GameState> GameState::findNextMoves(){
     set<GameState> successors;
-//    for (x,y) in boxes:
-//        set<boxMove> ms = moves(x,y);
-//        if isValid(move)
+    for(pos b : boxes){
+        set<boxMove> ms = moves(b);
+        for(boxMove m : ms){
+            GameState gs(this,&m);
+            successors.insert(gs);
+        }
+    }
     return successors;
 }
