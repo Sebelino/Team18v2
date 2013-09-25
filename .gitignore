@@ -12,8 +12,11 @@
 *.la
 *.a
 
-#misc files
+# Visual Studio
 *.filters
 *.vcxproj
 *.rc
 *.aps
+
+# Executables
+sokoban
