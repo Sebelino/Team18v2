@@ -1,7 +1,3 @@
-
-#ifndef _CONSTANTS_CPP__
-#define _CONSTANTS_CPP__
-
 #define FREE (' ')
 #define WALL ('#')
 #define GOAL ('.')
@@ -10,4 +6,3 @@
 #define BOX ('$')
 #define BOX_ON_GOAL ('*')
 
-#endif
