@@ -5,21 +5,12 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
-#include "GameState.h"
-#include "Map.h"
+#include "PathFinding.h"
 
 #ifndef _PATHFINDING_CPP__
 #define _PATHFINDING_CPP__
 
 using namespace std;
-
-struct dirEntry {
-	pos p;
-	int weight;
-	bool operator<(dirEntry other) const {
-		return weight > other.weight;
-	}
-};
 
 pos direction(char ch) {
     switch (ch) {

@@ -1,9 +1,9 @@
+#ifndef _MAP_H__
+#define _MAP_H__
+
 #include <utility>
 #include <vector>
 #include <string>
-
-#ifndef _MAP_H__
-#define _MAP_H__
 
 struct pos {
     int x;
@@ -28,9 +28,7 @@ struct pos {
     }
 };
 
-class Map
-
-{
+class Map {
 
 public:
 	Map(std::vector<std::string> stringmap, int width, int height);
