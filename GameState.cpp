@@ -28,7 +28,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 }
 
 /*
-Provate method to set all boxes from a board, and also set player position.
+Private method to set all boxes from a board, and also set player position.
 Only called from constructor.
 */
 void GameState::setBoxes(vector<vector<char> > * stringmap) {
@@ -64,29 +64,29 @@ GameState GameState::pushBox(const struct boxMove & m){
 
 
 //kommentera please
-/*
 bool GameState::isValid(const struct boxMove & m){
-    // Testing relative positions.
-    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
-      || abs(m.start.x-m.end.x) == 0 && abs(m.start.y-m.end.y) == 1)){
-        return false;
-    }
-    // Testing bounds.
-    if(min(min(min(m.start.x,m.end.x),m.start.y),m.end.y) < 0
-		|| max(m.start.y,m.end.y) > map->getHeight()
-    || max(m.start.x,m.end.x) > map[m.start.y].getHeight()){
-        return false;
-    }
-    // Testing starting position chars.
-    if(!(map[m.start.y][m.start.x] == '$' || map[m.start.y][m.start.x] == '*')){
-        return false;
-    }
-    // Testing destination position chars.
-    if(!(map[m.start.y][m.start.x] == ' ' || map[m.start.y][m.start.x] == '.')){
-        return false;
-    }
     return true;
-}*/
+//    // Testing relative positions.
+//    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
+//      || abs(m.start.x-m.end.x) == 0 && abs(m.start.y-m.end.y) == 1)){
+//        return false;
+//    }
+//    // Testing bounds.
+//    if(min(min(min(m.start.x,m.end.x),m.start.y),m.end.y) < 0
+//    || max(m.start.y,m.end.y) > map->getHeight()
+//    || max(m.start.x,m.end.x) > map[m.start.y].getHeight()){
+//        return false;
+//    }
+//    // Testing starting position chars.
+//    if(!(boxes.find(pos(m.start.y,m.start.x)) == '$' || map[m.start.y][m.start.x] == '*')){
+//        return false;
+//    }
+//    // Testing destination position chars.
+//    if(!(map[m.start.y][m.start.x] == ' ' || map[m.start.y][m.start.x] == '.')){
+//        return false;
+//    }
+//    return true;
+}
 
 // ToString for a game state.
 ostream& operator<<(ostream &strm, const GameState &state) {
@@ -100,15 +100,23 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     return stream;
 }
 
-
-//set<boxMove> moves(pos boxPos){
-//    boxMove up ();
-//}
+// Returns the set of moves possible to make for the box in position boxPos.
+set<boxMove> GameState::moves(pos boxPos){
+    set<boxMove> moveSet;
+    boxMove up; up.start = boxPos; up.end = boxPos+(pos){0,-1};
+    boxMove down; down.start = boxPos; down.end = boxPos+(pos){0,1};
+    boxMove left; left.start = boxPos; left.end = boxPos+(pos){-1,0};
+    boxMove right; right.start = boxPos; right.end = boxPos+(pos){1,0};
+    if(isValid(up)){
+        moveSet.insert(up);
+    }
+    return moveSet;
+}
 
 // Returns a set of all succeeding states.
-set<GameState> findNextMoves(){
+set<GameState> GameState::findNextMoves(){
     set<GameState> successors;
-//    for (x,y) in map.boxes:
+//    for (x,y) in boxes:
 //        set<boxMove> ms = moves(x,y);
 //        if isValid(move)
     return successors;

@@ -30,7 +30,9 @@ struct pos {
 };
 
 class Map
+
 {
+
 public:
 	Map(std::vector<std::string> stringmap, int width, int height);
 	~Map(void);
