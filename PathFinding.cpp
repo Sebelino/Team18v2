@@ -6,18 +6,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "PathFinding.h"
-#include "GameState.h"
-#include "Map.h"
+
 
 using namespace std;
-
-struct dirEntry {
-	pos p;
-	int weight;
-	bool operator<(dirEntry other) const {
-		return weight > other.weight;
-	}
-};
 
 pos direction(char ch) {
     switch (ch) {

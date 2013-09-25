@@ -4,7 +4,7 @@
 #include <string>
 #include <set>
 #include "GameState.h"
-#include "Constants.cpp"
+#include "Constants.h"
 
 using namespace std;
 

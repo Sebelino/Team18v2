@@ -6,7 +6,7 @@
 #include <string>
 #include <set>
 #include "Map.h"
-#include "PathFinding.cpp"
+#include "PathFinding.h"
 
 struct boxMove{
 	pos start;
