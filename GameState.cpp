@@ -5,6 +5,7 @@
 #include <set>
 #include "GameState.h"
 #include "Constants.cpp"
+//#include "PathFinding.cpp"
 
 using namespace std;
 
@@ -65,6 +66,10 @@ GameState GameState::pushBox(const struct boxMove & m){
 
 //kommentera please
 bool GameState::isValid(const struct boxMove & m){
+    vector<char> path = moveToPath(*this,m);
+    if(path[0] == 'X'){
+        return false;
+    }
     return true;
 //    // Testing relative positions.
 //    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
@@ -109,6 +114,15 @@ set<boxMove> GameState::moves(pos boxPos){
     boxMove right; right.start = boxPos; right.end = boxPos+(pos){1,0};
     if(isValid(up)){
         moveSet.insert(up);
+    }
+    if(isValid(down)){
+        moveSet.insert(down);
+    }
+    if(isValid(left)){
+        moveSet.insert(left);
+    }
+    if(isValid(right)){
+        moveSet.insert(right);
     }
     return moveSet;
 }

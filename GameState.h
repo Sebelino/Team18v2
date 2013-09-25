@@ -7,7 +7,6 @@
 #ifndef _GAMESTATE_H__
 #define _GAMESTATE_H__
 
-
 struct boxMove{
 	pos start;
 	pos end;

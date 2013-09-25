@@ -5,7 +5,6 @@
 #ifndef _MAP_H__
 #define _MAP_H__
 
-
 struct pos {
     int x;
     int y;

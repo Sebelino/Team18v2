@@ -8,6 +8,9 @@
 #include "GameState.h"
 #include "Map.h"
 
+#ifndef _PATHFINDING_CPP__
+#define _PATHFINDING_CPP__
+
 using namespace std;
 
 struct dirEntry {
@@ -137,3 +140,4 @@ std::vector<char> moveToPath (GameState gs, boxMove bm) {
 	return path;
 }
 
+#endif
