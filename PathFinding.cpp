@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../GameState.cpp"
-#include "../Map.cpp"
+#include "GameState.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -136,13 +136,4 @@ std::vector<char> moveToPath (GameState gs, boxMove bm) {
 	
 	return path;
 }
-
-
-int main(int argc, char **argv)
-{
-	fprintf(stderr, "Well, it can at least run\n");
-	return 0;
-}
-
-
 
