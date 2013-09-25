@@ -22,7 +22,7 @@ struct pos {
     	return {x*factor, y*factor};
     }
     bool operator<(pos other) const {
-    	if (x == other.x) {
+    	if (x == other.x)
     		return y-other.y;
         else
 	    	return x-other.x;
