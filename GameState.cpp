@@ -167,6 +167,10 @@ vector<GameState> GameState::findNextMoves(){
     return successors;
 }
 
+int GameState::heuristic() const{
+    return boxes.size();
+}
+
 /* Slightly misleading name because it is meant to be used for sorting GameStates in a std::set, not
  * in a hash datastructure. */
 //TODO: Ingen garanti för att alla GameStates har en unik hash.

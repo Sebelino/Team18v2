@@ -27,6 +27,7 @@ public:
     bool operator<(GameState other) const;
     long long unsigned int hash() const;
 	bool isSolution();
+    int heuristic() const;
 
     pos player;
 	std::set<pos> boxes;
