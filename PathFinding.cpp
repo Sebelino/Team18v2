@@ -13,26 +13,21 @@
 using namespace std;
 
 pos direction(char ch) {
-	pos p;
     switch (ch) {
         case 'U':
-			p.x=0; p.y=-1;
-            return p;
+            return pos(0,-1);
             break;
         case 'R':
-			p.x=1; p.y=0;
-            return 0;
+			return pos(1,0);
             break;
         case 'D':
-			p.x=0; p.y=1;
+			return pos(0,1);
             break;
         case 'L':
-			p.x=-1; p.y=0;
-            return p;
+			return pos(-1,0);
             break;
         default:
-			p.x = p.y = 42;
-            return p;     //This shouldn't be possible!
+            return pos(42,42);     //This shouldn't be possible!
             break;
     }
 }
@@ -46,7 +41,9 @@ char dirs(pos p) {
     	return 'D';
     } else if (p.x == -1 && p.y == 0) {
     	return 'L';
-    }
+    } else {
+		return 'A';
+	}
 }
 
 std::vector<char> moveToPath (GameState * gs, boxMove bm) {
@@ -65,11 +62,11 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	directions.push_back(dirEntry(pos(0, 1),0));
 	directions.push_back(dirEntry(pos(-1,0),0));
 	
-	char dirMap[w][h];
+	vector<vector<char>> dirMap;
 	
 	for (int i=0;i<w;i++) {
         for (int j=0;j<h;j++) {
-            dirMap[i][j] = '-';
+			dirMap[i].push_back('-');
         }
     }
 	
