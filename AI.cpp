@@ -13,9 +13,9 @@ using namespace std;
 
 void solve(GameState * gs) {
 	priority_queue<GameState> queue;
-	set<GameState> visited; //TODO, fixa egen hashfunction typ
+	set<int> visited; //TODO, fixa egen hashfunction typ
 
-	visited.insert(*gs);
+	visited.insert(gs->hash());
 	queue.push(*gs);
 
 	while(!queue.empty()) {
@@ -28,19 +28,12 @@ void solve(GameState * gs) {
 			break;
 		}
 
-
-		if(next.isSolution()) {
-			//SOLUTION FOUND, DO SOMETHING USEFUL
-			//TODO
-			break;
-		}
-
 		vector<GameState> nextMoves = next.findNextMoves();
 		vector<GameState>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState g = *it;
-			if(visited.find(g) != visited.end()) {
-				visited.insert(g);
+			if(visited.find(g.hash()) != visited.end()) {
+				visited.insert(g.hash());
 				queue.push(g);
 			}
 		}

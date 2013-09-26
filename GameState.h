@@ -36,6 +36,13 @@ public:
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
 };
+/*
+class Hasher {
+public:
+	Hasher(){};
+	bool operator() (GameState gs1, GameState gs2);
+}*/
+
 
 std::ostream& operator<<(std::ostream &strm, const GameState &state);
 
