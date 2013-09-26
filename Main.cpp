@@ -6,6 +6,11 @@
 
 using namespace std;
 
+string answer(vector<GameState> path){
+    string directions = "";
+    return directions;
+}
+
 int main(int argc, char **argv) {
 	
 	// Read the board
@@ -26,10 +31,12 @@ int main(int argc, char **argv) {
     cout << "Initial heuristic = " << gs.heuristic() << endl;
     cout << gs;
 
-	//call the solver
-	string s = "U R R U";
-
 	map.findStaticDeadLocks();
+
+	// Call the solver
+    vector<GameState> solution = solve(&gs);
+
+	string s = answer(solution);
 
 	// Output answer
 	std::cout << s << std::endl;
