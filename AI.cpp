@@ -13,7 +13,7 @@ using namespace std;
 
 void solve(GameState * gs) {
 	priority_queue<GameState> queue;
-	set<int> visited; //TODO, fixa egen hashfunction typ
+	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
 
 	visited.insert(gs->hash());
 	queue.push(*gs);
