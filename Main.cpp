@@ -22,7 +22,8 @@ int main(int argc, char **argv) {
     Map map = Map(board,width,height);
 	// Create gamestate
 	GameState gs = GameState(&map);
-    cout << "Initial GameState hash:" << gs.hash() << endl;
+    cout << "Initial GameState hash = " << gs.hash() << endl;
+    cout << "Initial heuristic = " << gs.heuristic() << endl;
     cout << gs;
 
 	//call the solver

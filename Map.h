@@ -21,6 +21,7 @@ public:
 	int getHeight();
 	void findStaticDeadLocks();
     bool isDeadlock(pos p);
+    std::set<pos> getGoals();
 
 	std::vector<std::vector<char> >* getOriginalMap();
 
