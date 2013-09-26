@@ -9,9 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "GameState.h"
-#include "Map.h"
+#include "Structs.h"
 
-class GameState;
 
 struct dirEntry {
 	pos p;
@@ -23,7 +22,7 @@ struct dirEntry {
 
 pos direction(char ch);
 char dirs(pos p);
-std::vector<char> moveToPath (GameState * gs, boxMove bm);
+std::vector<char> moveToPath (GameState gs, boxMove bm);
 
 #endif
 

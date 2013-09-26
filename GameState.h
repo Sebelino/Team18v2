@@ -7,6 +7,7 @@
 #include <set>
 #include "Map.h"
 #include "Structs.h"
+#include "PathFinding.h"
 
 
 class GameState{

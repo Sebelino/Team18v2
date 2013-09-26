@@ -6,9 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "PathFinding.h"
+#include "Structs.h"
 
-#ifndef _PATHFINDING_CPP__
-#define _PATHFINDING_CPP__
 
 using namespace std;
 
@@ -44,13 +43,13 @@ char dirs(pos p) {
     }
 }
 
-std::vector<char> moveToPath (GameState * gs, boxMove bm) {
+std::vector<char> moveToPath (GameState gs, boxMove bm) {
 
-	int h = gs->map->getHeight();
-	int w = gs->map->getWidth();
+	int h = gs.map->getHeight();
+	int w = gs.map->getWidth();
 	
 	pos startPos, endPos;
-	startPos = gs->player;	
+	startPos = gs.player;	
 	endPos = bm.start*2-bm.end;
 
 	
@@ -92,7 +91,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	        //Check if visited or unreachable
 	        char a = dirMap[curPos.x+d.x][curPos.y+d.y];
 	        
-	        if (a == '-' && (gs->boxes.end() == gs->boxes.find({curPos.x+d.x,curPos.y+d.y})) && !gs->map->isWall({curPos.x+d.x,curPos.y+d.y})) { //If space is free
+	        if (a == '-' && (gs.boxes.end() == gs.boxes.find({curPos.x+d.x,curPos.y+d.y})) && !gs.map->isWall({curPos.x+d.x,curPos.y+d.y})) { //If space is free
 	            //Visit
 	            dirMap[curPos.x+d.x][curPos.y+d.y] = dirs(d);
 	            q.push({curPos.x+d.x, curPos.y+d.y});
@@ -131,4 +130,3 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	return path;
 }
 
-#endif
