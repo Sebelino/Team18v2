@@ -19,6 +19,11 @@ struct dirEntry {
 	bool operator<(dirEntry other) const {
 		return weight > other.weight;
 	}
+
+	dirEntry(pos p, int weight) {
+		this->p = p;
+		this->weight = weight;
+	}
 };
 
 pos direction(char ch);

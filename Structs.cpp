@@ -5,6 +5,14 @@
 #include "Structs.h"
 //#include "PathFinding.h"
 
+pos::pos(int x, int y) {
+	this->x = x;
+	this->y = y;
+}
+
+pos::pos() {
+	
+}
 
 pos pos::operator-(pos other) const {
 	pos p;
@@ -36,6 +44,7 @@ bool pos::operator<(pos other) const {
     else
     	return x-other.x;
 }
+
 
 
 bool boxMove::operator<(boxMove other) const {

@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include "Structs.h"
+#include "PathFinding.h"
+
 
 class Map {
 
@@ -18,6 +20,7 @@ public:
 	int getWidth();
 	int getHeight();
 	void findStaticDeadLocks();
+    bool isDeadlock(pos p);
 
 	std::vector<std::vector<char> >* getOriginalMap();
 

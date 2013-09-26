@@ -23,6 +23,7 @@ public:
     std::set<boxMove> moves(pos boxPos);
     std::set<GameState> findNextMoves();
     bool operator<(GameState other) const;
+    long long unsigned int hash() const;
 
     pos player;
 	std::set<pos> boxes;
@@ -30,7 +31,6 @@ public:
 
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
-	
 };
 
 #endif

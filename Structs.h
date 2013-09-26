@@ -9,6 +9,8 @@
 struct pos {
     int x;
     int y;
+	pos(int x, int y);
+	pos();
     pos operator-(pos other) const;
     pos operator+(pos other) const;
     pos operator-() const;
