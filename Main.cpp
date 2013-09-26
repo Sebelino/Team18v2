@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
     Map map = Map(board,width,height);
 	// Create gamestate
 	GameState gs = GameState(&map);
+    cout << gs.hash();
 
 	//call the solver
 	string s = "U R R U";
