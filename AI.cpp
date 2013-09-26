@@ -28,6 +28,13 @@ void solve(GameState * gs) {
 			break;
 		}
 
+
+		if(next.isSolution()) {
+			//SOLUTION FOUND, DO SOMETHING USEFUL
+			//TODO
+			break;
+		}
+
 		vector<GameState> nextMoves = next.findNextMoves();
 		vector<GameState>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
