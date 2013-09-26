@@ -52,3 +52,31 @@ int Map::getHeight() { return height; }
 vector<vector<char> >* Map::getOriginalMap() {
 	return &map;
 }
+
+/**
+ * Searches the map for places that once a box is put there, the game is unsolvable.
+ */
+void findStaticDeadLocks() {
+	//TODO
+	
+	for(int i = 1;i < map.size()-1;i++){
+        for(int j = 1;j < map[i].size()-1;j++){
+            //Do something about map[i][j];
+            
+            if (map[i][j] == DEADLOCK || map[i][j] == WALL) {
+            	//Already detected as deadlock
+            	continue;
+            }
+            
+            
+            
+        }
+    }
+	
+}
+
+
+
+
+
+

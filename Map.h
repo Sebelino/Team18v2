@@ -17,6 +17,7 @@ public:
 
 	int getWidth();
 	int getHeight();
+	void findStaticDeadLocks();
 
 	std::vector<std::vector<char> >* getOriginalMap();
 
