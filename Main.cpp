@@ -8,6 +8,11 @@ using namespace std;
 
 string answer(vector<GameState> path){
     string directions = "";
+    vector<char> segment;
+    for(int i = 0;i < path.size()-1;i++){
+        segment = moveToPath(&path[0],path[1].src);
+        directions = directions+string(segment.begin(),segment.end());
+    }
     return directions;
 }
 
@@ -33,8 +38,10 @@ int main(int argc, char **argv) {
 
 	map.findStaticDeadLocks();
 
+    cout << "Calling solver..." << endl;
 	// Call the solver
     vector<GameState> solution = solve(&gs);
+    cout << "Solution returned." << endl;
 
 	string s = answer(solution);
 
