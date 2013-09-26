@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <iostream>
 #include "Map.h"
 #include "Structs.h"
 #include "PathFinding.h"
@@ -32,6 +33,8 @@ public:
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
 };
+
+std::ostream& operator<<(std::ostream &strm, const GameState &state);
 
 #endif
 

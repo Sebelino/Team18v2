@@ -109,9 +109,10 @@ bool GameState::isValid(const struct boxMove & m){
 /* Enables you to do cout << gamestate;. */
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
+    vector<vector<char> > & m = *(state.map->getOriginalMap());
     for(int i = 0;i < state.map->getHeight();i++){
 		for(int j = 0;j < state.map->getWidth();j++){
-            stream << state.map->getOriginalMap();
+            stream << m[i][j];
         }
         stream << endl;
     }
