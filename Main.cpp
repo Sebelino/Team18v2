@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "GameState.h"
-//#include "AI.cpp"
+#include "AI.h"
 
 using namespace std;
 

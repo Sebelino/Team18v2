@@ -1,10 +1,8 @@
-#ifndef _AI_CPP__
-#define _AI_CPP__
-
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
 #include "GameState.h"
+#include "AI.h"
 
 class GameState;
 
@@ -25,8 +23,9 @@ int abprune(GameState curGS, int depth, int a, int b, bool maxi)
  
     //fprintf(stderr, "In abprune now with depth %i\n", depth);
  
-    std::vector<GameState> lNextStates;
-    curGS.findNextMoves(lNextStates);
+    std::set<GameState> s = curGS.findNextMoves();
+    std::vector<GameState> lNextStates(s.begin(),s.end());
+    
     int vecSize = lNextStates.size();
  
     if (maxi) { //Maximizing player's turn
@@ -48,4 +47,4 @@ int abprune(GameState curGS, int depth, int a, int b, bool maxi)
     }
 }
 
-#endif
+
