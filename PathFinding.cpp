@@ -62,7 +62,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	directions.push_back(dirEntry(pos(0, 1),0));
 	directions.push_back(dirEntry(pos(-1,0),0));
 	
-	vector<vector<char>> dirMap;
+	vector<vector<char> > dirMap;
 	
 	for (int i=0;i<w;i++) {
         for (int j=0;j<h;j++) {

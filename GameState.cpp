@@ -41,8 +41,10 @@ void GameState::setBoxes(vector<vector<char> > * stringmap) {
 			char c = board[i][j];
 			if(c == BOX) {
 				boxes.insert(pos(i,j));
+				board[i][j] = ' '; // Overwrite dynamic entity.
 			} else if(c == PLAYER || c == PLAYER_ON_GOAL) {
 				player = pos(i,j);
+				board[i][j] = ' '; // Overwrite dynamic entity.
 			}
 		}
 	}
@@ -107,9 +109,10 @@ bool GameState::isValid(const struct boxMove & m){
 /* Enables you to do cout << gamestate;. */
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
+    vector<vector<char> > & m = *(state.map->getOriginalMap());
     for(int i = 0;i < state.map->getHeight();i++){
 		for(int j = 0;j < state.map->getWidth();j++){
-            stream << state.map->getOriginalMap();
+            stream << m[i][j];
         }
         stream << endl;
     }
@@ -141,9 +144,13 @@ set<boxMove> GameState::moves(pos boxPos){
 /* Returns a set of all succeeding states. */
 set<GameState> GameState::findNextMoves(){
     set<GameState> successors;
-    for(pos b : boxes){
+    set<pos>::iterator it;
+    for(it = boxes.begin();it != boxes.end();++it){
+        pos b = *it;
         set<boxMove> ms = moves(b);
-        for(boxMove m : ms){
+        set<boxMove>::iterator it2;
+        for(it2 = ms.begin();it2 != ms.end();++it2){
+            boxMove m = *it2;
             GameState gs(this,&m);
             successors.insert(gs);
         }
@@ -160,7 +167,8 @@ unsigned long long GameState::hash() const{
     int multiplier = 1;
     for(it = boxes.begin();it != boxes.end();++it){
         pos p = *it;
-        hash += multiplier*(p.x*map->getOriginalMap()->size()+p.y);
+        int posHash = p.x*map->getOriginalMap()->size()+p.y;
+        hash += multiplier*posHash;
         multiplier++;
     }
     return hash;
