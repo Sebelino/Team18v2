@@ -68,62 +68,69 @@ void Map::findStaticDeadLocks() {
 	directions.push_back(pos(-1,0));
 	pos curP;
 
-
+	/*
 	//Debug print without deadlocks
-	for(int i = 1;i < map.size()-1;i++){
-        for(int j = 1;j < map[i].size()-1;j++){
-        	fprintf(stderr, "%d", map[i][j]);
+	fprintf(stderr, "Before detecting deadlocks:\n");
+	for(int i = 0;i < map.size();i++){
+        for(int j = 0;j < map[i].size();j++){
+        	fprintf(stderr, "%c", map[i][j]);
         }
         fprintf(stderr, "\n");
     }
+    */
 	
 	
 	bool goals = false;
-	//TODO
 	for(int i = 1;i < map.size()-1;i++) {
 		if (map[i][1] == GOAL) {
 			goals = true;
 		}
     }    
-	if (goals) {
+	if (!goals) {
 		for(int i = 1;i < map.size()-1;i++) {
-			map[i][1] = DEADLOCK;
+			if (map[i][1] == FREE)
+				map[i][1] = DEADLOCK;
 		}
 	}
 	
 	goals = false;
 	for(int i = 1;i < map.size()-1;i++) {
-		if (map[i][map.size()-1] == GOAL) {
+		if (map[i][map[i].size()-2] == GOAL) {
 			goals = true;
 		}
     }    
-	if (goals) {
+	if (!goals) {
 		for(int i = 1;i < map.size()-1;i++) {
-			map[i][map.size()-1] = DEADLOCK;
+			if (map[i][map[i].size()-2] == FREE)
+				map[i][map[i].size()-2] = DEADLOCK;
+		}
+	}
+	
+	
+	
+	goals = false;
+	for(int i = 1;i < map[1].size()-1;i++) {
+		if (map[1][i] == GOAL) {
+			goals = true;
+		}
+    }    
+	if (!goals) {
+		for(int i = 1;i < map[1].size()-1;i++) {
+			if (map[1][i] == FREE)
+				map[1][i] = DEADLOCK;
 		}
 	}
 	
 	goals = false;
-	for(int i = 1;i < map.size()-1;i++) {
-		if (map[i][1] == GOAL) {
+	for(int i = 1;i < map[map.size()-2].size()-1;i++) {
+		if (map[map.size()-2][i] == GOAL) {
 			goals = true;
 		}
     }    
-	if (goals) {
-		for(int i = 1;i < map.size()-1;i++) {
-			map[i][1] = DEADLOCK;
-		}
-	}
-	
-	goals = false;
-	for(int i = 1;i < map.size()-1;i++) {
-		if (map[i][1] == GOAL) {
-			goals = true;
-		}
-    }    
-	if (goals) {
-		for(int i = 1;i < map.size()-1;i++) {
-			map[i][1] = DEADLOCK;
+	if (!goals) {
+		for(int i = 1;i < map[map.size()-2].size()-1;i++) {
+			if (map[map.size()-2][i] == FREE)
+				map[map.size()-2][i] = DEADLOCK;
 		}
 	}
 	
@@ -165,9 +172,10 @@ void Map::findStaticDeadLocks() {
     
     
     //Debug print with deadlocks
-	for(int i = 1;i < map.size()-1;i++){
-        for(int j = 1;j < map[i].size()-1;j++){
-        	fprintf(stderr, "%d", map[i][j]);
+    fprintf(stderr, "After detecting deadlocks:\n");
+	for(int i = 0;i < map.size();i++){
+        for(int j = 0;j < map[i].size();j++){
+        	fprintf(stderr, "%c", map[i][j]);
         }
         fprintf(stderr, "\n");
     }
