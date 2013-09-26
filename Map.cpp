@@ -42,7 +42,7 @@ bool Map::isWall(pos coords) {
  * as defined by constans.cpp, false otherwise.
  */
 bool Map::isGoal(pos coords ) {
-	return (map[coords.x][coords.y] == GOAL || map[coords.x][coords.y] == BOX_ON_GOAL);
+	return (map[coords.x][coords.y] == GOAL || map[coords.x][coords.y] == BOX_ON_GOAL || map[coords.x][coords.y] == PLAYER_ON_GOAL);
 }
 
 /* Getters for width and height */
