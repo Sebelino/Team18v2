@@ -52,3 +52,11 @@ int Map::getHeight() { return height; }
 vector<vector<char> >* Map::getOriginalMap() {
 	return &map;
 }
+
+/* Return true if the position renders the game session unsolvable. */
+bool Map::isDeadlock(pos p){
+    if(map[p.y][p.x] == 'X'){
+        return true;
+    }
+    return false;
+}

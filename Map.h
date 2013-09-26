@@ -17,6 +17,7 @@ public:
 
 	int getWidth();
 	int getHeight();
+    bool isDeadlock(pos p);
 
 	std::vector<std::vector<char> >* getOriginalMap();
 

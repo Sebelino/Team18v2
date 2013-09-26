@@ -72,10 +72,13 @@ bool GameState::operator<(GameState other) const {
 
 //kommentera please
 bool GameState::isValid(const struct boxMove & m){
-//    vector<char> path = moveToPath(*this,m);
-//    if(path[0] == 'X'){
-//        return false;
-//    }
+    vector<char> path = moveToPath(this,m);
+    if(path[0] == 'X'){
+        return false;
+    }
+    if(map->isDeadlock(m.end)){
+        return false;
+    }
     return true;
 //    // Testing relative positions.
 //    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
