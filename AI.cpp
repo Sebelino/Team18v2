@@ -33,6 +33,7 @@ void solve(GameState * gs) {
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState g = *it;
 			if(visited.find(g.hash()) != visited.end()) {
+				g.parent = &next;
 				visited.insert(g.hash());
 				queue.push(g);
 			}

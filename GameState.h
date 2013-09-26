@@ -33,6 +33,7 @@ public:
 	std::set<pos> boxes;
 	Map * map;
 	int score; //TODO
+	GameState * parent = 0;
 
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
