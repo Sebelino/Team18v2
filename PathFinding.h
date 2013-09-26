@@ -9,7 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "GameState.h"
-#include "Map.h"
+#include "Structs.h"
+
 
 struct dirEntry {
 	pos p;

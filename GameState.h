@@ -6,27 +6,8 @@
 #include <string>
 #include <set>
 #include "Map.h"
-//#include "PathFinding.h"
+#include "Structs.h"
 
-struct boxMove{
-	pos start;
-	pos end;
-    bool operator<(boxMove other) const {
-    	if(start.x == other.start.x){
-            if(start.y == other.start.y){
-                if(end.x == other.end.x){
-                    return end.y-other.end.y;
-                }else{
-                    return end.x-other.end.x;
-                }
-            }else{
-                return start.y-other.end.y;
-            }
-        }else{
-            return start.x-other.end.x;
-        }
-    }
-};
 
 class GameState{
 public:

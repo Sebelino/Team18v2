@@ -17,6 +17,7 @@
 *.vcxproj
 *.rc
 *.aps
+Debug/*
 
 # Executables
 sokoban
