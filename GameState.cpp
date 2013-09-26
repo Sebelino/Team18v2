@@ -50,6 +50,7 @@ void GameState::setBoxes(vector<vector<char> > * stringmap) {
 				boxes.insert(pos(i,j));
 				board[i][j] = FREE; // Overwrite dynamic entity.
 			}else if(c == BOX_ON_GOAL){
+				boxes.insert(pos(i,j));
                 board[i][j] = GOAL;
 			}else if(c == PLAYER){
 				player = pos(i,j);
