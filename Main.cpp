@@ -7,6 +7,16 @@
 
 using namespace std;
 
+string answer(vector<GameState> path){
+    string directions = "";
+    vector<char> segment;
+    for(int i = 0;i < path.size()-1;i++){
+        segment = moveToPath(&path[0],path[1].src);
+        directions = directions+string(segment.begin(),segment.end());
+    }
+    return directions;
+}
+
 int main(int argc, char **argv) {
 	
 	// Read the board
@@ -36,6 +46,8 @@ int main(int argc, char **argv) {
 	vector<GameState> solution = solve(&gs);
 	vector<string> movements(solution.size());
 	
+	map.findStaticDeadLocks();
+
 	// Output answer
 	for (int i = 0;i<solution.size(); i++) {
 		str = moveToPath(&(solution[i]),solution[i+1].src);
