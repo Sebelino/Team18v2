@@ -6,9 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "PathFinding.h"
+#include "Structs.h"
 
-#ifndef _PATHFINDING_CPP__
-#define _PATHFINDING_CPP__
 
 using namespace std;
 
@@ -131,4 +130,3 @@ std::vector<char> moveToPath (GameState gs, boxMove bm) {
 	return path;
 }
 
-#endif

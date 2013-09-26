@@ -4,29 +4,8 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include "Structs.h"
 
-struct pos {
-    int x;
-    int y;
-    pos operator-(pos other) const {
-    	return {x-other.x, y-other.y};
-    }
-    pos operator+(pos other) const {
-    	return {x+other.x, y+other.y};
-    }
-    pos operator-() const {
-    	return {-x, -y};
-    }
-    pos operator*(int factor) const {
-    	return {x*factor, y*factor};
-    }
-    bool operator<(pos other) const {
-    	if (x == other.x)
-    		return y-other.y;
-        else
-	    	return x-other.x;
-    }
-};
 
 class Map {
 
