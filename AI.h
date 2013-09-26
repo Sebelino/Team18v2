@@ -5,6 +5,6 @@
 #ifndef _AI_H__
 #define _AI_H__
 //TODO Make sense of this function
-int solve_pas(void);
+int solve(void);
 //test
 #endif
