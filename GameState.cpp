@@ -46,12 +46,17 @@ void GameState::setBoxes(vector<vector<char> > * stringmap) {
 	for(unsigned int i = 0; i < board.size(); i++) {
 		for(unsigned int j = 0; j < board[i].size(); j++) {
 			char c = board[i][j];
-			if(c == BOX) {
+			if(c == BOX){
 				boxes.insert(pos(i,j));
-				board[i][j] = ' '; // Overwrite dynamic entity.
-			} else if(c == PLAYER || c == PLAYER_ON_GOAL) {
+				board[i][j] = FREE; // Overwrite dynamic entity.
+			}else if(c == BOX_ON_GOAL){
+                board[i][j] = GOAL;
+			}else if(c == PLAYER){
 				player = pos(i,j);
-				board[i][j] = ' '; // Overwrite dynamic entity.
+                board[i][j] = FREE;
+            }else if(c == PLAYER_ON_GOAL) {
+				player = pos(i,j);
+				board[i][j] = GOAL; // Overwrite dynamic entity.
 			}
 		}
 	}
