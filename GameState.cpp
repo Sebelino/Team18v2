@@ -73,6 +73,15 @@ bool GameState::operator<(GameState other) const {
         return false;
 }
 
+/* Returns true if the gamestate is a solution */
+bool GameState::isSolution() {
+	set<pos>::iterator it;
+	for(it = boxes.begin(); it != boxes.end() ; it++) {
+		if(!(map->isGoal(*it)))
+			return false;
+	}
+	return true;
+}
 
 /* Returns true iff it is possible to move a box in the way specified in the argument. */
 bool GameState::isValid(const struct boxMove & m){
