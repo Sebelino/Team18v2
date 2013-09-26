@@ -128,7 +128,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	    nd = dirMap[curPos.x][curPos.y];
 	}
 	
-	//std::reverse(path.begin(),path.end());
+	std::reverse(path.begin(),path.end());
 	//Or just let main print them in reverse order.
 	
 	return path;
