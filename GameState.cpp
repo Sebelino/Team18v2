@@ -169,7 +169,7 @@ unsigned long long GameState::hash() const{
         pos p = *it;
         int posHash = p.x*map->getOriginalMap()->size()+p.y;
         hash += multiplier*posHash;
-        multiplier++;
+        multiplier *= 2;
     }
     return hash;
 }
