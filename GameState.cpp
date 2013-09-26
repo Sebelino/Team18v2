@@ -67,10 +67,7 @@ GameState GameState::pushBox(const struct boxMove & m){
 
 /* Just a way to sort the GameStates. */
 bool GameState::operator<(GameState other) const {
-    if(hash() < other.hash())
-        return true;
-    else
-        return false;
+    return heuristic() < other.heuristic();
 }
 
 /* Returns true if the gamestate is a solution */
@@ -168,7 +165,11 @@ vector<GameState> GameState::findNextMoves(){
 }
 
 int GameState::heuristic() const{
-    return boxes.size();
+    set<pos> goals = map->getGoals();
+    if(boxes.size() != goals.size()){
+        cerr << "Assertion failed: boxes.size() == goals.size()" << endl;
+    }
+    return goals.size()-boxes.size();
 }
 
 /* Slightly misleading name because it is meant to be used for sorting GameStates in a std::set, not
