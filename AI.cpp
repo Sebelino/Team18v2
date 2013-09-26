@@ -6,11 +6,46 @@
 #include <algorithm>
 #include "GameState.h"
 #include "AI.h"
+#include <queue>
+#include <set>
 
 class GameState;
+class Heuristic; //TODO!!!!
 
-void solve(GameState gs) {
-	return;
+using namespace std;
+
+void solve(GameState * gs) {
+	priority_queue<GameState> queue;
+	set<GameState> visited; //TODO, fixa egen hashfunction typ
+
+	visited.insert(*gs);
+	queue.push(*gs);
+
+	while(!queue.empty) {
+		GameState next = queue.top();
+		queue.pop();
+
+		if(next.isSolution()) {
+			//SOLUTION FOUND, DO SOMETHING USEFUL
+			//TODO
+			break;
+		}
+
+		vector<GameState> nextMoves = next.findNextMoves();
+		vector<GameState>::iterator it;
+		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
+			GameState g = *it;
+			if(visited.find(g) != visited.end()) {
+				visited.insert(g);
+				queue.push(g);
+			}
+		}
+	}
+
+	//if we are here, solution has been found
+
+
+	return; //return something, or do something
 }
 
 int abprune(GameState curGS, int depth, int a, int b, bool maxi)
