@@ -144,9 +144,13 @@ set<boxMove> GameState::moves(pos boxPos){
 /* Returns a set of all succeeding states. */
 set<GameState> GameState::findNextMoves(){
     set<GameState> successors;
-    for(pos b : boxes){
+    set<pos>::iterator it;
+    for(it = boxes.begin();it != boxes.end();++it){
+        pos b = *it;
         set<boxMove> ms = moves(b);
-        for(boxMove m : ms){
+        set<boxMove>::iterator it2;
+        for(it2 = ms.begin();it2 != ms.end();++it2){
+            boxMove m = *it2;
             GameState gs(this,&m);
             successors.insert(gs);
         }
