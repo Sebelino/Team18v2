@@ -9,16 +9,28 @@ struct pos {
     int x;
     int y;
     pos operator-(pos other) const {
-    	return {x-other.x, y-other.y};
+		pos p;
+		p.x = x-other.x;
+		p.y = y-other.y;
+		return p;
     }
     pos operator+(pos other) const {
-    	return {x+other.x, y+other.y};
+    	pos p;
+		p.x = x+other.x;
+		p.y = y+other.y;
+		return p;
     }
     pos operator-() const {
-    	return {-x, -y};
+		pos p;
+		p.x = -x;
+		p.y = -y;
+		return p;
     }
     pos operator*(int factor) const {
-    	return {x*factor, y*factor};
+		pos p;
+		p.x = x*factor;
+		p.y = y*factor;
+		return p;
     }
     bool operator<(pos other) const {
     	if (x == other.x)
