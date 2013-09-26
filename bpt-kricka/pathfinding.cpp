@@ -5,18 +5,11 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../GameState.cpp"
-#include "../Map.cpp"
+#include "PathFinding.h"
+#include "Structs.h"
+
 
 using namespace std;
-
-struct dirEntry {
-	pos p;
-	int weight;
-	bool operator<(dirEntry other) const {
-		return weight > other.weight;
-	}
-};
 
 pos direction(char ch) {
     switch (ch) {
@@ -136,13 +129,4 @@ std::vector<char> moveToPath (GameState gs, boxMove bm) {
 	
 	return path;
 }
-
-
-int main(int argc, char **argv)
-{
-	fprintf(stderr, "Well, it can at least run\n");
-	return 0;
-}
-
-
 

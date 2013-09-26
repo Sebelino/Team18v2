@@ -36,13 +36,13 @@ Only called from constructor.
 void GameState::setBoxes(vector<vector<char> > * stringmap) {
 	vector<vector<char> >& board = *stringmap;
 	
-	for(int i = 0; i < board.size(); i++) {
-		for(int j = 0; j < board[i].size(); j++) {
+	for(unsigned int i = 0; i < board.size(); i++) {
+		for(unsigned int j = 0; j < board[i].size(); j++) {
 			char c = board[i][j];
 			if(c == BOX) {
-				boxes.insert({i,j});
+				boxes.insert(pos(i,j));
 			} else if(c == PLAYER || c == PLAYER_ON_GOAL) {
-				player = {i,j};
+				player = pos(i,j);
 			}
 		}
 	}
@@ -119,10 +119,10 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 /* Returns the set of moves possible to make for the box in position boxPos. */
 set<boxMove> GameState::moves(pos boxPos){
     set<boxMove> moveSet;
-    boxMove up; up.start = boxPos; up.end = boxPos+(pos){0,-1};
-    boxMove down; down.start = boxPos; down.end = boxPos+(pos){0,1};
-    boxMove left; left.start = boxPos; left.end = boxPos+(pos){-1,0};
-    boxMove right; right.start = boxPos; right.end = boxPos+(pos){1,0};
+    boxMove up; up.start = boxPos; up.end = boxPos+pos(0,-1);
+    boxMove down; down.start = boxPos; down.end = boxPos+pos(0,1);
+    boxMove left; left.start = boxPos; left.end = boxPos+pos(-1,0);
+    boxMove right; right.start = boxPos; right.end = boxPos+pos(1,0);
     if(isValid(up)){
         moveSet.insert(up);
     }

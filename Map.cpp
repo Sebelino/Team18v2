@@ -13,9 +13,9 @@ A Map represents the static parts of the map.
  * nothing to do with map initialization.
  */
 Map::Map(vector<string> stringmap, int width, int height) {
-    for(int i = 0;i < stringmap.size();i++){
+    for(unsigned int i = 0;i < stringmap.size();i++){
         vector<char> line;
-        for(int j = 0;j < stringmap[i].size();j++){
+        for(unsigned int j = 0;j < stringmap[i].size();j++){
             line.push_back(stringmap[i][j]); //not sure about order of i and j - but want first coordinate to be column.
         }
         map.push_back(line);
