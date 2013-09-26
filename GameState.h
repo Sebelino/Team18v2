@@ -26,7 +26,7 @@ public:
     std::vector<GameState> findNextMoves(); //TODO
     bool operator<(GameState other) const;
     long long unsigned int hash() const;
-	bool isSolution(); //TODO
+	bool isSolution();
 
     pos player;
 	std::set<pos> boxes;

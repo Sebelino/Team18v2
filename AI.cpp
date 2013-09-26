@@ -47,7 +47,7 @@ void solve(GameState * gs) {
 
 	return; //return something, or do something
 }
-
+/*
 int abprune(GameState curGS, int depth, int a, int b, bool maxi)
 {
     if (depth == 0) { // || curGS.isEOG()) {
@@ -85,4 +85,4 @@ int abprune(GameState curGS, int depth, int a, int b, bool maxi)
     }
 }
 
-
+*/
