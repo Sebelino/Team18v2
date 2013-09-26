@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <string>
 #include <set>
+#include <sstream>
+#include <iterator>
 #include "GameState.h"
 #include "Constants.h"
 
@@ -61,16 +63,16 @@ GameState GameState::pushBox(const struct boxMove & m){
 
 }*/
 
+/* Just a way to sort the GameStates. */
 bool GameState::operator<(GameState other) const {
-    if(player < other.player){
+    if(hash() < other.hash())
         return true;
-    }else{
+    else
         return false;
-    }
 }
 
 
-//kommentera please
+/* Returns true iff it is possible to move a box in the way specified in the argument. */
 bool GameState::isValid(const struct boxMove & m){
     vector<char> path = moveToPath(this,m);
     if(path[0] == 'X'){
@@ -102,7 +104,7 @@ bool GameState::isValid(const struct boxMove & m){
 //    return true;
 }
 
-// ToString for a game state.
+/* Enables you to do cout << gamestate;. */
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(int i = 0;i < state.map->getHeight();i++){
@@ -114,7 +116,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     return stream;
 }
 
-// Returns the set of moves possible to make for the box in position boxPos.
+/* Returns the set of moves possible to make for the box in position boxPos. */
 set<boxMove> GameState::moves(pos boxPos){
     set<boxMove> moveSet;
     boxMove up; up.start = boxPos; up.end = boxPos+pos(0,-1);
@@ -136,7 +138,7 @@ set<boxMove> GameState::moves(pos boxPos){
     return moveSet;
 }
 
-// Returns a set of all succeeding states.
+/* Returns a set of all succeeding states. */
 set<GameState> GameState::findNextMoves(){
     set<GameState> successors;
     for(pos b : boxes){
@@ -148,3 +150,19 @@ set<GameState> GameState::findNextMoves(){
     }
     return successors;
 }
+
+/* Slightly misleading name because it is meant to be used for sorting GameStates in a std::set, not
+ * in a hash datastructure. */
+//TODO: Ingen garanti för att alla GameStates har en unik hash.
+unsigned long long GameState::hash() const{
+    unsigned long long hash = 0;
+    set<pos>::iterator it;
+    int multiplier = 1;
+    for(it = boxes.begin();it != boxes.end();++it){
+        pos p = *it;
+        hash += multiplier*(p.x*map->getOriginalMap()->size()+p.y);
+        multiplier++;
+    }
+    return hash;
+}
+
