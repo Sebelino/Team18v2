@@ -34,6 +34,7 @@ public:
 	Map * map;
 	int score; //TODO
 	GameState * parent;
+	boxMove src;
 
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);

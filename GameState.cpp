@@ -15,6 +15,12 @@ GameState::GameState(Map * canvas) {
 	Map& m = *canvas;
 	vector<vector<char> > * board = m.getOriginalMap();
 	setBoxes(board);
+	boxMove s;
+	s.start.x = -1;
+	s.start.y = -1;
+	s.end.x = -1;
+	s.end.y = -1;
+	src = s;
 }
 
 /*
@@ -27,6 +33,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	boxes.insert(box_move->end);
 	player = box_move->start;
 	map = prev->map;
+	src = *box_move;
 }
 
 /*
