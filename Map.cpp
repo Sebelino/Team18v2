@@ -77,28 +77,67 @@ void Map::findStaticDeadLocks() {
         fprintf(stderr, "\n");
     }
 	
-	bool byWall;
 	
+	bool goals = false;
+	//TODO
+	for(int i = 1;i < map.size()-1;i++) {
+		if (map[i][1] == GOAL) {
+			goals = true;
+		}
+    }    
+	if (goals) {
+		for(int i = 1;i < map.size()-1;i++) {
+			map[i][1] = DEADLOCK;
+		}
+	}
+	
+	for(int i = 1;i < map.size()-1;i++) {
+		if (map[i][1] == GOAL) {
+			goals = true;
+		}
+    }    
+	if (goals) {
+		for(int i = 1;i < map.size()-1;i++) {
+			map[i][1] = DEADLOCK;
+		}
+	}
+	
+	
+	
+	/*	//Aah, it's tricky to get it right
 	for(int i = 1;i < map.size()-1;i++){
         for(int j = 1;j < map[i].size()-1;j++){
             //Do something about map[i][j];
             if (map[i][j] == FREE) {
             	//Only free spaces can be deadlocks
-            	byWall = false;
-            	for (int k = 0;k<4;k++) {
-            		curP = directions[k];
-            		
-            		if (map[i+curP.x][j+curP.y] == WALL) {
-            			//It's close to a wall, might be deadlock
-            			byWall = true;
-            			
-            			
-            			
-            		}	
-            	}	
+            	
+
+        		if (map[i-1][j] == WALL) {
+        			//It's close to a wall, might be deadlock
+        			for (int k = 1; map[i-1][j+k] == WALL ;k++) {
+        				if (map[i][j+k] == WALL) {
+        					
+        					for (int l = 1; map[i-1][j-l] == WALL ;l++) {
+        						if (map[i][j-l] == WALL) {
+        							//Found deadlock
+        							for (int m = 0;m<l+k;m++) {
+        								map[i][j-l+m] = 'X';
+        							}
+        							
+        						}
+        					}
+        					
+        					
+        					
+        					
+        				}
+        			}
+        		}	
+
+
             }
         }
-    }
+    }*/
     
     
     //Debug print with deadlocks
