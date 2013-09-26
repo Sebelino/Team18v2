@@ -91,6 +91,19 @@ void Map::findStaticDeadLocks() {
 		}
 	}
 	
+	goals = false;
+	for(int i = 1;i < map.size()-1;i++) {
+		if (map[i][map.size()-1] == GOAL) {
+			goals = true;
+		}
+    }    
+	if (goals) {
+		for(int i = 1;i < map.size()-1;i++) {
+			map[i][map.size()-1] = DEADLOCK;
+		}
+	}
+	
+	goals = false;
 	for(int i = 1;i < map.size()-1;i++) {
 		if (map[i][1] == GOAL) {
 			goals = true;
@@ -102,6 +115,17 @@ void Map::findStaticDeadLocks() {
 		}
 	}
 	
+	goals = false;
+	for(int i = 1;i < map.size()-1;i++) {
+		if (map[i][1] == GOAL) {
+			goals = true;
+		}
+    }    
+	if (goals) {
+		for(int i = 1;i < map.size()-1;i++) {
+			map[i][1] = DEADLOCK;
+		}
+	}
 	
 	
 	/*	//Aah, it's tricky to get it right
