@@ -9,6 +9,7 @@
 #include "Structs.h"
 #include "PathFinding.h"
 
+class Map;
 
 class GameState{
 public:
