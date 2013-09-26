@@ -21,7 +21,7 @@ void solve(GameState * gs) {
 	visited.insert(*gs);
 	queue.push(*gs);
 
-	while(!queue.empty) {
+	while(!queue.empty()) {
 		GameState next = queue.top();
 		queue.pop();
 
