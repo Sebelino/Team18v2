@@ -28,6 +28,8 @@ int main(int argc, char **argv) {
 	//call the solver
 	string s = "U R R U";
 
+	map.findStaticDeadLocks();
+
 	// Output answer
 	std::cout << s << std::endl;
 	return 0;
