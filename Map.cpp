@@ -198,7 +198,7 @@ set<pos> Map::getGoals(){
     set<pos> goals;
     for(unsigned int i = 0;i < map.size();i++){
         for(unsigned int j = 0;j < map[i].size();j++){
-            pos p (j,i);
+            pos p (i,j);
             if(isGoal(p)){
                 goals.insert(p);
             }
