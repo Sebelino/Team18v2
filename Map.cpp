@@ -45,7 +45,6 @@ bool Map::isWall(pos coords) {
  * as defined by constans.cpp, false otherwise.
  */
 bool Map::isGoal(pos coords ) {
-    cout << "x" << coords.x << "y" << coords.y << std::endl;
 	return (map[coords.y][coords.x] == GOAL || map[coords.y][coords.x] == BOX_ON_GOAL || map[coords.y][coords.x] == PLAYER_ON_GOAL);
 }
 

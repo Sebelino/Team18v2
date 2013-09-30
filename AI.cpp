@@ -12,6 +12,7 @@ class Heuristic; //TODO!!!!
 using namespace std;
 
 vector<GameState> solve(GameState * gs) {
+    cout << *gs << std::endl;
 	priority_queue<GameState> queue;
 	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
 
@@ -36,6 +37,7 @@ vector<GameState> solve(GameState * gs) {
 		}
 
 		vector<GameState> nextMoves = next.findNextMoves();
+        cout << "findnextmo=" << nextMoves.size() << endl;
 		vector<GameState>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState g = *it;

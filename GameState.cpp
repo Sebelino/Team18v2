@@ -131,7 +131,12 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     vector<vector<char> > & m = *(state.map->getOriginalMap());
     for(int i = 0;i < state.map->getHeight();i++){
 		for(int j = 0;j < state.map->getWidth();j++){
-            stream << m[i][j];
+            const bool printBox = state.boxes.find(pos(j,i)) != state.boxes.end();
+            if(printBox){
+                stream << "$";
+            }else{
+                stream << m[i][j];
+            }
         }
         stream << endl;
     }
