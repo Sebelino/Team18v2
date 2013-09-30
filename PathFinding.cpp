@@ -64,13 +64,15 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	
 	vector<vector<char> > dirMap;
 	
-	for (int i=0;i<w;i++) {
-        for (int j=0;j<h;j++) {
-			dirMap[i].push_back('-');
+	for (int i=0;i<h;i++) {
+        vector<char> line;
+        for (int j=0;j<w;j++) {
+			line.push_back('-');
         }
+        dirMap.push_back(line);
     }
 	
-	dirMap[startPos.x][startPos.y] = 'S';
+	dirMap[startPos.y][startPos.x] = 'S';
 	
 	bool goalReached = false;
 	
@@ -92,16 +94,16 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	        dir = dirs(d);
 	        
 	        //Check if visited or unreachable
-	        char a = dirMap[curPos.x+d.x][curPos.y+d.y];
+	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
 	        if (a == '-' && (gs->boxes.end() == gs->boxes.find(pos(curPos.x+d.x,curPos.y+d.y))) && 
 												!gs->map->isWall(pos(curPos.x+d.x,curPos.y+d.y))) { //If space is free
 	            //Visit
-	            dirMap[curPos.x+d.x][curPos.y+d.y] = dirs(d);
+	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
 	        } else if (a == '.') {
 	            //Goal reached!
-	            dirMap[curPos.x+d.x][curPos.y+d.y] = dirs(d);
+	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
 	            goalReached = true;
 	            endPos = pos(curPos.x+d.x,curPos.y+d.y);
 	            break;
@@ -118,14 +120,14 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	//Else
 	char finalMove = dirs(endPos*2-bm.start);
 	pos curPos = endPos;
-	char nd = dirMap[endPos.x][endPos.y];
+	char nd = dirMap[endPos.y][endPos.x];
 	std::vector<char> path;
 	path.push_back(finalMove);
 	while (nd != 'S') {
 	    path.push_back(nd);
 	    pos pnd = direction(nd);
 	    curPos = pos(curPos.x-pnd.x, curPos.y-pnd.y);
-	    nd = dirMap[curPos.x][curPos.y];
+	    nd = dirMap[curPos.y][curPos.x];
 	}
 	
 	std::reverse(path.begin(),path.end());

@@ -54,7 +54,9 @@ int main(int argc, char **argv) {
 	fprintf(stderr,"2\n");
 
 	// Output answer
-	for (int i = 0;i<solution.size()-1; i++) {
+	for (int i = 0;i<(int)solution.size()-1; i++) {
+        cout << "i=" << i << std::endl;
+        cout << "solutionsize=" << solution.size() << std::endl;
 		str = moveToPath(&(solution[i]),solution[i+1].src);
 		for (int j = 0;j<str.size(); j++) {
 			printf("%c",str[j]);
