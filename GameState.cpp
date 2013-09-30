@@ -134,6 +134,8 @@ ostream& operator<<(ostream &strm, const GameState &state) {
             const bool printBox = state.boxes.find(pos(j,i)) != state.boxes.end();
             if(printBox){
                 stream << "$";
+            }else if(state.player.x == j && state.player.y == i){
+                stream << "@";
             }else{
                 stream << m[i][j];
             }
