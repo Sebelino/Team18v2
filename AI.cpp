@@ -5,6 +5,7 @@
 #include "AI.h"
 #include <queue>
 #include <set>
+#include <unistd.h>
 
 class GameState;
 class Heuristic; //TODO!!!!
@@ -20,17 +21,22 @@ vector<GameState> solve(GameState * gs) {
 	queue.push(*gs);
 
 	while(!queue.empty()) {
-		GameState next = queue.top();
-		queue.pop();
+		GameState next = queue.top(); queue.pop();
 
 		if(next.isSolution()) {
+            cout << "next" << &next << endl;
+            cout << "next.parent" << next.parent << endl;
+            cout << "ISSOULUTION ENTERED" << endl;
 			//backtrack through the parent members of the gamestates to place full
 			//solution into a vector
 			vector<GameState> retv;
 			GameState * gsp = next.parent;
 			retv.insert(retv.begin(),next);
-			while(gsp != 0) {
+			while(gsp != NULL) {
 				retv.insert(retv.begin(),*gsp);
+                usleep(50000);
+                cout << "gsp" << gsp << endl;
+                gsp = gsp->parent;
 			}
 
 			return retv;
@@ -44,8 +50,13 @@ vector<GameState> solve(GameState * gs) {
 		vector<GameState>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState g = *it;
-			if(visited.find(g.hash()) != visited.end()) {
-				g.parent = &next;
+            cout << "g.hash=" << g.hash() << std::endl;
+            for(set<unsigned long long>::iterator it=visited.begin();it!=visited.end();++it){
+                cout << "visited:" << *it << endl;
+            }
+			if(visited.find(g.hash()) == visited.end()) {
+                cout << "if ENTERED!" << std::endl;
+				//g.parent = &next;
 				visited.insert(g.hash());
 				queue.push(g);
 			}

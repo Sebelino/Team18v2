@@ -21,6 +21,7 @@ GameState::GameState(Map * canvas) {
 	s.end.x = -1;
 	s.end.y = -1;
 	src = s;
+    parent = NULL;
 }
 
 /*
@@ -34,6 +35,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	player = box_move->start;
 	map = prev->map;
 	src = *box_move;
+    parent = prev;
 }
 
 /*
@@ -102,21 +104,6 @@ bool GameState::isValid(const struct boxMove & m){
     if(map->isDeadlock(m.end) || map->isWall(m.end)){
         return false;
     }
-//    // Testing relative positions.
-//    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
-//      || abs(m.start.x-m.end.x) == 0 && abs(m.start.y-m.end.y) == 1)){
-//        return false;
-//    }
-//    // Testing bounds.
-//    if(min(min(min(m.start.x,m.end.x),m.start.y),m.end.y) < 0
-//    || max(m.start.y,m.end.y) > map->getHeight()
-//    || max(m.start.x,m.end.x) > map[m.start.y].getHeight()){
-//        return false;
-//    }
-//    // Testing starting position chars.
-//    if(!(boxes.find(pos(m.start.y,m.start.x)) == '$' || map[m.start.y][m.start.x] == '*')){
-//        return false;
-//    }
     return true;
 }
 
@@ -127,7 +114,9 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     for(int i = 0;i < state.map->getHeight();i++){
 		for(int j = 0;j < state.map->getWidth();j++){
             const bool printBox = state.boxes.find(pos(j,i)) != state.boxes.end();
-            if(printBox){
+            if(printBox && state.map->isGoal(pos(j,i))){
+                stream << "*";
+            }else if(printBox){
                 stream << "$";
             }else if(state.player.x == j && state.player.y == i){
                 stream << "@";

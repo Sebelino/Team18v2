@@ -6,3 +6,6 @@ cpp11:
 
 test:
 	./sokoban < maps/test
+
+testii:
+	./sokoban < maps/test2
