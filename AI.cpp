@@ -38,6 +38,9 @@ vector<GameState> solve(GameState * gs) {
 
 		vector<GameState> nextMoves = next.findNextMoves();
         cout << "findnextmo=" << nextMoves.size() << endl;
+        for(int i = 0;i < nextMoves.size();i++){
+            cout << nextMoves[i] << endl;
+        }
 		vector<GameState>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState g = *it;

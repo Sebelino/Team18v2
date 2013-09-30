@@ -99,10 +99,9 @@ bool GameState::isValid(const struct boxMove & m){
     if(path[0] == 'X'){
         return false;
     }
-    if(map->isDeadlock(m.end)){
+    if(map->isDeadlock(m.end) || map->isWall(m.end)){
         return false;
     }
-    return true;
 //    // Testing relative positions.
 //    if(!(abs(m.start.x-m.end.x) == 1 && abs(m.start.y-m.end.y) == 0
 //      || abs(m.start.x-m.end.x) == 0 && abs(m.start.y-m.end.y) == 1)){
@@ -118,11 +117,7 @@ bool GameState::isValid(const struct boxMove & m){
 //    if(!(boxes.find(pos(m.start.y,m.start.x)) == '$' || map[m.start.y][m.start.x] == '*')){
 //        return false;
 //    }
-//    // Testing destination position chars.
-//    if(!(map[m.start.y][m.start.x] == ' ' || map[m.start.y][m.start.x] == '.')){
-//        return false;
-//    }
-//    return true;
+    return true;
 }
 
 /* Enables you to do cout << gamestate;. */
