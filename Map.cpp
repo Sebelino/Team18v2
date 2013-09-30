@@ -17,7 +17,7 @@ Map::Map(vector<string> stringmap, int width, int height) {
     for(unsigned int i = 0;i < stringmap.size();i++){
         vector<char> line;
         for(unsigned int j = 0;j < stringmap[i].size();j++){
-            line.push_back(stringmap[i][j]); //not sure about order of i and j - but want first coordinate to be column.
+            line.push_back(stringmap[j][i]);
         }
         map.push_back(line);
     }
@@ -34,7 +34,7 @@ Map::~Map(void) {
  * as defined by constans.cpp, false otherwise.
  */
 bool Map::isWall(pos coords) {
-	return (map[coords.x][coords.y] == WALL);
+	return (map[coords.y][coords.x] == WALL);
 }
 
 /**
@@ -42,7 +42,7 @@ bool Map::isWall(pos coords) {
  * as defined by constans.cpp, false otherwise.
  */
 bool Map::isGoal(pos coords ) {
-	return (map[coords.x][coords.y] == GOAL || map[coords.x][coords.y] == BOX_ON_GOAL || map[coords.x][coords.y] == PLAYER_ON_GOAL);
+	return (map[coords.y][coords.x] == GOAL || map[coords.y][coords.x] == BOX_ON_GOAL || map[coords.y][coords.x] == PLAYER_ON_GOAL);
 }
 
 /* Getters for width and height */
