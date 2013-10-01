@@ -5,7 +5,7 @@
 #include "AI.h"
 #include <queue>
 #include <set>
-#include <unistd.h>
+//#include <unistd.h>
 
 class GameState;
 class Heuristic; //TODO!!!!
@@ -13,7 +13,8 @@ class Heuristic; //TODO!!!!
 using namespace std;
 
 vector<GameState> solve(GameState * gs) {
-    cout << *gs << std::endl;
+    cout << "GS "<< gs << std::endl;
+	cout << gs->parent << endl;
 	priority_queue<GameState> queue;
 	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
 
@@ -21,12 +22,14 @@ vector<GameState> solve(GameState * gs) {
 	queue.push(*gs);
 
 	while(!queue.empty()) {
-		GameState next = queue.top(); queue.pop();
+		cout << "TOP: " << &(queue.top()) << endl;
+		GameState& next = queue.top(); 
+		cout << "NEXT: " << &next << endl;
 
 		if(next.isSolution()) {
-            cout << "next" << &next << endl;
-            cout << "next.parent" << next.parent << endl;
-            cout << "ISSOULUTION ENTERED" << endl;
+            //cout << "next" << &next << endl;
+            //cout << "next.parent" << next.parent << endl;
+            //cout << "ISSOULUTION ENTERED" << endl;
 			//backtrack through the parent members of the gamestates to place full
 			//solution into a vector
 			vector<GameState> retv;
@@ -34,7 +37,7 @@ vector<GameState> solve(GameState * gs) {
 			retv.insert(retv.begin(),next);
 			while(gsp != NULL) {
 				retv.insert(retv.begin(),*gsp);
-                usleep(50000);
+                //usleep(50000);
                 cout << "gsp" << gsp << endl;
                 gsp = gsp->parent;
 			}
@@ -43,24 +46,27 @@ vector<GameState> solve(GameState * gs) {
 		}
 
 		vector<GameState> nextMoves = next.findNextMoves();
-        cout << "findnextmo=" << nextMoves.size() << endl;
+        //cout << "findnextmo=" << nextMoves.size() << endl;
+		cout << "parent should be " << &next << endl;
         for(int i = 0;i < nextMoves.size();i++){
-            cout << nextMoves[i] << endl;
+           cout << &(nextMoves[i]) << "     " << nextMoves[i].parent << endl;
         }
 		vector<GameState>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
-			GameState g = *it;
-            cout << "g.hash=" << g.hash() << std::endl;
-            for(set<unsigned long long>::iterator it=visited.begin();it!=visited.end();++it){
-                cout << "visited:" << *it << endl;
-            }
+			GameState& g = *it;
+            //cout << "g.hash=" << g.hash() << std::endl;
+            //for(set<unsigned long long>::iterator it=visited.begin();it!=visited.end();++it){
+            //    cout << "visited:" << *it << endl;
+            //}
 			if(visited.find(g.hash()) == visited.end()) {
-                cout << "if ENTERED!" << std::endl;
+                //cout << "if ENTERED!" << std::endl;
 				//g.parent = &next;
+				cout << "inserting " << &g << " with parent " << g.parent << endl;
 				visited.insert(g.hash());
 				queue.push(g);
 			}
 		}
+		queue.pop();
 	}
 
 	//if we are here, solution has been found
