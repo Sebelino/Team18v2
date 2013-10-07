@@ -23,7 +23,7 @@ public:
 	GameState pushBox(const struct boxMove& m);
 	bool isValid(const struct boxMove& m);
     std::set<boxMove> moves(pos boxPos);
-    std::vector<GameState> findNextMoves(); //TODO
+    std::vector<GameState*> findNextMoves(); //TODO
     bool operator<(GameState other) const;
     long long unsigned int hash() const;
 	bool isSolution();
