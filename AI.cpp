@@ -18,12 +18,14 @@ vector<GameState*> solve(GameState * gs) {
 	priority_queue<GameState*> queue;
 	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
 
+cout << "gs=\n" << *gs << endl;
+
 	visited.insert(gs->hash());
 	queue.push(gs);
 
     cout << "Prepare to enter the loop of delirium!!!11" << endl;
 	while(!queue.empty()) {
-		cout << "TOP: " << &(queue.top()) << endl;
+		cout << "TOP: " << queue.top() << endl;
 		GameState* next = queue.top(); 
 		cout << "NEXT: " << next << endl;
 
@@ -40,13 +42,12 @@ vector<GameState*> solve(GameState * gs) {
 			while(gsp != NULL) {
                 //cout << *gsp << ";Parent:\n" << *(gsp->parent) << endl;
 				retv.insert(retv.begin(),gsp);
-                usleep(50000);
+                //usleep(50000);
                 cout << gsp << endl;
                 gsp = gsp->parent;
 			}
 			return retv;
 		}
-
 		vector<GameState*> nextMoves = next->findNextMoves();
         //cout << "findnextmo=" << nextMoves.size() << endl;
 		cout << "parent should be " << next << endl;
@@ -54,7 +55,7 @@ vector<GameState*> solve(GameState * gs) {
             cout << nextMoves[i] << "     " << nextMoves[i]->parent << endl;
         }
 		vector<GameState*>::iterator it;
-		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
+		for(it = nextMoves.begin(); it != nextMoves.end(); it++) { // ++it eller it++?
 			GameState* g = *it;
             //cout << "g.hash=" << g.hash() << std::endl;
             //for(set<unsigned long long>::iterator it=visited.begin();it!=visited.end();++it){

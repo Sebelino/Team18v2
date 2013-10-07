@@ -111,6 +111,7 @@ bool GameState::isValid(const struct boxMove & m){
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     vector<vector<char> > & m = *(state.map->getOriginalMap());
+
     for(int i = 0;i < state.map->getHeight();i++){
 		for(int j = 0;j < state.map->getWidth();j++){
             const bool printBox = state.boxes.find(pos(j,i)) != state.boxes.end();
@@ -153,7 +154,7 @@ set<boxMove> GameState::moves(pos boxPos){
 
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
-    vector<GameState*> successors;
+    vector<GameState> successors;
     set<pos>::iterator it;
     for(it = boxes.begin();it != boxes.end();++it){
         pos b = *it;
@@ -162,10 +163,14 @@ vector<GameState*> GameState::findNextMoves(){
         for(it2 = ms.begin();it2 != ms.end();++it2){
             boxMove m = *it2;
             GameState gs(this,&m);
-            successors.push_back(&gs);
+            successors.push_back(gs);
         }
     }
-    return successors;
+    vector<GameState*> sPointers;
+    for(int i = 0;i < successors.size();i++){
+        sPointers.push_back(&(successors[i]));
+    }
+    return sPointers;
 }
 
 int GameState::heuristic() const{

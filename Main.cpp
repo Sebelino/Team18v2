@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 	GameState gs = GameState(&map);
     cout << "Initial GameState hash = " << gs.hash() << endl;
     cout << "Initial heuristic = " << gs.heuristic() << endl;
-    cout << gs;
+    cout << "Initial GameState apparence =\n" << gs << endl;
 	
 	map.findStaticDeadLocks();
 
