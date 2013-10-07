@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 	
 	fprintf(stderr,"0\n");
 	
-	vector<GameState> solution = solve(&gs);
+	vector<GameState*> solution = solve(&gs);
 	
 	fprintf(stderr,"1\n");
 	
@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 	for (int i = 0;i<(int)solution.size()-1; i++) {
         cout << "i=" << i << std::endl;
         cout << "solutionsize=" << solution.size() << std::endl;
-		str = moveToPath(&(solution[i]),solution[i+1].src);
+		str = moveToPath((solution[i]),solution[i+1]->src);
 		for (int j = 0;j<str.size(); j++) {
 			printf("%c",str[j]);
 		}
