@@ -172,6 +172,7 @@ int GameState::heuristic() const{
     set<pos> goals = map->getGoals();
     if(boxes.size() != goals.size()){
         cerr << "Assertion failed: boxes.size() == goals.size()" << endl;
+        cerr << "    boxes.size()=" << boxes.size() << ", goals.size()=" << goals.size() << endl;
     }
     return goals.size()-boxes.size();
 }
