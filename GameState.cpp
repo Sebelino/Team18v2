@@ -30,8 +30,8 @@ from box_move.start to box_move.end. Also updates player position to box_move.st
 */
 GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	boxes = prev->boxes;
-	boxes.erase(box_move->start);
-	boxes.insert(box_move->end);
+	boxes[box_move->start.y][box_move->start.x] = FREE;
+	boxes[box_move->end.y][box_move->end.x] = BOX;
 	player = box_move->start;
 	map = prev->map;
 	src = *box_move;
@@ -46,22 +46,28 @@ void GameState::setBoxes(vector<vector<char> > * stringmap) {
 	vector<vector<char> >& board = *stringmap;
 	
 	for(unsigned int i = 0; i < board.size(); i++) {
+        vector<bool > line;
 		for(unsigned int j = 0; j < board[i].size(); j++) {
 			char c = board[i][j];
 			if(c == BOX){
-                boxes.insert(pos(j,i));
+                boxes[i].push_back(BOX);
 				board[i][j] = FREE; // Overwrite dynamic entity.
 			}else if(c == BOX_ON_GOAL){
-				boxes.insert(pos(j,i));
+                boxes[i].push_back(BOX);
                 board[i][j] = GOAL;
 			}else if(c == PLAYER){
+                boxes[i].push_back(FREE);
 				player = pos(j,i);
                 board[i][j] = FREE;
             }else if(c == PLAYER_ON_GOAL) {
+                boxes[i].push_back(FREE);
 				player = pos(j,i);
 				board[i][j] = GOAL; // Overwrite dynamic entity.
-			}
+			}else{
+                boxes[i].push_back(FREE);
+            }
 		}
+        boxes.push_back(line);
 	}
 }
 
@@ -85,12 +91,13 @@ bool GameState::operator<(GameState other) const {
     return heuristic() < other.heuristic();
 }
 
-/* Returns true if the gamestate is a solution */
+/* Returns true if all the boxes are on goals. */
 bool GameState::isSolution() {
-	set<pos>::iterator it;
-	for(it = boxes.begin(); it != boxes.end() ; it++) {
-		if(!(map->isGoal(*it)))
-			return false;
+	for(int i = 0;i < boxes.size();i++){
+        for(int j = 0;j < boxes[i].size();j++){
+            if(!(map->isGoal(pos(j,i))))
+                return false;
+        }
 	}
 	return true;
 }
@@ -107,6 +114,24 @@ bool GameState::isValid(const struct boxMove & m){
     return true;
 }
 
+/* Returns true iff there is a box on the specified position. */
+bool isBox(pos p){
+    return boxes[p.y][p.x] == BOX;
+}
+
+/* Returns the number of boxes on the field. */
+int boxCount(){
+    int ctr = 0;
+    for(int y = 0;y < boxes.size();y++){
+        for(int x = 0;x < boxes[y].size();x++){
+            if(isBox(pos(x,y)){
+                ctr++;
+            }
+        }
+    }
+    return ctr;
+}
+
 /* Enables you to do cout << gamestate;. */
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
@@ -114,7 +139,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 
     for(int i = 0;i < state.map->getHeight();i++){
 		for(int j = 0;j < state.map->getWidth();j++){
-            const bool printBox = state.boxes.find(pos(j,i)) != state.boxes.end();
+            const bool printBox = state.isBox(pos(j,i));
             if(printBox && state.map->isGoal(pos(j,i))){
                 stream << "*";
             }else if(printBox){
@@ -186,6 +211,7 @@ int GameState::heuristic() const{
  * in a hash datastructure. */
 //TODO: Ingen garanti för att alla GameStates har en unik hash.
 unsigned long long GameState::hash() const{
+cout << "EEEEEEEEE" << map->getWidth() << endl;
     unsigned long long hash = 0;
     set<pos>::iterator it;
     int multiplier = 1;
@@ -194,7 +220,9 @@ unsigned long long GameState::hash() const{
         int posHash = p.x*map->getOriginalMap()->size()+p.y;
         hash += multiplier*posHash;
         multiplier *= 2;
+        cout << "size=" << boxes.size() << endl;
     }
+cout << "AAAAAAAA" << map->getWidth() << endl;
     return hash;
 }
 

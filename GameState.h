@@ -30,7 +30,7 @@ public:
     int heuristic() const;
 
     pos player;
-	std::set<pos> boxes;
+    std::vector<std::vector<char> > boxes;
 	Map * map;
 	int score; //TODO
 	GameState * parent;
