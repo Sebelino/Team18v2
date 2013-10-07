@@ -23,7 +23,7 @@ vector<GameState> solve(GameState * gs) {
 
 	while(!queue.empty()) {
 		cout << "TOP: " << &(queue.top()) << endl;
-		GameState& next = queue.top(); 
+		GameState next = queue.top(); 
 		cout << "NEXT: " << &next << endl;
 
 		if(next.isSolution()) {
