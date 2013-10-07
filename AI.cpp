@@ -12,7 +12,7 @@ class Heuristic; //TODO!!!!
 
 using namespace std;
 
-vector<GameState> solve(GameState * gs) {
+vector<GameState*> solve(GameState * gs) {
     cout << "GS "<< gs << std::endl;
 	cout << gs->parent << endl;
 	priority_queue<GameState*> queue;
@@ -33,13 +33,13 @@ vector<GameState> solve(GameState * gs) {
             //cout << "ISSOULUTION ENTERED" << endl;
 			//backtrack through the parent members of the gamestates to place full
 			//solution into a vector
-			vector<GameState> retv;
+			vector<GameState*> retv;
 			GameState * gsp = next->parent;
-			retv.insert(retv.begin(),*next);
+			retv.insert(retv.begin(),next);
             cout << "Prepare to enter the loop of eternal self-reproduction!!!11" << endl;
 			while(gsp != NULL) {
                 //cout << *gsp << ";Parent:\n" << *(gsp->parent) << endl;
-				retv.insert(retv.begin(),*gsp);
+				retv.insert(retv.begin(),gsp);
                 usleep(50000);
                 cout << gsp << endl;
                 gsp = gsp->parent;
@@ -51,20 +51,20 @@ vector<GameState> solve(GameState * gs) {
         //cout << "findnextmo=" << nextMoves.size() << endl;
 		cout << "parent should be " << next << endl;
         for(int i = 0;i < nextMoves.size();i++){
-           cout << &(nextMoves[i]) << "     " << nextMoves[i].parent << endl;
+            cout << nextMoves[i] << "     " << nextMoves[i]->parent << endl;
         }
-		vector<GameState>::iterator it;
+		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState* g = *it;
             //cout << "g.hash=" << g.hash() << std::endl;
             //for(set<unsigned long long>::iterator it=visited.begin();it!=visited.end();++it){
             //    cout << "visited:" << *it << endl;
             //}
-			if(visited.find(g.hash()) == visited.end()) {
+			if(visited.find(g->hash()) == visited.end()) {
                 //cout << "if ENTERED!" << std::endl;
 				//g.parent = &next;
 				cout << "inserting " << g << " with parent " << g->parent << endl;
-				visited.insert(g.hash());
+				visited.insert(g->hash());
 				queue.push(g);
 			}
 		}
@@ -73,7 +73,7 @@ vector<GameState> solve(GameState * gs) {
 
 	//if we are here, solution has been found
     cout << "WE ARE OUTTA HELL!" << endl;
-	return vector<GameState>(); //return something, or do something
+	return vector<GameState*>(); //return something, or do something
 }
 /*
 int abprune(GameState curGS, int depth, int a, int b, bool maxi)
