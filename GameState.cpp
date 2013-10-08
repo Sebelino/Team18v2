@@ -46,7 +46,7 @@ void GameState::setBoxes(vector<vector<char> > * stringmap) {
 	vector<vector<char> >& board = *stringmap;
 	
 	for(unsigned int i = 0; i < board.size(); i++) {
-        vector<bool > line;
+        vector<char > line;
 		for(unsigned int j = 0; j < board[i].size(); j++) {
 			char c = board[i][j];
 			if(c == BOX){
@@ -156,23 +156,23 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 }
 
 /* Returns the set of moves possible to make for the box in position boxPos. */
-set<boxMove> GameState::moves(pos boxPos){
-    set<boxMove> moveSet;
+vector<boxMove> GameState::moves(pos boxPos){
+    vector<boxMove> moveSet;
     boxMove up; up.start = boxPos; up.end = boxPos+pos(0,-1);
     boxMove down; down.start = boxPos; down.end = boxPos+pos(0,1);
     boxMove left; left.start = boxPos; left.end = boxPos+pos(-1,0);
     boxMove right; right.start = boxPos; right.end = boxPos+pos(1,0);
     if(isValid(up)){
-        moveSet.insert(up);
+        moveSet.push_back(up);
     }
     if(isValid(down)){
-        moveSet.insert(down);
+        moveSet.push_back(down);
     }
     if(isValid(left)){
-        moveSet.insert(left);
+        moveSet.push_back(left);
     }
     if(isValid(right)){
-        moveSet.insert(right);
+        moveSet.push_back(right);
     }
     return moveSet;
 }
@@ -180,7 +180,18 @@ set<boxMove> GameState::moves(pos boxPos){
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
     vector<GameState> successors;
-    set<pos>::iterator it;
+    for(int y = 0;y < boxes.size();y++){
+        for(int x = 0;x < boxes[y].size();x++){
+            if(boxes[y][x] == BOX){
+                vector<boxMove> ms = moves(pos(x,y));
+                for(int i = 0;i < ms.size();i++){
+                    boxMove m = ms[i];
+                    GameState gs = GameState(this,&m);
+                    successors.push_back(gs);
+                }
+            }
+        }
+    }
     for(it = boxes.begin();it != boxes.end();++it){
         pos b = *it;
         set<boxMove> ms = moves(b);
