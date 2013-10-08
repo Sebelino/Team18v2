@@ -44,7 +44,9 @@ bool pos::operator<(pos other) const {
     else
     	return x-other.x;
 }
-
+bool pos::operator==(pos other) const {
+	return (x == other.x && y == other.y);
+}
 
 
 bool boxMove::operator<(boxMove other) const {

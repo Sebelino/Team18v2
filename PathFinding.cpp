@@ -84,8 +84,33 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	    pos curPos = q.top();
 	    q.pop();
 	    
+	    fprintf(stderr, "dirMap:\n");
+		for (int i = 0;i<dirMap.size();i++) {
+			for (int j = 0;j<dirMap[i].size();j++) {
+				if (endPos.x == j && endPos.y == i) {
+					fprintf(stderr, "G");
+				} else {
+					fprintf(stderr, "%c", dirMap[i][j]);
+				}
+				
+			}
+			fprintf(stderr, "\n");
+		}
+	    
+	    if (curPos == endPos) {
+			//Goal reached!
+			fprintf(stderr, "enterd if statement as the goal was found!!!!!\n");
+			goalReached = true;
+			break;
+	    }
+	    
 	    pos d;
 	    char dir;
+
+		for (int i = 0;i<4;i++) {
+			directions[i].weight = (endPos.x-curPos.x)*directions[i].p.x + (endPos.y-curPos.y)*directions[i].p.y;
+			directions[i].weight *= (-1);
+		}
 
 	    std::sort(directions.begin(), directions.end());
 	    
@@ -96,34 +121,30 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	        //Check if visited or unreachable
 	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
-	        if (a == '-' && (gs->boxes.end() == gs->boxes.find(pos(curPos.x+d.x,curPos.y+d.y))) && 
-												!gs->map->isWall(pos(curPos.x+d.x,curPos.y+d.y))) { //If space is free
+	        if (a == '-' && (gs->boxes.end() == gs->boxes.find(pos(curPos.x+d.x,curPos.y+d.y))) && !gs->map->isWall(pos(curPos.x+d.x,curPos.y+d.y))) { //If space is free
 	            //Visit
 	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
-	        } else if (a == '.') {
-	            //Goal reached!
-	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
-	            goalReached = true;
-	            endPos = pos(curPos.x+d.x,curPos.y+d.y);
-	            break;
 	        }
 	    }
 	}
 	
 	if (!goalReached) {
 	    //Invalid move
-	    return std::vector<char>('X');
+	    std::vector<char> ret;
+	    ret.push_back('X');
+		return ret;
 	}	
 	
 	
 	//Else
-	char finalMove = dirs(endPos*2-bm.start);
+	char finalMove = dirs(bm.start-endPos);
 	pos curPos = endPos;
 	char nd = dirMap[endPos.y][endPos.x];
 	std::vector<char> path;
 	path.push_back(finalMove);
 	while (nd != 'S') {
+		fprintf(stderr, "nd = %c\n", nd);
 	    path.push_back(nd);
 	    pos pnd = direction(nd);
 	    curPos = pos(curPos.x-pnd.x, curPos.y-pnd.y);

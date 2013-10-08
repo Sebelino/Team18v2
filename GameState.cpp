@@ -99,6 +99,7 @@ bool GameState::isSolution() {
 bool GameState::isValid(const struct boxMove & m){
     vector<char> path = moveToPath(this,m);
     if(path[0] == 'X'){
+    	fprintf(stderr, "Contained an X!!!!!!!!!!!\n");
         return false;
     }
     if(map->isDeadlock(m.end) || map->isWall(m.end)){

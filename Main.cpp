@@ -33,9 +33,9 @@ int main(int argc, char **argv) {
     Map map = Map(board,width,height);
 	// Create gamestate
 	GameState gs = GameState(&map);
-    cout << "Initial GameState hash = " << gs.hash() << endl;
-    cout << "Initial heuristic = " << gs.heuristic() << endl;
-    cout << "Initial GameState apparence =\n" << gs << endl;
+    cerr << "Initial GameState hash = " << gs.hash() << endl;
+    cerr << "Initial heuristic = " << gs.heuristic() << endl;
+    cerr << "Initial GameState apparence =\n" << gs << endl;
 	
 	map.findStaticDeadLocks();
 
@@ -55,8 +55,8 @@ int main(int argc, char **argv) {
 
 	// Output answer
 	for (int i = 0;i<(int)solution.size()-1; i++) {
-        cout << "i=" << i << std::endl;
-        cout << "solutionsize=" << solution.size() << std::endl;
+        cerr << "i=" << i << std::endl;
+        cerr << "solutionsize=" << solution.size() << std::endl;
 		str = moveToPath((solution[i]),solution[i+1]->src);
 		for (int j = 0;j<str.size(); j++) {
 			printf("%c",str[j]);

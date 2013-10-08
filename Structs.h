@@ -16,6 +16,7 @@ struct pos {
     pos operator-() const;
     pos operator*(int factor) const;
     bool operator<(pos other) const;
+    bool operator==(pos other) const;
 };
 
 struct boxMove{
