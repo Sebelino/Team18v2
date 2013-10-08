@@ -22,12 +22,14 @@ public:
 
 	GameState pushBox(const struct boxMove& m);
 	bool isValid(const struct boxMove& m);
-    std::set<boxMove> moves(pos boxPos);
+    std::vector<boxMove> moves(pos boxPos);
     std::vector<GameState*> findNextMoves(); //TODO
     bool operator<(GameState other) const;
     long long unsigned int hash() const;
 	bool isSolution();
     int heuristic() const;
+    bool isBox(pos p) const;
+    int boxCount() const;
 
     pos player;
     std::vector<std::vector<char> > boxes;

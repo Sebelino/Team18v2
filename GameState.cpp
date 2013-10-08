@@ -115,16 +115,16 @@ bool GameState::isValid(const struct boxMove & m){
 }
 
 /* Returns true iff there is a box on the specified position. */
-bool isBox(pos p){
-    return boxes[p.y][p.x] == BOX;
+bool GameState::isBox(pos p) const{
+    return (boxes[p.y][p.x] == BOX);
 }
 
 /* Returns the number of boxes on the field. */
-int boxCount(){
+int GameState::boxCount() const{
     int ctr = 0;
     for(int y = 0;y < boxes.size();y++){
         for(int x = 0;x < boxes[y].size();x++){
-            if(isBox(pos(x,y)){
+            if(isBox(pos(x,y))){
                 ctr++;
             }
         }
@@ -186,20 +186,10 @@ vector<GameState*> GameState::findNextMoves(){
                 vector<boxMove> ms = moves(pos(x,y));
                 for(int i = 0;i < ms.size();i++){
                     boxMove m = ms[i];
-                    GameState gs = GameState(this,&m);
+                    GameState gs (this,&m);
                     successors.push_back(gs);
                 }
             }
-        }
-    }
-    for(it = boxes.begin();it != boxes.end();++it){
-        pos b = *it;
-        set<boxMove> ms = moves(b);
-        set<boxMove>::iterator it2;
-        for(it2 = ms.begin();it2 != ms.end();++it2){
-            boxMove m = *it2;
-            GameState gs(this,&m);
-            successors.push_back(gs);
         }
     }
     vector<GameState*> sPointers;
@@ -226,12 +216,16 @@ cout << "EEEEEEEEE" << map->getWidth() << endl;
     unsigned long long hash = 0;
     set<pos>::iterator it;
     int multiplier = 1;
-    for(it = boxes.begin();it != boxes.end();++it){
-        pos p = *it;
-        int posHash = p.x*map->getOriginalMap()->size()+p.y;
-        hash += multiplier*posHash;
-        multiplier *= 2;
-        cout << "size=" << boxes.size() << endl;
+    for(int y = 0;y < boxes.size();y++){
+        for(int x = 0;x < boxes.size();x++){
+            int posHash = 0;
+            if(boxes[y][x] == BOX){
+                posHash = x*map->getOriginalMap()->size()+y;
+            }
+            hash += multiplier*posHash;
+            multiplier *= 2;
+            cout << "size=" << boxes.size() << endl;
+        }
     }
 cout << "AAAAAAAA" << map->getWidth() << endl;
     return hash;

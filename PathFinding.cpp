@@ -97,7 +97,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
 	        if (a == '-' && (gs->boxes.end() == gs->boxes.find(pos(curPos.x+d.x,curPos.y+d.y))) && 
-												!gs->map->isWall(pos(curPos.x+d.x,curPos.y+d.y))) { //If space is free
+                        !gs->map->isWall(pos(curPos.x+d.x,curPos.y+d.y))) { //If space is free
 	            //Visit
 	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
