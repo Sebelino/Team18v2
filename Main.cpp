@@ -7,11 +7,11 @@
 
 using namespace std;
 
-string answer(vector<GameState> path){
+string answer(vector<GameState*> path){
     string directions = "";
     vector<char> segment;
     for(int i = 0;i < path.size()-1;i++){
-        segment = moveToPath(&path[0],path[1].src);
+        segment = moveToPath(path[i],path[i+1]->src);
         directions = directions+string(segment.begin(),segment.end());
     }
     return directions;
@@ -40,29 +40,15 @@ int main(int argc, char **argv) {
 	map.findStaticDeadLocks();
 
 	//call the solver
-	string s = "U R R U";
 	vector<char> str;
-	
 	fprintf(stderr,"0\n");
-	
 	vector<GameState*> solution = solve(&gs);
-	
 	fprintf(stderr,"1\n");
-	
 	vector<string> movements(solution.size());
-	
 	fprintf(stderr,"2\n");
 
-	// Output answer
-	for (int i = 0;i<(int)solution.size()-1; i++) {
-        cerr << "i=" << i << std::endl;
-        cerr << "solutionsize=" << solution.size() << std::endl;
-		str = moveToPath((solution[i]),solution[i+1]->src);
-		for (int j = 0;j<str.size(); j++) {
-			printf("%c",str[j]);
-		}
-	}
-	putchar('\n');
+	// Output answer.
+    cout << answer(solution) << endl;
 	
 	fprintf(stderr,"3\n");
 
