@@ -5,7 +5,7 @@
 #include "AI.h"
 #include <queue>
 #include <set>
-#include <unistd.h>         // Hmpf; finns inte på VS.
+//#include <unistd.h>         // Hmpf; finns inte på VS.
 
 class GameState;
 class Heuristic; //TODO!!!!
@@ -13,21 +13,21 @@ class Heuristic; //TODO!!!!
 using namespace std;
 
 vector<GameState*> solve(GameState * gs) {
-    cout << "GS "<< gs << std::endl;
-	cout << gs->parent << endl;
+    //cout << "GS "<< gs << std::endl;
+	//cout << gs->parent << endl;
 	priority_queue<GameState*> queue;
 	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
 
-cout << "gs=\n" << *gs << endl;
+	//cout << "gs=\n" << *gs << endl;
 
 	visited.insert(gs->hash());
 	queue.push(gs);
 
-    cout << "Prepare to enter the loop of delirium!!!11" << endl;
+    //cout << "Prepare to enter the loop of delirium!!!11" << endl;
 	while(!queue.empty()) {
-		cout << "TOP: " << queue.top() << endl;
+		//cout << "TOP: " << queue.top() << endl;
 		GameState* next = queue.top(); 
-		cout << "NEXT: " << next << endl;
+		//cout << "NEXT: " << next << endl;
 
 		if(next->isSolution()) {
             //cout << "next" << &next << endl;
@@ -38,22 +38,22 @@ cout << "gs=\n" << *gs << endl;
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
-            cout << "Prepare to enter the loop of eternal self-reproduction!!!11" << endl;
+            //cout << "Prepare to enter the loop of eternal self-reproduction!!!11" << endl;
 			while(gsp != NULL) {
                 //cout << *gsp << ";Parent:\n" << *(gsp->parent) << endl;
 				retv.insert(retv.begin(),gsp);
                 //usleep(50000);
-                cout << gsp << endl;
+                //cout << gsp << endl;
                 gsp = gsp->parent;
 			}
 			return retv;
 		}
 		vector<GameState*> nextMoves = next->findNextMoves();
         //cout << "findnextmo=" << nextMoves.size() << endl;
-		cout << "parent should be " << next << endl;
-        for(int i = 0;i < nextMoves.size();i++){
-            cout << nextMoves[i] << "     " << nextMoves[i]->parent << endl;
-        }
+		//cout << "parent should be " << next << endl;
+        //for(int i = 0;i < nextMoves.size();i++){
+        //    cout << nextMoves[i] << "     " << nextMoves[i]->parent << endl;
+        //}
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) { // ++it eller it++?
 			GameState* g = *it;
@@ -64,7 +64,7 @@ cout << "gs=\n" << *gs << endl;
 			if(visited.find(g->hash()) == visited.end()) {
                 //cout << "if ENTERED!" << std::endl;
 				//g.parent = &next;
-				cout << "inserting " << g << " with parent " << g->parent << endl;
+				//cout << "inserting " << g << " with parent " << g->parent << endl;
 				visited.insert(g->hash());
 				queue.push(g);
 			}

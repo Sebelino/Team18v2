@@ -154,7 +154,7 @@ set<boxMove> GameState::moves(pos boxPos){
 
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
-    vector<GameState> successors;
+    vector<GameState*> successors;
     set<pos>::iterator it;
     for(it = boxes.begin();it != boxes.end();++it){
         pos b = *it;
@@ -162,15 +162,11 @@ vector<GameState*> GameState::findNextMoves(){
         set<boxMove>::iterator it2;
         for(it2 = ms.begin();it2 != ms.end();++it2){
             boxMove m = *it2;
-            GameState gs(this,&m);
+            GameState * gs = new GameState(this,&m);
             successors.push_back(gs);
         }
     }
-    vector<GameState*> sPointers;
-    for(int i = 0;i < successors.size();i++){
-        sPointers.push_back(&(successors[i]));
-    }
-    return sPointers;
+    return successors;
 }
 
 int GameState::heuristic() const{
