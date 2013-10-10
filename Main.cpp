@@ -11,7 +11,7 @@ using namespace std;
 string answer(vector<GameState*> path){
     string directions = "";
     vector<char> segment;
-    for(int i = 0;i < path.size()-1;i++){
+    for(int i = 0;i+1 < path.size();i++){
         segment = moveToPath(path[i],path[i+1]->src);
         directions = directions+string(segment.begin(),segment.end());
     }
@@ -25,6 +25,8 @@ int main(int argc, char **argv) {
 	unsigned int width = 0;
 	unsigned int height = 0;
 
+	pos player;
+
 	//Read the Sokoban level from standard input
 	vector<char> line;
 	for (char input = getchar(); input != EOF ;input = getchar()) {
@@ -32,6 +34,9 @@ int main(int argc, char **argv) {
 			board.push_back(line);
 			line.clear();
 		} else {
+			if (input == PLAYER || input == PLAYER_ON_GOAL) {
+				player = pos(line.size(), board.size());
+			}
 			line.push_back(input);
 		}
 		if (line.size() > width) {
@@ -48,10 +53,10 @@ int main(int argc, char **argv) {
 
 	height = board.size();
 
-    Map map = Map(board,width,height);
-    map.findStaticDeadLocks();
+    //Map map = Map(board,width,height);
+    //map.findStaticDeadLocks();
 	// Create gamestate
-	GameState gs = GameState(&map, board);
+	GameState gs = GameState(board, player);
     cerr << "Initial GameState hash = " << gs.hash() << endl;
     cerr << "Initial heuristic = " << gs.heuristic() << endl;
     cerr << "Initial GameState apparence =\n" << gs << endl;

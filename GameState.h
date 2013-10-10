@@ -6,7 +6,6 @@
 #include <string>
 #include <set>
 #include <iostream>
-#include "Map.h"
 #include "Structs.h"
 #include "PathFinding.h"
 
@@ -14,7 +13,7 @@ class Map;
 
 class GameState{
 public:
-	GameState(Map * canvas, std::vector<std::vector<char> > b);
+	GameState(std::vector<std::vector<char> > b, pos pl);
 	GameState(GameState * prev, struct boxMove * box_move);
     //GameState(std::vector<std::string> stringmap,int width,int height);
 	//GameState(std::vector<std::vector<char> > stringmap,int width,int height);
@@ -25,7 +24,7 @@ public:
     std::set<boxMove> moves(pos boxPos);
     std::vector<GameState*> findNextMoves(); //TODO
     bool operator<(GameState other) const;
-    long long unsigned int hash() const;
+    std::string hash() const;
 	bool isSolution();
     int heuristic() const;
 

@@ -16,7 +16,7 @@ vector<GameState*> solve(GameState * gs) {
     //cerr << "GS "<< gs << std::endl;
 	//cerr << gs->parent << endl;
 	priority_queue<GameState*> queue;
-	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
+	set<string> visited; //TODO, fixa egen hashfunction typ
 
 	//cerr << "gs=\n" << *gs << endl;
 

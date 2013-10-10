@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "PathFinding.h"
+#include "Constants.h"
 
 #ifndef _PATHFINDING_CPP__
 #define _PATHFINDING_CPP__
@@ -48,13 +49,12 @@ char dirs(pos p) {
 
 std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 
-	int h = gs->map->getHeight();
-	int w = gs->map->getWidth();
+	int h = gs->board.size();
+	int w = gs->board[0].size();
 	
 	pos startPos, endPos;
 	startPos = gs->player;	
 	endPos = bm.start*2-bm.end;
-
 	
 	std::vector<dirEntry> directions;
 	directions.push_back(dirEntry(pos(0,-1),0));
@@ -62,15 +62,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	directions.push_back(dirEntry(pos(0, 1),0));
 	directions.push_back(dirEntry(pos(-1,0),0));
 	
-	vector<vector<char> > dirMap;
-	
-	for (int i=0;i<h;i++) {
-        vector<char> line;
-        for (int j=0;j<w;j++) {
-			line.push_back('-');
-        }
-        dirMap.push_back(line);
-    }
+	vector<vector<char> > dirMap = gs->board;
 	
 	dirMap[startPos.y][startPos.x] = 'S';
 	
@@ -100,7 +92,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	    
 	    if (curPos == endPos) {
 			//Goal reached!
-			fprintf(stderr, "enterd if statement as the goal was found!!!!!\n");
+			fprintf(stderr, "Entered if statement, as the goal was found!\n");
 			goalReached = true;
 			break;
 	    }
@@ -122,7 +114,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	        //Check if visited or unreachable
 	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
-	        if (a == '-' && (gs->boxes.end() == gs->boxes.find(pos(curPos.x+d.x,curPos.y+d.y))) && !gs->map->isWall(pos(curPos.x+d.x,curPos.y+d.y))) { //If space is free
+	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
 	            //Visit
 	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
@@ -145,7 +137,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	std::vector<char> path;
 	path.push_back(finalMove);
 	while (nd != 'S') {
-		fprintf(stderr, "nd = %c\n", nd);
+		//fprintf(stderr, "nd = %c\n", nd);
 	    path.push_back(nd);
 	    pos pnd = direction(nd);
 	    curPos = pos(curPos.x-pnd.x, curPos.y-pnd.y);

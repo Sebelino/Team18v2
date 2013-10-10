@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "GameState.h"
-#include "Map.h"
 
 class GameState;
 
