@@ -13,18 +13,8 @@ A Map represents the static parts of the map.
  * Creates a Map from a vector of strings. Width and height are set but has 
  * nothing to do with map initialization.
  */
-Map::Map(vector<string> stringmap, int width, int height) {
-    for(unsigned int i = 0;i < stringmap.size();i++){
-        vector<char> line;
-        for(unsigned int j = 0;j < stringmap[i].size();j++){
-            line.push_back(stringmap[i][j]);
-        }
-        for(int j = stringmap[i].size();j < width;j++){
-            line.push_back(FREE);
-        }
-        map.push_back(line);
-    }
-
+Map::Map(vector<vector<char> > stringmap, int width, int height) {
+	map = stringmap;
 	this->width = width;
 	this->height = height;
 }

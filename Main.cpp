@@ -4,6 +4,7 @@
 #include <cstdio>
 #include "GameState.h"
 #include "AI.h"
+#include "Constants.h"
 
 using namespace std;
 
@@ -20,24 +21,42 @@ string answer(vector<GameState*> path){
 int main(int argc, char **argv) {
 	
 	// Read the board
-	vector<string> board;
+	vector<vector<char> > board;
 	unsigned int width = 0;
 	unsigned int height = 0;
-	for (string line; getline(cin, line);) {
-		board.push_back(line);
-		if(line.length() > width)
-			width = line.length();
+
+	//Read the Sokoban level from standard input
+	vector<char> line;
+	for (char input = getchar(); input != EOF ;input = getchar()) {
+		if (input == '\n') {
+			board.push_back(line);
+			line.clear();
+		} else {
+			line.push_back(input);
+		}
+		if (line.size() > width) {
+			width = line.size();
+		}
 	}
+
+	//Add padding to avoid indexing errors
+	for (int i = 0;i<board.size();i++) {
+		for (int j = board[i].size();j<width;j++) {
+			board[i].push_back(FREE);
+		}
+	}
+
 	height = board.size();
 
     Map map = Map(board,width,height);
+    map.findStaticDeadLocks();
 	// Create gamestate
-	GameState gs = GameState(&map);
+	GameState gs = GameState(&map, board);
     cerr << "Initial GameState hash = " << gs.hash() << endl;
     cerr << "Initial heuristic = " << gs.heuristic() << endl;
     cerr << "Initial GameState apparence =\n" << gs << endl;
 	
-	map.findStaticDeadLocks();
+	
 
 	//call the solver
 	vector<char> str;

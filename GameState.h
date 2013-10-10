@@ -14,7 +14,7 @@ class Map;
 
 class GameState{
 public:
-	GameState(Map * canvas);
+	GameState(Map * canvas, std::vector<std::vector<char> > b);
 	GameState(GameState * prev, struct boxMove * box_move);
     //GameState(std::vector<std::string> stringmap,int width,int height);
 	//GameState(std::vector<std::vector<char> > stringmap,int width,int height);
@@ -29,13 +29,17 @@ public:
 	bool isSolution();
     int heuristic() const;
 
+	std::vector<std::vector<char> > board;
     pos player;
-	std::set<pos> boxes;
-	Map * map;
 	int score; //TODO
 	GameState * parent;
 	boxMove src;
-
+	//Soon obsolete
+	std::set<pos> boxes;
+	Map * map;
+	
+	
+	
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
 };

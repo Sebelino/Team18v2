@@ -11,7 +11,7 @@
 class Map {
 
 public:
-	Map(std::vector<std::string> stringmap, int width, int height);
+	Map(std::vector<std::vector<char> > stringmap, int width, int height);
 	~Map(void);
 
 	bool isWall(pos coords);

@@ -13,60 +13,60 @@ class Heuristic; //TODO!!!!
 using namespace std;
 
 vector<GameState*> solve(GameState * gs) {
-    //cout << "GS "<< gs << std::endl;
-	//cout << gs->parent << endl;
+    //cerr << "GS "<< gs << std::endl;
+	//cerr << gs->parent << endl;
 	priority_queue<GameState*> queue;
 	set<unsigned long long> visited; //TODO, fixa egen hashfunction typ
 
-	//cout << "gs=\n" << *gs << endl;
+	//cerr << "gs=\n" << *gs << endl;
 
 	visited.insert(gs->hash());
 	queue.push(gs);
 
-    //cout << "Prepare to enter the loop of delirium!!!11" << endl;
+    //cerr << "Prepare to enter the loop of delirium!!!11" << endl;
 	while(!queue.empty()) {
-		//cout << "TOP: " << queue.top() << endl;
+		//cerr << "TOP: " << queue.top() << endl;
 		GameState* next = queue.top(); 
 		queue.pop();
-		//cout << "NEXT: " << next << endl;
-		//cout << "NEXT GAMESTATE:\n" << *next << endl;
+		//cerr << "NEXT: " << next << endl;
+		//cerr << "NEXT GAMESTATE:\n" << *next << endl;
 
 		if(next->isSolution()) {
-            //cout << "next" << &next << endl;
-            //cout << "next.parent" << next.parent << endl;
-            //cout << "ISSOULUTION ENTERED" << endl;
+            //cerr << "next" << &next << endl;
+            //cerr << "next.parent" << next.parent << endl;
+            //cerr << "ISSOULUTION ENTERED" << endl;
 			//backtrack through the parent members of the gamestates to place full
 			//solution into a vector
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
-            //cout << "Prepare to enter the loop of eternal self-reproduction!!!11" << endl;
+            //cerr << "Prepare to enter the loop of eternal self-reproduction!!!11" << endl;
 			while(gsp != NULL) {
-                //cout << *gsp << ";Parent:\n" << *(gsp->parent) << endl;
+                //cerr << *gsp << ";Parent:\n" << *(gsp->parent) << endl;
 				retv.insert(retv.begin(),gsp);
                 //usleep(50000);
-                //cout << gsp << endl;
+                //cerr << gsp << endl;
                 gsp = gsp->parent;
 			}
 			return retv;
 		}
 		vector<GameState*> nextMoves = next->findNextMoves();
-        //cout << "findnextmo=" << nextMoves.size() << endl;
-		//cout << "parent should be " << next << endl;
+        //cerr << "findnextmo=" << nextMoves.size() << endl;
+		//cerr << "parent should be " << next << endl;
         //for(int i = 0;i < nextMoves.size();i++){
         //    cout << "NEXTMOVES RETURNED\n" <<*(nextMoves[i]) << endl;
         //}
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) { // ++it eller it++?
 			GameState* g = *it;
-            //cout << "g.hash=" << g.hash() << std::endl;
+            //cerr << "g.hash=" << g.hash() << std::endl;
             //for(set<unsigned long long>::iterator it=visited.begin();it!=visited.end();++it){
             //    cout << "visited:" << *it << endl;
             //}
 			if(visited.find(g->hash()) == visited.end()) {
-                //cout << "if ENTERED!" << std::endl;
+                //cerr << "if ENTERED!" << std::endl;
 				//g.parent = &next;
-				//cout << "inserting " << g << " with parent " << g->parent << endl;
+				//cerr << "inserting " << g << " with parent " << g->parent << endl;
 				visited.insert(g->hash());
 				queue.push(g);
 			}

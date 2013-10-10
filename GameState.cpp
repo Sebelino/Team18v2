@@ -5,16 +5,19 @@
 #include <set>
 #include <sstream>
 #include <iterator>
+#include <queue>
 #include "GameState.h"
 #include "Constants.h"
 
+
 using namespace std;
 
-GameState::GameState(Map * canvas) {
+GameState::GameState(Map * canvas, vector<vector<char> > b) {
+	board = b;
 	map = canvas;
 	Map& m = *canvas;
-	vector<vector<char> > * board = m.getOriginalMap();
-	setBoxes(board);
+	board = *(m.getOriginalMap());
+	setBoxes(&board);	//Soon obsolete
 	boxMove s;
 	s.start.x = -1;
 	s.start.y = -1;
@@ -32,34 +35,51 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	boxes = prev->boxes;
 	boxes.erase(box_move->start);
 	boxes.insert(box_move->end);
-	player = box_move->start;
 	map = prev->map;
+	//^ Soon obsolete
+	
+	player = box_move->start;
 	src = *box_move;
     parent = prev;
+    board = prev->board;
+    
+    if (board[src.start.y][src.start.x] == BOX) {
+    	board[src.start.y][src.start.x] = FREE;
+    } else if (board[src.start.y][src.start.x] == BOX_ON_GOAL) {
+		board[src.start.y][src.start.x] = GOAL;
+	}
+	
+	if (board[src.end.y][src.end.x] == GOAL) {
+		board[src.end.y][src.end.x] = BOX_ON_GOAL;
+	} else if (board[src.end.y][src.end.x] == FREE) {
+		board[src.end.y][src.end.x] = BOX;
+	}
+    
 }
 
 /*
 Private method to set all boxes from a board, and also set player position.
 Only called from constructor.
 */
+//Soon obsolete
 void GameState::setBoxes(vector<vector<char> > * stringmap) {
-	vector<vector<char> >& board = *stringmap;
+	vector<vector<char> >& b = *stringmap;
 	
-	for(unsigned int i = 0; i < board.size(); i++) {
-		for(unsigned int j = 0; j < board[i].size(); j++) {
+	for(unsigned int i = 0; i < b.size(); i++) {
+		for(unsigned int j = 0; j < b[i].size(); j++) {
 			char c = board[i][j];
 			if(c == BOX){
                 boxes.insert(pos(j,i));
-				board[i][j] = FREE; // Overwrite dynamic entity.
+				//b[i][j] = FREE; // Overwrite dynamic entity.
 			}else if(c == BOX_ON_GOAL){
 				boxes.insert(pos(j,i));
-                board[i][j] = GOAL;
+                //b[i][j] = GOAL;
 			}else if(c == PLAYER){
 				player = pos(j,i);
-                board[i][j] = FREE;
+                //b[i][j] = FREE;
             }else if(c == PLAYER_ON_GOAL) {
 				player = pos(j,i);
-				board[i][j] = GOAL; // Overwrite dynamic entity.
+				//b[i][j] = GOAL; // Overwrite dynamic entity.
 			}
 		}
 	}
@@ -87,11 +107,21 @@ bool GameState::operator<(GameState other) const {
 
 /* Returns true if the gamestate is a solution */
 bool GameState::isSolution() {
+
+	for (int i = 0;i<(int)board.size();i++) {
+		for (int j = 0;j<(int)board[i].size();j++) {
+			if (board[i][j] == BOX || board[i][j] == GOAL) {
+				return false;
+			}
+		}
+	}
+	/*
 	set<pos>::iterator it;
 	for(it = boxes.begin(); it != boxes.end() ; it++) {
 		if(!(map->isGoal(*it)))
 			return false;
 	}
+	*/
 	return true;
 }
 
@@ -132,6 +162,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 }
 
 /* Returns the set of moves possible to make for the box in position boxPos. */
+//Soon obsolete
 set<boxMove> GameState::moves(pos boxPos){
     set<boxMove> moveSet;
     boxMove up; up.start = boxPos; up.end = boxPos+pos(0,-1);
@@ -155,7 +186,72 @@ set<boxMove> GameState::moves(pos boxPos){
 
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
-    vector<GameState*> successors;
+	
+	vector<GameState*> successors;
+	vector<boxMove> moves;
+	
+	vector<vector<char> > dirMap = board;
+	
+	vector<pos> directions;
+	directions.push_back(pos(0,-1));
+	directions.push_back(pos(1, 0));
+	directions.push_back(pos(0, 1));
+	directions.push_back(pos(-1,0));
+	
+	queue<pos> q;
+	
+	dirMap[player.y][player.x] = 'S';
+
+	q.push(player);
+	pos curPos;
+	pos d;
+	char dir;
+	char a, b;
+	boxMove bm;
+	
+	//Search the graph
+	while (!q.empty()) {
+	    curPos = q.front();
+	    q.pop();
+	    
+	    //DEBUG
+		fprintf(stderr, "dirMap:\n");
+		for (int i = 0;i<dirMap.size();i++) {
+			for (int j = 0;j<dirMap[i].size();j++) {
+				fprintf(stderr, "%c", dirMap[i][j]);
+			}
+			fprintf(stderr, "\n");
+		}
+        //____________
+        
+	    
+	    for (int i = 0;i<4;i++) {
+	    	d = directions[i];
+	        dir = dirs(d);
+	        
+	        //Check if visited or unreachable
+	        a = dirMap[curPos.y+d.y][curPos.x+d.x];
+	        
+	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
+	            //Visit
+	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
+	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
+	        } else if (a == BOX || a == BOX_ON_GOAL) {	//If there is a box here
+	        	b = dirMap[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
+	        	if (b == FREE || b == GOAL) {
+	        		bm.start = curPos+d;
+	        		bm.end = bm.start+d;
+	        		moves.push_back(bm);
+	        	}
+	        }
+	    }
+	}
+
+	for (int i = 0;i < (int)moves.size();i++) {
+		successors.push_back(new GameState(this,&(moves[i])));
+	}
+
+	/*
     set<pos>::iterator it;
     for(it = boxes.begin();it != boxes.end();++it){
         pos b = *it;
@@ -167,6 +263,7 @@ vector<GameState*> GameState::findNextMoves(){
             successors.push_back(gs);
         }
     }
+    */
     return successors;
 }
 

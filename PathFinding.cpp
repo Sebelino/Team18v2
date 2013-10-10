@@ -84,6 +84,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	    pos curPos = q.top();
 	    q.pop();
 	    
+	    /*
 	    fprintf(stderr, "dirMap:\n");
 		for (int i = 0;i<dirMap.size();i++) {
 			for (int j = 0;j<dirMap[i].size();j++) {
@@ -95,7 +96,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 				
 			}
 			fprintf(stderr, "\n");
-		}
+		}*/
 	    
 	    if (curPos == endPos) {
 			//Goal reached!
