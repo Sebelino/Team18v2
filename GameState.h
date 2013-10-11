@@ -13,7 +13,7 @@ class Map;
 
 class GameState{
 public:
-	GameState(std::vector<std::vector<char> > b, pos pl);
+	GameState(std::vector<std::vector<char> > b);
 	GameState(GameState * prev, struct boxMove * box_move);
     //GameState(std::vector<std::string> stringmap,int width,int height);
 	//GameState(std::vector<std::vector<char> > stringmap,int width,int height);
@@ -36,8 +36,6 @@ public:
 	//Soon obsolete
 	std::set<pos> boxes;
 	Map * map;
-	
-	
 	
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);

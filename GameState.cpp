@@ -10,11 +10,23 @@
 #include "GameState.h"
 #include "Constants.h"
 
-
 using namespace std;
 
-GameState::GameState(vector<vector<char> > b, pos pl) {
-	player = pl;
+GameState::GameState(vector<vector<char> > b) {
+    bool found = false;
+	for (int y = 0;y < b.size();y++) {
+        for (int x = 0;x < b[y].size();x++) {
+            char cell = b[y][x];
+            if(cell == PLAYER || cell == PLAYER_ON_GOAL){
+                if(!found){
+                    player = pos(x,y);
+                }else{
+                    cerr << "WTH? The map contains more than 1 player!" << endl;
+                    throw 777;
+                }
+            }
+        }
+	}
 	board = b;
 	boxMove s;
 	s.start.x = -1;
@@ -178,9 +190,6 @@ int GameState::heuristic() const{
     return score;
 }
 
-/* Slightly misleading name because it is meant to be used for sorting GameStates in a std::set, not
- * in a hash datastructure. */
-//TODO: ...
 string GameState::hash() const {
     string hash;
     string oldhash = "";
@@ -211,6 +220,4 @@ string GameState::hash() const {
     //cout << "hash is: " << hash << ", oldhash is: " << oldhash << endl;
     return hash;
 }
-
-
 
