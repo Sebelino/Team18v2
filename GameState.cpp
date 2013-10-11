@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iterator>
 #include <queue>
+#include <bitset>
 #include "GameState.h"
 #include "Constants.h"
 
@@ -179,18 +180,35 @@ int GameState::heuristic() const{
 
 /* Slightly misleading name because it is meant to be used for sorting GameStates in a std::set, not
  * in a hash datastructure. */
-//TODO: Ingen garanti för att alla GameStates har en unik hash.
+//TODO: ...
 string GameState::hash() const {
-    string hash = "";
+    string hash;
+    string oldhash = "";
+    int bsize = board.size()*board[0].size();
+    hash.reserve(bsize+2);
+    hash.push_back(player.x);
+    hash.push_back(player.y);
+    char i = 1;
+    char ch = 0;
     for(int y = 0;y < board.size();y++){
         for(int x = 0;x < board[y].size();x++){
-            if(board[y][x] == BOX || board[y][x] == BOX_ON_GOAL){
-                hash += "1";
-            }else{
-                hash += "0";
+        	i = i<<1;
+        	//fprintf(stdout, "i is: %d / %c\n", i, i);
+        	if (i == 0) {
+        		i = 1;
+        		hash.push_back(ch);
+        		//fprintf(stdout, "Pushing back %c with ascii value: %d\n", ch, ch);
+        		ch = 0;
+        	}
+            if (board[y][x] != BOX && board[y][x] != BOX_ON_GOAL){
+                ch += i;
+                oldhash += "0";
+            } else {
+            	oldhash += "1";
             }
         }
     }
+    //cout << "hash is: " << hash << ", oldhash is: " << oldhash << endl;
     return hash;
 }
 

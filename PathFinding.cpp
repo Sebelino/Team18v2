@@ -8,9 +8,6 @@
 #include "PathFinding.h"
 #include "Constants.h"
 
-#ifndef _PATHFINDING_CPP__
-#define _PATHFINDING_CPP__
-
 using namespace std;
 
 pos direction(char ch) {
@@ -150,4 +147,3 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	return path;
 }
 
-#endif

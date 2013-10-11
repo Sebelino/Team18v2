@@ -75,7 +75,7 @@ vector<GameState*> solve(GameState * gs) {
 	}
 
 	//if we are here, solution has been found
-    cout << "WE ARE OUTTA HELL!" << endl;
+    cerr << "WE ARE OUTTA HELL!" << endl;
 	return vector<GameState*>(); //return something, or do something
 }
 /*
