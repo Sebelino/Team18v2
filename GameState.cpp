@@ -79,7 +79,7 @@ GameState GameState::pushBox(const struct boxMove & m){
 
 /* Just a way to sort the GameStates. */
 bool GameState::operator<(GameState other) const {
-    return heuristic() < other.heuristic();
+    return score < other.score;
 }
 
 /* Returns true if the gamestate is a solution */
