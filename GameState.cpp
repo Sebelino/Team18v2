@@ -219,7 +219,9 @@ string GameState::hash() const {
             position++;
         }
     }
-    hash.push_back(ch);
+    if(position % 8 != 0){
+        hash.push_back(ch);
+    }
     return hash;
 }
 
