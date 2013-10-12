@@ -6,6 +6,7 @@
 #include <sstream>
 #include <bitset>
 #include "GameState.h"
+#include "Constants.h"
 #include "AI.h"
 #include "Sokoban.h"
 
@@ -39,15 +40,47 @@ string readableHash(string hash){
     }
     stringstream readable;
     for(int i = 0;i < hash.length();i++){
-        readable << "\n" << bitset<8>(hash[i]);
+        readable << endl << bitset<8>(hash[i]);
     }
     return readable.str();
 }
 
-void hashAssertEquals(string path,string expected){
+string hashToBitmap(vector<vector<char> > board){
+    stringstream bitmap;
+    for(int y = 0;y < board.size();y++){
+        for(int x = 0;x < board[y].size();x++){
+            char cell = board[y][x];
+            if(cell == PLAYER || cell == PLAYER_ON_GOAL){
+                bitmap << endl << bitset<8>((char)x) << endl << bitset<8>((char)y);
+            }
+        }
+    }
+    int pos = 0;
+    for(int y = 0;y < board.size();y++){
+        for(int x = 0;x < board[y].size();x++){
+            if(pos % 8 == 0){
+                bitmap << endl;
+            }
+            char cell = board[y][x];
+            if(cell == BOX || cell == BOX_ON_GOAL){
+                bitmap << "1";
+            }else{
+                bitmap << "0";
+            }
+            pos++;
+        }
+    }
+    for(;(pos % 8) > 0;pos++){
+        bitmap << "0";
+    }
+    return bitmap.str();
+}
+
+void hashAssertEquals(string path){
     const GameState gs = GameState(readFile(path));
     cout << "Testing " << path << "...";
     string hash = readableHash(gs.hash());
+    string expected = hashToBitmap(gs.board);
     if(hash != expected){
         cout << endl;
         cout << "Returned: " << hash << ", expected: " << expected << endl;
@@ -57,8 +90,8 @@ void hashAssertEquals(string path,string expected){
 }
 
 void runTests() {
-    hashAssertEquals("maps/test", "\n00000010\n00000001\n00000000\n00000000\n00000000\n00000010\n00000000\n00000000\n00000000");
-    hashAssertEquals("maps/test3","\n00000010\n00000001\n00000000\n00000000\n00100000\n00000010\n00000000\n00000000\n00000000");
-    hashAssertEquals("maps/test5","\n00000001\n00000000\n00010010\n00000000");
+    hashAssertEquals("maps/test");
+    hashAssertEquals("maps/test3");
+    hashAssertEquals("maps/test5");
 }
 
