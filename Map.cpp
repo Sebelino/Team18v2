@@ -127,6 +127,15 @@ void Map::findStaticDeadLocks() {
 		}
 	}*/
 	
+	//Debug print with deadlocks
+    fprintf(stdout, "Before detecting deadlocks:\n");
+	for(int i = 0;i < map.size();i++){
+        for(int j = 0;j < map[i].size();j++){
+        	fprintf(stdout, "%c", map[i][j]);
+        }
+        fprintf(stdout, "\n");
+    }
+	
 	static const char EXAMINED = 'e';
 	int i, j, k;
 	//Aah, it's tricky to get it right
@@ -171,7 +180,7 @@ wallRight:
 						}
 					}
 wallLeft:			
-					fprintf(stderr, "HS: dle1 and dle2 have values: %d and %d\n", dle1, dle2);
+					//fprintf(stderr, "HS: dle1 and dle2 have values: %d and %d\n", dle1, dle2);
 					if (dle1 && dle2) {
 						//Mark deadlock zone
 						for (k = dle2+1; k < dle1 ;k++) {
@@ -215,7 +224,7 @@ wallDown:
 						}
 					}
 wallUp:				
-					fprintf(stderr, "VS: dle1 and dle2 have values: %d and %d\n", dle1, dle2);
+					//fprintf(stderr, "VS: dle1 and dle2 have values: %d and %d\n", dle1, dle2);
 					if (dle1 && dle2) {
 						//Mark deadlock zone
 						for (k = dle2+1; k < dle1 ;k++) {
@@ -246,8 +255,8 @@ wallUp:
         }
     }
     
-    for(int i = 1;i < map.size()-1;i++){
-        for(int j = 1;j < map[i].size()-1;j++){
+    for(int i = 0;i < map.size();i++){
+        for(int j = 0;j < map[i].size();j++){
         	if (map[i][j] == EXAMINED) {
         		map[i][j] = FREE;
         	}

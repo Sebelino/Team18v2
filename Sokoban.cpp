@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "AI.h"
 #include "Constants.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -49,6 +50,20 @@ vector<vector<char> > readBoard(){
 
 void sokoban(){
     vector<vector<char> > board = readBoard();
+    
+    for (int i = 0;i<board[0].size();i++) {
+		board[0][i] = WALL;
+		board[board.size()-1][i] = WALL;
+	}
+    for (int i = 0;i<board.size();i++) {
+		board[i][0] = WALL;
+		board[i][board[0].size()-1] = WALL;
+	}
+	
+    
+    //Map map(board, board[0].size(), board.size());
+    //map.findStaticDeadLocks();
+    
 	// Create gamestate
 	GameState gs = GameState(board);
     cerr << "Initial GameState hash = " << gs.hash() << endl;
@@ -67,4 +82,6 @@ void sokoban(){
 	// Output answer.
     cout << answer(solution) << endl;
 	fprintf(stderr,"3\n");
+	
 }
+
