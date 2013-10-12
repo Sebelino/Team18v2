@@ -33,12 +33,13 @@ public:
 	int score; //TODO
 	GameState * parent;
 	boxMove src;
-	//Soon obsolete
-	std::set<pos> boxes;
-	Map * map;
 	
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
+	void heuristicSmarter();
+	int checkGoalClass(int i, int j);
+	bool isBoxWall(int i, int j);
+	int heuristicDistance(const pos& p1,const pos& p2);
 };
 /*
 class Hasher {
