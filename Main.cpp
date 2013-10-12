@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "AI.h"
 #include "Constants.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -50,29 +51,42 @@ int main(int argc, char **argv) {
 			board[i].push_back(FREE);
 		}
 	}
+	
+	//fprintf(stdout, "player pos: %d, %d\n", player.x, player.y);
+	//Removing the player from the matrix describing the level
+	if (board[player.y][player.x] == PLAYER) {
+		board[player.y][player.x] = FREE;
+		//fprintf(stdout, "Change player to free\n");
+	} else if (board[player.y][player.x] == PLAYER_ON_GOAL) {
+		board[player.y][player.x] = GOAL;
+		//fprintf(stdout, "Change player_on_goal to goal\n");
+	}
+	
 
 	height = board.size();
 
-    //Map map = Map(board,width,height);
-    //map.findStaticDeadLocks();
+    Map map(board,width,height);
+    map.findStaticDeadLocks();
+    
 	// Create gamestate
 	GameState gs = GameState(board, player);
-    cerr << "Initial GameState hash = " << gs.hash() << endl;
-    cerr << "Initial heuristic = " << gs.heuristic() << endl;
-    cerr << "Initial GameState apparence =\n" << gs << endl;
+    //cerr << "Initial GameState hash = " << gs.hash() << endl;
+    //cerr << "Initial heuristic = " << gs.heuristic() << endl;
+    //cerr << "Initial GameState apparence =\n" << gs << endl;
 	
 	
 
 	//call the solver
 	vector<char> str;
 	fprintf(stderr,"0\n");
-	vector<GameState*> solution = solve(&gs);
+	vector<GameState*> solution;
+	//solution = solve(&gs);
 	fprintf(stderr,"1\n");
-	vector<string> movements(solution.size());
+	//vector<string> movements(solution.size());
 	fprintf(stderr,"2\n");
 
 	// Output answer.
-    cout << answer(solution) << endl;
+    //cout << answer(solution) << endl;
 	
 	fprintf(stderr,"3\n");
 

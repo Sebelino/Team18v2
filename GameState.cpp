@@ -124,6 +124,7 @@ vector<GameState*> GameState::findNextMoves(){
 	    q.pop();
 	    
 	    //DEBUG
+	    /*
 		fprintf(stderr, "dirMap:\n");
 		for (int i = 0;i<dirMap.size();i++) {
 			for (int j = 0;j<dirMap[i].size();j++) {
@@ -131,7 +132,7 @@ vector<GameState*> GameState::findNextMoves(){
 			}
 			fprintf(stderr, "\n");
 		}
-        //____________
+		*/
         
 	    
 	    for (int i = 0;i<4;i++) {
@@ -186,8 +187,8 @@ string GameState::hash() const {
     string oldhash = "";
     int bsize = board.size()*board[0].size();
     hash.reserve(bsize+2);
-    hash.push_back(player.x);
-    hash.push_back(player.y);
+    hash.push_back((char)player.x);
+    hash.push_back((char)player.y);
     char i = 1;
     char ch = 0;
     for(int y = 0;y < board.size();y++){
@@ -201,13 +202,14 @@ string GameState::hash() const {
         		ch = 0;
         	}
             if (board[y][x] != BOX && board[y][x] != BOX_ON_GOAL){
-                ch += i;
                 oldhash += "0";
             } else {
+            	ch += i;
             	oldhash += "1";
             }
         }
     }
+    hash.push_back(ch);
     //cout << "hash is: " << hash << ", oldhash is: " << oldhash << endl;
     return hash;
 }

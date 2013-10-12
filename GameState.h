@@ -9,7 +9,6 @@
 #include "Structs.h"
 #include "PathFinding.h"
 
-class Map;
 
 class GameState{
 public:
@@ -33,11 +32,6 @@ public:
 	int score; //TODO
 	GameState * parent;
 	boxMove src;
-	//Soon obsolete
-	std::set<pos> boxes;
-	Map * map;
-	
-	
 	
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
