@@ -190,34 +190,33 @@ int GameState::heuristic() const{
     return score;
 }
 
+/**
+ * Format:
+ * "<player.x><player.y><segment>...<segment>"
+ * där <segment>...<segment> utgör en bit-map för alla boxar.
+ **/
 string GameState::hash() const {
     string hash;
-    string oldhash = "";
     int bsize = board.size()*board[0].size();
     hash.reserve(bsize+2);
     hash.push_back(player.x);
     hash.push_back(player.y);
     char i = 1;
+    int position = 0;
     char ch = 0;
     for(int y = 0;y < board.size();y++){
         for(int x = 0;x < board[y].size();x++){
-        	i = i<<1;
-        	//fprintf(stdout, "i is: %d / %c\n", i, i);
-        	if (i == 0) {
-        		i = 1;
-        		hash.push_back(ch);
-        		//fprintf(stdout, "Pushing back %c with ascii value: %d\n", ch, ch);
-        		ch = 0;
-        	}
-            if (board[y][x] != BOX && board[y][x] != BOX_ON_GOAL){
-                ch += i;
-                oldhash += "0";
-            } else {
-            	oldhash += "1";
+            if (board[y][x] == BOX || board[y][x] == BOX_ON_GOAL){
+                ch += (128 >> (position % 8));
             }
+            if(position % 8 == 7){
+                hash.push_back(ch);
+                ch = 0;
+            }
+            position++;
         }
     }
-    //cout << "hash is: " << hash << ", oldhash is: " << oldhash << endl;
+    hash.push_back(ch);
     return hash;
 }
 
