@@ -6,19 +6,16 @@
 #include "AI.h"
 #include "Constants.h"
 #include "Map.h"
+#include "Sokoban.h"
+#include "Tester.h"
 
 using namespace std;
 
-string answer(vector<GameState*> path){
-    string directions = "";
-    vector<char> segment;
-    for(int i = 0;i+1 < path.size();i++){
-        segment = moveToPath(path[i],path[i+1]->src);
-        directions = directions+string(segment.begin(),segment.end());
-    }
-    return directions;
-}
-
+/**
+ * Performs unit tests if called with the test parameter:
+ * ./sokoban test
+ * and runs the program otherwise.
+ */
 int main(int argc, char **argv) {
 	
 	// Read the board
@@ -90,6 +87,11 @@ int main(int argc, char **argv) {
 	
 	fprintf(stderr,"3\n");
 
-	return 0;
-}
+    if(argc == 2 && argv[1] == string("test")){
+        runTests();
+    }else{
+        sokoban();
+    }
+    return 0;
 
+}

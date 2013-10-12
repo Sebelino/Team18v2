@@ -12,7 +12,7 @@
 
 class GameState{
 public:
-	GameState(std::vector<std::vector<char> > b, pos pl);
+	GameState(std::vector<std::vector<char> > b);
 	GameState(GameState * prev, struct boxMove * box_move);
     //GameState(std::vector<std::string> stringmap,int width,int height);
 	//GameState(std::vector<std::vector<char> > stringmap,int width,int height);
@@ -35,6 +35,10 @@ public:
 	
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
+	void heuristicSmarter();
+	int checkGoalClass(int i, int j);
+	bool isBoxWall(int i, int j);
+	int heuristicDistance(const pos& p1,const pos& p2);
 };
 /*
 class Hasher {

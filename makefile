@@ -1,5 +1,8 @@
 all:
 	g++ -g -O2 -static *.cpp -o ./sokoban
+tester:
+	g++ -g -O2 -static *.cpp -o ./sokoban
+	./sokoban test < maps/test
 
 cpp11:
 	g++ -std=gnu++0x -g -O2 -static *.cpp -o ./sokoban
