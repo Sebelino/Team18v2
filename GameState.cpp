@@ -107,7 +107,6 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     return stream;
 }
 
-
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
 	
@@ -152,18 +151,18 @@ vector<GameState*> GameState::findNextMoves(){
 	    
 	    for (int i = 0;i<4;i++) {
 	    	d = directions[i];
-	        dir = dirs(d);
+	        //dir = dirs(d);
 	        
 	        //Check if visited or unreachable
 	        a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
 	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
 	            //Visit
-	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
+	            dirMap[curPos.y+d.y][curPos.x+d.x] = 'V';
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
 	        } else if (a == BOX || a == BOX_ON_GOAL) {	//If there is a box here
 	        	b = dirMap[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
-	        	if (b == FREE || b == GOAL) {
+				if (b == FREE || b == GOAL ||b == 'V') {
 	        		bm.start = curPos+d;
 	        		bm.end = bm.start+d;
 	        		moves.push_back(bm);
@@ -236,7 +235,7 @@ string GameState::hash() const {
         hash.push_back(ch);
         //vechash.push_back(ch);
     }
-    cerr << "hash is: " << hash << endl;
+    //cerr << "hash is: " << hash << endl;
     
     /*
     fprintf(stderr, "vechash is:\n");
