@@ -100,7 +100,15 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(int i = 0;i < state.board.size();i++){
 		for(int j = 0;j < state.board[i].size();j++){
-			stream << state.board[i][j];
+			if (state.player.x == j && state.player.y == i) {
+				if (state.board[i][j] == FREE) {
+					stream << PLAYER;
+				} else if (state.board[i][j] == GOAL) {
+					stream << PLAYER_ON_GOAL;
+				}
+			} else {
+				stream << state.board[i][j];
+			}
 		}
         stream << endl;
     }

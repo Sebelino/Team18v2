@@ -6,6 +6,7 @@
 #include "AI.h"
 #include "Constants.h"
 #include "Map.h"
+#include "DeadlockDetection.h"
 
 using namespace std;
 
@@ -30,8 +31,12 @@ vector<vector<char> > readBoard(){
 			board.push_back(line);
 			line.clear();
 		} else {
-			if (input == PLAYER || input == PLAYER_ON_GOAL) {
+			if (input == PLAYER) {
 				player = pos(line.size(), board.size());
+				input = FREE;
+			} else if (input == PLAYER_ON_GOAL) {
+				player = pos(line.size(), board.size());
+				input = GOAL;
 			}
 			line.push_back(input);
 		}
@@ -60,9 +65,8 @@ void sokoban(){
 		board[i][board[0].size()-1] = WALL;
 	}
 	
-    
-    //Map map(board, board[0].size(), board.size());
-    //map.findStaticDeadLocks();
+    //Find static Deadlocks
+    //findStaticDeadLocks(board);
     
 	// Create gamestate
 	GameState gs = GameState(board);
@@ -70,7 +74,6 @@ void sokoban(){
     cerr << "Initial heuristic = " << gs.heuristic() << endl;
     cerr << "Initial GameState apparence =\n" << gs << endl;
 
-	
 	//call the solver
 	vector<char> str;
 	fprintf(stderr,"0\n");
