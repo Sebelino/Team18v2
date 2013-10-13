@@ -6,6 +6,12 @@
 
 using namespace std;
 
+/*
+Set the heuristic score of the given gamestate.
+Note: the reference to the GameState is not a const because two things may
+change value in the given gamestate: the score and some boxes that are pushed into
+corners will become walls.
+*/
 void heuristicSmarter(GameState& g) {
 	/*
 	1.Sort all goals by some heuristic
@@ -60,9 +66,19 @@ void heuristicSmarter(GameState& g) {
 				}
 			}
 			allBoxes.erase(shortestDistP); //TODO not sure if this is constant or it has to iterate through list...
-			score += (shortestDist<<2);
+
+			//add some extra score to a box thats far away, to make it more worth to actually push a box into place.
+			int extra_dist = 0;
+			if(shortestDist >= DIM_RETURN_DISTANCE)
+				extra_dist = _DRA[DIM_RETURN_DISTANCE-1];
+			else
+				extra_dist = _DRA[shortestDist];
+
+			score += (shortestDist + extra_dist);
 		}
 	}
+	//score is now the total heuristic distance
+	
 
 	g.score = -score;
 }
