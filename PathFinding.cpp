@@ -89,7 +89,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	    
 	    if (curPos == endPos) {
 			//Goal reached!
-			fprintf(stderr, "Entered if statement, as the goal was found!\n");
+			//fprintf(stderr, "Entered if statement, as the goal was found!\n");
 			goalReached = true;
 			break;
 	    }

@@ -135,7 +135,7 @@ vector<GameState*> GameState::findNextMoves(){
 	
 	queue<pos> q;
 	
-	dirMap[player.y][player.x] = 'S';
+	dirMap[player.y][player.x] = 'V';
 
 	q.push(player);
 	pos curPos;
@@ -173,8 +173,8 @@ vector<GameState*> GameState::findNextMoves(){
 	            dirMap[curPos.y+d.y][curPos.x+d.x] = 'V';
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
 	        } else if (a == BOX || a == BOX_ON_GOAL) {	//If there is a box here
-	        	b = dirMap[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
-				if (b == FREE || b == GOAL ||b == 'V') {
+	        	b = board[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
+				if (b == FREE || b == GOAL) {
 	        		bm.start = curPos+d;
 	        		bm.end = bm.start+d;
 	        		moves.push_back(bm);
