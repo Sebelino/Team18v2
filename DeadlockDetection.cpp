@@ -14,13 +14,13 @@ void findStaticDeadLocks(vector<vector<char> > &map) {
 	//TODO
 
 	//Debug print with deadlocks
-    fprintf(stdout, "Before detecting deadlocks:\n");
+   /* fprintf(stdout, "Before detecting deadlocks:\n");
 	for(int i = 0;i < map.size();i++){
         for(int j = 0;j < map[i].size();j++){
         	fprintf(stdout, "%c", map[i][j]);
         }
         fprintf(stdout, "\n");
-    }
+    }*/
 	
 	static const char EXAMINED = 'e';
 	int i, j, k;
@@ -151,12 +151,12 @@ wallUp:
 	
     
     //Debug print with deadlocks
-    fprintf(stdout, "After detecting deadlocks:\n");
+    /*fprintf(stderr, "After detecting deadlocks:\n");
 	for(int i = 0;i < map.size();i++){
         for(int j = 0;j < map[i].size();j++){
         	fprintf(stdout, "%c", map[i][j]);
         }
         fprintf(stdout, "\n");
-    }
+    }*/
 }
 

@@ -139,8 +139,8 @@ vector<GameState*> GameState::findNextMoves(){
 	directions.push_back(pos(-1,0));
 	
 	queue<pos> q;
-	fprintf(stderr, "player pos: %d, %d\n", player.x, player.y);
-	fprintf(stderr, "dirMap size is:%d x %d\n", (int)dirMap.size(), (int)dirMap[0].size());
+	//fprintf(stderr, "player pos: %d, %d\n", player.x, player.y);
+	//fprintf(stderr, "dirMap size is:%d x %d\n", (int)dirMap.size(), (int)dirMap[0].size());
 	dirMap[player.y][player.x] = 'V';
 
 	q.push(player);

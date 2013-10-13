@@ -58,22 +58,22 @@ void sokoban(){
 	
 	// Create gamestate
 	GameState gs = GameState(board);
-    cerr << "Initial GameState hash = " << gs.hash() << endl;
-    cerr << "Initial heuristic = " << gs.heuristic() << endl;
-    cerr << "Initial GameState apparence =\n" << gs << endl;
+    //cerr << "Initial GameState hash = " << gs.hash() << endl;
+    //cerr << "Initial heuristic = " << gs.heuristic() << endl;
+    //cerr << "Initial GameState apparence =\n" << gs << endl;
 
 	//call the solver
 	vector<char> str;
-	fprintf(stderr,"0\n");
+	//fprintf(stderr,"0\n");
 	vector<GameState*> solution = solve(&gs);
 
-	fprintf(stderr,"1\n");
+	//fprintf(stderr,"1\n");
 	vector<string> movements(solution.size());
-	fprintf(stderr,"2\n");
+	//fprintf(stderr,"2\n");
 
 	// Output answer.
     cout << answer(solution) << endl;
-	fprintf(stderr,"3\n");
+	//fprintf(stderr,"3\n");
 	
 }
 

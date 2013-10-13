@@ -29,7 +29,7 @@ public:
 
 	std::vector<std::vector<char> > board;
     pos player;
-	int score; //TODO
+	double score; //TODO
 	GameState * parent;
 	boxMove src;
 	
