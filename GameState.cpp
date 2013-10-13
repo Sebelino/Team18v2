@@ -100,7 +100,15 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(int i = 0;i < state.board.size();i++){
 		for(int j = 0;j < state.board[i].size();j++){
-			stream << state.board[i][j];
+			if (player.x == j && player.y == i) {
+				if (board[i][j] == FREE) {
+					stream << PLAYER;
+				} else if (board[i][j] == GOAL) {
+					stream << PLAYER_ON_GOAL;
+				}
+			} else {
+				stream << state.board[i][j];
+			}
 		}
         stream << endl;
     }
@@ -236,7 +244,7 @@ string GameState::hash() const {
         hash.push_back(ch);
         //vechash.push_back(ch);
     }
-    cerr << "hash is: " << hash << endl;
+    //cerr << "hash is: " << hash << endl;
     
     /*
     fprintf(stderr, "vechash is:\n");
