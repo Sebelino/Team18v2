@@ -6,7 +6,6 @@
 #include "AI.h"
 #include "Constants.h"
 #include "Map.h"
-#include "DeadlockDetection.h"
 
 using namespace std;
 
@@ -57,9 +56,6 @@ void sokoban(){
 		board[i][board[0].size()-1] = WALL;
 	}
 	
-    //Find static Deadlocks
-    //findStaticDeadLocks(board);
-    
 	// Create gamestate
 	GameState gs = GameState(board);
     cerr << "Initial GameState hash = " << gs.hash() << endl;
