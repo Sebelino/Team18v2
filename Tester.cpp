@@ -91,7 +91,9 @@ void hashAssertEquals(string path){
 
 void runTests() {
     hashAssertEquals("maps/test");
+    hashAssertEquals("maps/test2");
     hashAssertEquals("maps/test3");
+    hashAssertEquals("maps/test4");
     hashAssertEquals("maps/test5");
 }
 
