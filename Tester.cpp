@@ -56,8 +56,8 @@ string hashToBitmap(vector<vector<char> > board){
         }
     }
     int pos = 0;
-    for(int y = 0;y < board.size();y++){
-        for(int x = 0;x < board[y].size();x++){
+    for(int y = 1;y < board.size()-1;y++){
+        for(int x = 1;x < board[y].size()-1;x++){
             if(pos % 8 == 0){
                 bitmap << endl;
             }
@@ -80,7 +80,7 @@ void hashAssertEquals(string path){
     const GameState gs = GameState(readFile(path));
     cout << "Testing " << path << "...";
     string hash = readableHash(gs.hash());
-    string expected = hashToBitmap(gs.board);
+    string expected = hashToBitmap(readFile(path));
     if(hash != expected){
         cout << endl;
         cout << "Returned: " << hash << ", expected: " << expected << endl;
@@ -95,5 +95,6 @@ void runTests() {
     hashAssertEquals("maps/test3");
     hashAssertEquals("maps/test4");
     hashAssertEquals("maps/test5");
+    hashAssertEquals("maps/test6");
 }
 
