@@ -34,9 +34,11 @@ void heuristicSmarter(GameState& g) {
 		}
 	}
 
+	
+
 	//step 2
 	//complexity of this step is O(Area of board + (numberOfGoals^2 / 2)) TODO not completely sure, see below
-
+	
 	//actually this is step 3 and 4 at the same time as well.
 
 	//first get a list of all boxes
@@ -58,6 +60,8 @@ void heuristicSmarter(GameState& g) {
 			int shortestDist = 10000000; //something very big, I don't think we will have maps this big!
 			list<pos>::iterator shortestDistP;
 			pos& goalPos = buckets[i][j];
+			//cerr << "goalPos is in bucket " << i << ", the vector has size " << buckets[i].size() << endl;
+			//cerr << "Coordinates are (" << goalPos.x << "," << goalPos.y << ")" << endl;
 			for(bit = allBoxes.begin(); bit != allBoxes.end(); bit++) {
 				int herDist = heuristicDistance(goalPos, *bit);
 				if(herDist < shortestDist) {
@@ -71,6 +75,7 @@ void heuristicSmarter(GameState& g) {
 
 
 			score += shortestDist;
+			//cerr << "Score is now " << score << endl;
 		}
 	}
 	//score is now the total heuristic distance
@@ -155,4 +160,5 @@ int heuristicDistance(const pos& p1, const pos& p2) {
 	else
 		extra_dist = _DRA[dist];
 	return dist+extra_dist;
+	return dist;
 }

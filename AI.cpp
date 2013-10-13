@@ -12,10 +12,18 @@ class Heuristic; //TODO!!!!
 
 using namespace std;
 
+struct lex_compare {
+	bool operator() (GameState*& g1, GameState*& g2) const{
+		return (g1->score) < (g2->score);
+	}
+};
+
+
 vector<GameState*> solve(GameState * gs) {
     //cerr << "GS "<< gs << std::endl;
 	//cerr << gs->parent << endl;
-	priority_queue<GameState*> queue;
+
+	priority_queue<GameState*,vector<GameState*>,lex_compare> queue;
 	set<string> visited; //TODO, fixa egen hashfunction typ
 
 	//cerr << "gs=\n" << *gs << endl;
@@ -29,8 +37,8 @@ vector<GameState*> solve(GameState * gs) {
 		GameState* next = queue.top(); 
 		queue.pop();
 		//cerr << "NEXT: " << next << endl;
-		//cerr << "NEXT GAMESTATE:\n" << *next << endl;
-		//cerr << "Heuristic score: " << (*next).score << endl;
+		cerr << "NEXT GAMESTATE:\n" << *next;
+		cerr << "Heuristic score: " << (*next).score << endl;
 
 		if(next->isSolution()) {
             //cerr << "next" << &next << endl;
