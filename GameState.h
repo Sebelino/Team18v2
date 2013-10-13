@@ -33,6 +33,8 @@ public:
 	GameState * parent;
 	boxMove src;
 	
+	int depth;
+
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
 };

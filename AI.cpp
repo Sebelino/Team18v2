@@ -37,8 +37,8 @@ vector<GameState*> solve(GameState * gs) {
 		GameState* next = queue.top(); 
 		queue.pop();
 		//cerr << "NEXT: " << next << endl;
-		cerr << "NEXT GAMESTATE:\n" << *next;
-		cerr << "Heuristic score: " << (*next).score << endl;
+		//cerr << "NEXT GAMESTATE:\n" << *next;
+		//cerr << "Heuristic score: " << (*next).score << endl;
 
 		if(next->isSolution()) {
             //cerr << "next" << &next << endl;
@@ -62,9 +62,9 @@ vector<GameState*> solve(GameState * gs) {
 		vector<GameState*> nextMoves = next->findNextMoves();
         //cerr << "findnextmo=" << nextMoves.size() << endl;
 		//cerr << "parent should be " << next << endl;
-        for(int i = 0;i < nextMoves.size();i++){
-            cerr << "NEXTMOVES RETURNED\n" <<*(nextMoves[i]) << endl;
-        }
+        //for(int i = 0;i < nextMoves.size();i++){
+        //    cerr << "NEXTMOVES RETURNED\n" <<*(nextMoves[i]) << endl;
+        //}
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) { // ++it eller it++?
 			GameState* g = *it;

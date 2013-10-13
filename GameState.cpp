@@ -39,9 +39,11 @@ GameState::GameState(vector<vector<char> > b) {
 	s.start.y = -1;
 	s.end.x = -1;
 	s.end.y = -1;
+	depth = 0;
 	src = s;
     parent = NULL;
 	heuristicSmarter(*this);
+	
 }
 
 /*
@@ -53,6 +55,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	src = *box_move;
     parent = prev;
     board = prev->board;
+	depth = prev->depth + 1;
     
     if (board[src.start.y][src.start.x] == BOX) {
     	board[src.start.y][src.start.x] = FREE;
