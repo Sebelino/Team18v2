@@ -199,30 +199,51 @@ int GameState::heuristic() const{
  * "<player.x><player.y><segment>...<segment>"
  * where <segment>...<segment> constitue a bit map for all boxes.
  **/
+//TODO Remove the vector references once it works; they are just for debugging.
 string GameState::hash() const {
     string hash;
     int bsize = board.size()*board[0].size();
     hash.reserve(bsize+2);
     hash.push_back((char)player.x);
     hash.push_back((char)player.y);
+    
+    /*
+    vector<char> vechash;
+    vechash.reserve(bsize+2);
+    vechash.push_back((char)player.x);
+    vechash.push_back((char)player.y);
+    */
+    
     char i = 1;
     int position = 0;
     char ch = 0;
-    for(int y = 0;y < board.size();y++){
-        for(int x = 0;x < board[y].size();x++){
+    
+    for(int y = 1;y < (int)board.size()-1;y++){
+        for(int x = 1;x < (int)board[y].size()-1;x++){
             if (board[y][x] == BOX || board[y][x] == BOX_ON_GOAL){
-                ch += (128 >> (position % 8));
+            	//If there was a box here
+                ch += (i << (7-position));
             }
-            if(position % 8 == 7){
+            position = (position+1) % 8;
+            if(position == 0){
                 hash.push_back(ch);
+                //vechash.push_back(ch);
                 ch = 0;
             }
-            position++;
         }
     }
-    if(position % 8 != 0){
+    if(position != 0){
         hash.push_back(ch);
+        //vechash.push_back(ch);
     }
+    cerr << "hash is: " << hash << endl;
+    
+    /*
+    fprintf(stderr, "vechash is:\n");
+    for (int i = 0;i<vechash.size();i++) {
+    	fprintf(stderr, "%X, %c or %d\n", vechash[i], vechash[i], vechash[i]);
+    }*/
+    
     return hash;
 }
 

@@ -1,66 +1,18 @@
-#include "Map.h"
+#include <vector>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include "DeadlockDetection.h"
 #include "Constants.h"
 
 
+class GameState;
+
 using namespace std;
-/*
-A Map represents the static parts of the map.
-*/
 
-
-
-/**
- * Creates a Map from a vector of strings. Width and height are set but has 
- * nothing to do with map initialization.
- */
-Map::Map(vector<vector<char> > stringmap, int width, int height) {
-	map = stringmap;
-	this->width = width;
-	this->height = height;
-}
-
-Map::~Map(void) {
-}
-
-/**
- * Takes a position on the board as input, and answers true if it is a wall,
- * as defined by constans.cpp, false otherwise.
- */
-bool Map::isWall(pos coords) {
-	return (map[coords.y][coords.x] == WALL);
-}
-
-/**
- * Takes a position on the board as input, and answers true if it is a goal,
- * as defined by constans.cpp, false otherwise.
- */
-bool Map::isGoal(pos coords ) {
-	return (map[coords.y][coords.x] == GOAL || map[coords.y][coords.x] == BOX_ON_GOAL || map[coords.y][coords.x] == PLAYER_ON_GOAL);
-}
-
-/* Getters for width and height */
-int Map::getWidth() { return width; }
-int Map::getHeight() { return height; }
-
-/* Get a pointer to the starting map/board */
-vector<vector<char> >* Map::getOriginalMap() {
-	return &map;
-}
-
-
-/**
- * Searches the map for places that once a box is put there, the game is unsolvable.
- */
-void Map::findStaticDeadLocks() {
+void findStaticDeadLocks(vector<vector<char> > &map) {
 	//TODO
-	
-	std::vector<pos> directions;
-	directions.push_back(pos(0,-1));
-	directions.push_back(pos(1, 0));
-	directions.push_back(pos(0, 1));
-	directions.push_back(pos(-1,0));
-	pos curP;
-	
+
 	//Debug print with deadlocks
     fprintf(stdout, "Before detecting deadlocks:\n");
 	for(int i = 0;i < map.size();i++){
@@ -206,28 +158,5 @@ wallUp:
         }
         fprintf(stdout, "\n");
     }
-}
-
-
-/* Return true if the position renders the game session unsolvable. */
-bool Map::isDeadlock(pos p){
-    if(map[p.y][p.x] == 'X'){
-        return true;
-    }
-    return false;
-}
-
-/* Return true if the position renders the game session unsolvable. */
-set<pos> Map::getGoals(){
-    set<pos> goals;
-    for(unsigned int i = 0;i < map.size();i++){
-        for(unsigned int j = 0;j < map[i].size();j++){
-            pos p (j,i);
-            if(isGoal(p)){
-                goals.insert(p);
-            }
-        }
-    }
-    return goals;
 }
 

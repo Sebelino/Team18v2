@@ -70,6 +70,7 @@ void sokoban(){
     cerr << "Initial heuristic = " << gs.heuristic() << endl;
     cerr << "Initial GameState apparence =\n" << gs << endl;
 
+	/*
 	//call the solver
 	vector<char> str;
 	fprintf(stderr,"0\n");
@@ -82,6 +83,6 @@ void sokoban(){
 	// Output answer.
     cout << answer(solution) << endl;
 	fprintf(stderr,"3\n");
-	
+	*/
 }
 
