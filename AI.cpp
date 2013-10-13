@@ -30,6 +30,7 @@ vector<GameState*> solve(GameState * gs) {
 		queue.pop();
 		//cerr << "NEXT: " << next << endl;
 		//cerr << "NEXT GAMESTATE:\n" << *next << endl;
+		//cerr << "Heuristic score: " << (*next).score << endl;
 
 		if(next->isSolution()) {
             //cerr << "next" << &next << endl;
