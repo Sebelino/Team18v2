@@ -65,16 +65,12 @@ void heuristicSmarter(GameState& g) {
 					shortestDist = herDist;
 				}
 			}
-			allBoxes.erase(shortestDistP); //TODO not sure if this is constant or it has to iterate through list...
+			allBoxes.erase(shortestDistP); //Takes constant time!
 
 			//add some extra score to a box thats far away, to make it more worth to actually push a box into place.
-			int extra_dist = 0;
-			if(shortestDist >= DIM_RETURN_DISTANCE)
-				extra_dist = _DRA[DIM_RETURN_DISTANCE-1];
-			else
-				extra_dist = _DRA[shortestDist];
 
-			score += (shortestDist + extra_dist);
+
+			score += shortestDist;
 		}
 	}
 	//score is now the total heuristic distance
@@ -152,5 +148,11 @@ bool isBoxWall(GameState& g, int i, int j) {
 }
 
 int heuristicDistance(const pos& p1, const pos& p2) {
-	return abs(p1.x-p2.x)+abs(p1.y-p2.y);
+	int dist = abs(p1.x-p2.x)+abs(p1.y-p2.y);
+	int extra_dist = 0;
+	if(dist >= DIM_RETURN_DISTANCE)
+		extra_dist = _DRA[DIM_RETURN_DISTANCE-1];
+	else
+		extra_dist = _DRA[dist];
+	return dist+extra_dist;
 }
