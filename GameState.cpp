@@ -11,6 +11,7 @@
 #include "GameState.h"
 #include "Constants.h"
 #include "Heuristics.h"
+#include "DeadlockDetection.h"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ GameState::GameState(vector<vector<char> > b) {
 	depth = 0;
 	src = s;
     parent = NULL;
+    findStaticDeadLocks(board);
 	heuristicSmarter(*this);
 	
 }
@@ -137,7 +139,8 @@ vector<GameState*> GameState::findNextMoves(){
 	directions.push_back(pos(-1,0));
 	
 	queue<pos> q;
-	
+	fprintf(stderr, "player pos: %d, %d\n", player.x, player.y);
+	fprintf(stderr, "dirMap size is:%d x %d\n", (int)dirMap.size(), (int)dirMap[0].size());
 	dirMap[player.y][player.x] = 'V';
 
 	q.push(player);

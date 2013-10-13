@@ -59,6 +59,7 @@ vector<GameState*> solve(GameState * gs) {
 			}
 			return retv;
 		}
+		
 		vector<GameState*> nextMoves = next->findNextMoves();
         //cerr << "findnextmo=" << nextMoves.size() << endl;
 		//cerr << "parent should be " << next << endl;
