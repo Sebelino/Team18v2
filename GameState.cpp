@@ -70,6 +70,10 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	} else if (board[src.end.y][src.end.x] == FREE) {
 		board[src.end.y][src.end.x] = BOX;
 	}
+	
+	//Detect dynamic deadlocks:
+	detectDynamicDeadlocks(this, src.end);
+	
     heuristicSmarter(*this);
 }
 

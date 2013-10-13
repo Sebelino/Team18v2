@@ -10,6 +10,62 @@ class GameState;
 
 using namespace std;
 
+/**
+ * Detects dynamic deadlocks on the map, caused by moving boxes. 
+ * If a dynamic deadlock is found, the game is over.
+ * The function returns true if a deadlock is found.
+ * Only local search is necessary.
+ */
+bool findDynamicDeadlocks(GameState * gs, pos dst) {
+	char chdest = gs.board[dst.y][dst.x]
+	if (chdest != BOX || chdest != BOX_ON_GOAL) {
+		//This shouldn't happen
+		fprintf(stderr, "Wrong pos parameter passed to findDynamicDeadlocks()\n");
+		return true;
+	}
+	
+	pos curDir;
+	vector<pos> directions;
+	direction.push_back(pos(1,0));
+	direction.push_back(pos(0,1));
+	direction.push_back(pos(-1,0));
+	direction.push_back(pos(0,-1));
+	char c1, c2, c3, c4;
+	
+	//First test. Find certain types of deadlocks.
+	for (int i = 0;i<4;i++) {
+		curDir = directions[i];
+		c1 = gs.board[dst.y+curDir.y][dst.x+curDir.x];
+		if (c1 == BOX || (c1 == BOX_ON_GOAL && ) || c1 == WALL) {
+			//If there is a neighboring obstacle
+			c1 = gs.board[dst.y+curDir.x][dst.x+curDir.y];
+			c2 = gs.board[dst.y-curDir.x][dst.x-curDir+y];
+			c3 = gs.board[dst.y+curDir.x+curDir.y][dst.x+curDir.y+curDir.x];
+			c4 = gs.board[dst.y-curDir.x-curDir.y][dst.x-curDir+y-curDir.x];
+			if ((c1 == WALL || c2 == WALL) && (c3 == WALL || c4 == WALL)) {
+				//Deadlock found!
+				return true;
+			}
+		}
+	}
+	
+	//Second test. 
+	//TODO
+	for (int i = 1;i<3;i++) {
+		for (int j = 0;j<3;j++) {
+		
+		}
+	}
+	
+	
+	//If no deadlocks were found: return false.
+	return false;
+}
+
+/**
+ * Detects static deadlocks on the map. 
+ * These deadlocks won't change throughout the game.
+ */
 void findStaticDeadLocks(vector<vector<char> > &map) {
 	//TODO
 

@@ -3,7 +3,9 @@
 
 #include <vector>
 
-void findStaticDeadLocks(std::vector<std::vector<char> > &map);
+class GameState;
 
+void findStaticDeadLocks(std::vector<std::vector<char> > &map);
+bool findDynamicDeadlocks(GameState * gs, pos dst)
 
 #endif
