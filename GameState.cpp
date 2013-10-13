@@ -10,6 +10,8 @@
 #include <list>
 #include "GameState.h"
 #include "Constants.h"
+#include "Heuristics.h"
+#include "DeadlockDetection.h"
 
 using namespace std;
 
@@ -17,8 +19,12 @@ GameState::GameState(vector<vector<char> > b) {
     bool found = false;
 	for (int y = 0;y < b.size();y++) {
         for (int x = 0;x < b[y].size();x++) {
-            char cell = b[y][x];
-            if(cell == PLAYER || cell == PLAYER_ON_GOAL){
+            if(b[y][x] == PLAYER || b[y][x] == PLAYER_ON_GOAL){
+            	if(b[y][x] == PLAYER){
+            		b[y][x] = FREE;
+            	} else if (b[y][x] == PLAYER_ON_GOAL) {
+	            	b[y][x] = GOAL;
+            	}
                 if(!found){
                     player = pos(x,y);
                 }else{
@@ -34,9 +40,12 @@ GameState::GameState(vector<vector<char> > b) {
 	s.start.y = -1;
 	s.end.x = -1;
 	s.end.y = -1;
+	depth = 0;
 	src = s;
     parent = NULL;
-	heuristicSmarter();
+    findStaticDeadLocks(board);
+	heuristicSmarter(*this);
+	
 }
 
 /*
@@ -48,6 +57,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	src = *box_move;
     parent = prev;
     board = prev->board;
+	depth = prev->depth + 1;
     
     if (board[src.start.y][src.start.x] == BOX) {
     	board[src.start.y][src.start.x] = FREE;
@@ -60,7 +70,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	} else if (board[src.end.y][src.end.x] == FREE) {
 		board[src.end.y][src.end.x] = BOX;
 	}
-    heuristicSmarter();
+    heuristicSmarter(*this);
 }
 
 
@@ -99,13 +109,20 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
     for(int i = 0;i < state.board.size();i++){
 		for(int j = 0;j < state.board[i].size();j++){
-			stream << state.board[i][j];
+			if (state.player.x == j && state.player.y == i) {
+				if (state.board[i][j] == FREE) {
+					stream << PLAYER;
+				} else if (state.board[i][j] == GOAL) {
+					stream << PLAYER_ON_GOAL;
+				}
+			} else {
+				stream << state.board[i][j];
+			}
 		}
         stream << endl;
     }
     return stream;
 }
-
 
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
@@ -122,8 +139,9 @@ vector<GameState*> GameState::findNextMoves(){
 	directions.push_back(pos(-1,0));
 	
 	queue<pos> q;
-	
-	dirMap[player.y][player.x] = 'S';
+	fprintf(stderr, "player pos: %d, %d\n", player.x, player.y);
+	fprintf(stderr, "dirMap size is:%d x %d\n", (int)dirMap.size(), (int)dirMap[0].size());
+	dirMap[player.y][player.x] = 'V';
 
 	q.push(player);
 	pos curPos;
@@ -151,18 +169,18 @@ vector<GameState*> GameState::findNextMoves(){
 	    
 	    for (int i = 0;i<4;i++) {
 	    	d = directions[i];
-	        dir = dirs(d);
+	        //dir = dirs(d);
 	        
 	        //Check if visited or unreachable
 	        a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
 	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
 	            //Visit
-	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
+	            dirMap[curPos.y+d.y][curPos.x+d.x] = 'V';
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
 	        } else if (a == BOX || a == BOX_ON_GOAL) {	//If there is a box here
-	        	b = dirMap[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
-	        	if (b == FREE || b == GOAL) {
+	        	b = board[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
+				if (b == FREE || b == GOAL) {
 	        		bm.start = curPos+d;
 	        		bm.end = bm.start+d;
 	        		moves.push_back(bm);
@@ -198,163 +216,52 @@ int GameState::heuristic() const{
  * "<player.x><player.y><segment>...<segment>"
  * where <segment>...<segment> constitue a bit map for all boxes.
  **/
+//TODO Remove the vector references once it works; they are just for debugging.
 string GameState::hash() const {
     string hash;
     int bsize = board.size()*board[0].size();
     hash.reserve(bsize+2);
     hash.push_back((char)player.x);
     hash.push_back((char)player.y);
+    
+    /*
+    vector<char> vechash;
+    vechash.reserve(bsize+2);
+    vechash.push_back((char)player.x);
+    vechash.push_back((char)player.y);
+    */
+    
     char i = 1;
     int position = 0;
     char ch = 0;
-    for(int y = 0;y < board.size();y++){
-        for(int x = 0;x < board[y].size();x++){
+    
+    for(int y = 1;y < (int)board.size()-1;y++){
+        for(int x = 1;x < (int)board[y].size()-1;x++){
             if (board[y][x] == BOX || board[y][x] == BOX_ON_GOAL){
-                ch += (128 >> (position % 8));
+            	//If there was a box here
+                ch += (i << (7-position));
             }
-            if(position % 8 == 7){
+            position = (position+1) % 8;
+            if(position == 0){
                 hash.push_back(ch);
+                //vechash.push_back(ch);
                 ch = 0;
             }
-            position++;
         }
     }
-    if(position % 8 != 0){
+    if(position != 0){
         hash.push_back(ch);
+        //vechash.push_back(ch);
     }
+    //cerr << "hash is: " << hash << endl;
+    
+    /*
+    fprintf(stderr, "vechash is:\n");
+    for (int i = 0;i<vechash.size();i++) {
+    	fprintf(stderr, "%X, %c or %d\n", vechash[i], vechash[i], vechash[i]);
+    }*/
+    
     return hash;
 }
 
-void GameState::heuristicSmarter() {
-	/*
-	1.Sort all goals by some heuristic
-2.For each goal, find closest box, that is not taken already.
-3.Mark box as taken
-4.Add to score the distance (or subtract)*/
-
-	//4 classes of goals
-	vector<pos> buckets[4]; //puts each goal in a bucket.
-
-	for(int i = 1; i < board.size() -1; i++) {
-		for(int j = 1; j < board[i].size()-1;j++) {
-			if(board[i][j] == GOAL || board[i][j] == PLAYER_ON_GOAL || board[i][j] == BOX_ON_GOAL) {
-				if(board[i][j] == BOX_ON_GOAL && isBoxWall(i,j)) {
-					board[i][j] == WALL;
-				} else {
-					buckets[checkGoalClass(i,j)].push_back(pos(i,j));
-				}
-			} 
-		}
-	}
-
-	//step 2
-	//complexity of this step is O(Area of board + (numberOfGoals^2 / 2)) TODO not completely sure, see below
-
-	//actually this is step 3 and 4 at the same time as well.
-
-	//first get a list of all boxes
-	list<pos> allBoxes;
-	for(int i = 1; i < board.size() -1; i++) {
-		for(int j = 1; j < board[i].size()-1;j++) {
-			if(board[i][j] == BOX || board[i][j] == BOX_ON_GOAL) {
-				allBoxes.push_back(pos(i,j));
-			}
-		}
-	}
-	//then find the closest boxes and remove them from the list, while incrementing score.
-	int score = 0;
-	for(int i = 0; i < 4; i++) {
-		for(int j = 0; j < buckets[i].size(); j++) {
-			//for each goal
-			//find the minimum distance to a box.
-			list<pos>::iterator bit;
-			int shortestDist = 10000000; //something very big, I don't think we will have maps this big!
-			list<pos>::iterator shortestDistP;
-			pos& goalPos = buckets[i][j];
-			for(bit = allBoxes.begin(); bit != allBoxes.end(); bit++) {
-				int herDist = heuristicDistance(goalPos, *bit);
-				if(herDist < shortestDist) {
-					shortestDistP = bit;
-					shortestDist = herDist;
-				}
-			}
-			allBoxes.erase(shortestDistP); //TODO not sure if this is constant or it has to iterate through list...
-			score += shortestDist;
-		}
-	}
-
-	this->score = -score;
-}
-
-/*
-* Private function for the heuristic function - return the class of a specific goal.
-* Classes are:
-* 0 - Goals with 3 walls next to them.
-* 1 - Goals with 2 walls next to eachother (not 2 opposite walls)
-* 2 - Goals with 1 wall next to them.
-* 3 - Goals with 0 walls next to them or 2 opposite walls.
-*/
-int GameState::checkGoalClass(int i, int j) {
-	int clas = 0;
-	bool topWall = false;
-	bool leftWall = false;
-	bool rightWall = false;
-	bool botWall = false;
-
-	if(board[i-1][j] == WALL || (board[i-1][j] == BOX_ON_GOAL && isBoxWall(i-1,j))) {
-		topWall = true;
-		clas++;
-	}
-	if(board[i+1][j] == WALL || (board[i+1][j] == BOX_ON_GOAL && isBoxWall(i+1,j))) {
-		botWall = true;
-		clas++;
-	}
-	if(board[i][j+1] == WALL || (board[i][j+1] == BOX_ON_GOAL && isBoxWall(i,j+1))) {
-		rightWall = true;
-		clas++;
-	}
-	if(board[i][j-1] == WALL || (board[i][j-1] == BOX_ON_GOAL && isBoxWall(i,j-1))) {
-		leftWall = true;
-		clas++;
-	}
-
-	if((clas == 2) && ((topWall && botWall) || (leftWall && rightWall))) {
-		clas = 0; //a so-called pathway
-	}
-
-	return 3-clas; //reverse, so that high priority gets class 0.
-
-}
-
-/*
-* Check if the box on the current position (not checked that it is a box btw)
-* has 2 walls next to it so that it cannot be moved. Will do at maximum 4 comparisions.
-*/
-bool GameState::isBoxWall(int i, int j) {
-	bool northWall = false;
-	if(board[i-1][j] == WALL) {
-		northWall = true;
-	}
-
-	//this might look a bit sketchy but does as few comparisions as possible
-	if(northWall) {
-		if(board[i][j-1] == WALL || board[i][j+1] == WALL)
-			return true;
-		else
-			return false;
-	} else {
-		if(board[i+1][j] == WALL) {
-			if(board[i][j-1] == WALL || board[i][j+1] == WALL)
-				return true;
-			else
-				return false;
-		} else {
-			return false;
-		}
-	}
-}
-
-int GameState::heuristicDistance(const pos& p1, const pos& p2) {
-	return abs(p1.x-p2.x)+abs(p1.y-p2.y);
-}
 

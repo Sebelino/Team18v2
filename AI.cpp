@@ -12,10 +12,18 @@ class Heuristic; //TODO!!!!
 
 using namespace std;
 
+struct lex_compare {
+	bool operator() (GameState*& g1, GameState*& g2) const{
+		return (g1->score) < (g2->score);
+	}
+};
+
+
 vector<GameState*> solve(GameState * gs) {
     //cerr << "GS "<< gs << std::endl;
 	//cerr << gs->parent << endl;
-	priority_queue<GameState*> queue;
+
+	priority_queue<GameState*,vector<GameState*>,lex_compare> queue;
 	set<string> visited; //TODO, fixa egen hashfunction typ
 
 	//cerr << "gs=\n" << *gs << endl;
@@ -29,7 +37,8 @@ vector<GameState*> solve(GameState * gs) {
 		GameState* next = queue.top(); 
 		queue.pop();
 		//cerr << "NEXT: " << next << endl;
-		//cerr << "NEXT GAMESTATE:\n" << *next << endl;
+		//cerr << "NEXT GAMESTATE:\n" << *next;
+		//cerr << "Heuristic score: " << (*next).score << endl;
 
 		if(next->isSolution()) {
             //cerr << "next" << &next << endl;
@@ -50,11 +59,12 @@ vector<GameState*> solve(GameState * gs) {
 			}
 			return retv;
 		}
+		
 		vector<GameState*> nextMoves = next->findNextMoves();
         //cerr << "findnextmo=" << nextMoves.size() << endl;
 		//cerr << "parent should be " << next << endl;
         //for(int i = 0;i < nextMoves.size();i++){
-        //    cout << "NEXTMOVES RETURNED\n" <<*(nextMoves[i]) << endl;
+        //    cerr << "NEXTMOVES RETURNED\n" <<*(nextMoves[i]) << endl;
         //}
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) { // ++it eller it++?
@@ -78,42 +88,4 @@ vector<GameState*> solve(GameState * gs) {
     cerr << "WE ARE OUTTA HELL!" << endl;
 	return vector<GameState*>(); //return something, or do something
 }
-/*
-int abprune(GameState curGS, int depth, int a, int b, bool maxi)
-{
-    if (depth == 0) { // || curGS.isEOG()) {
-        //fprintf(stderr, "Entered first if. In abprune now with depth %i\n", depth);
-        //if (curGS.isDraw()) {
-        //    return 0;
-        //}
-        return 0;
-        //return evalHeur(curGS);
-    }
- 
-    //fprintf(stderr, "In abprune now with depth %i\n", depth);
- 
-    std::set<GameState> s = curGS.findNextMoves();
-    std::vector<GameState> lNextStates(s.begin(),s.end());
-    
-    int vecSize = lNextStates.size();
- 
-    if (maxi) { //Maximizing player's turn
-        for (int i = 0;i<vecSize;i++) {
-            a = std::max(a, abprune(lNextStates[i], depth-1, a, b, !maxi));
-            if (b <= a) {
-                break;
-            }
-        }
-        return a;
-    } else {    //Minimizing player's turn
-        for (int i = 0;i<vecSize;i++) {
-            b = std::min(b, abprune(lNextStates[i], depth-1, a, b, !maxi));
-            if (b <= a) {
-                break;
-            }
-        }
-        return b;
-    }
-}
 
-*/

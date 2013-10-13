@@ -23,16 +23,12 @@ string answer(vector<GameState*> path){
 vector<vector<char> > readBoard(){
 	vector<vector<char> > board;
 	unsigned int width = 0;
-	pos player;
 	vector<char> line;
 	for (char input = getchar(); input != EOF ;input = getchar()) {
 		if (input == '\n') {
 			board.push_back(line);
 			line.clear();
 		} else {
-			if (input == PLAYER || input == PLAYER_ON_GOAL) {
-				player = pos(line.size(), board.size());
-			}
 			line.push_back(input);
 		}
 		if (line.size() > width) {
@@ -60,10 +56,6 @@ void sokoban(){
 		board[i][board[0].size()-1] = WALL;
 	}
 	
-    
-    //Map map(board, board[0].size(), board.size());
-    //map.findStaticDeadLocks();
-    
 	// Create gamestate
 	GameState gs = GameState(board);
     cerr << "Initial GameState hash = " << gs.hash() << endl;

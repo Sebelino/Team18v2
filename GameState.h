@@ -33,12 +33,10 @@ public:
 	GameState * parent;
 	boxMove src;
 	
+	int depth;
+
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
-	void heuristicSmarter();
-	int checkGoalClass(int i, int j);
-	bool isBoxWall(int i, int j);
-	int heuristicDistance(const pos& p1,const pos& p2);
 };
 /*
 class Hasher {
