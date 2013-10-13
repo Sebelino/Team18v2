@@ -18,8 +18,12 @@ GameState::GameState(vector<vector<char> > b) {
     bool found = false;
 	for (int y = 0;y < b.size();y++) {
         for (int x = 0;x < b[y].size();x++) {
-            char cell = b[y][x];
-            if(cell == PLAYER || cell == PLAYER_ON_GOAL){
+            if(b[y][x] == PLAYER || b[y][x] == PLAYER_ON_GOAL){
+            	if(b[y][x] == PLAYER){
+            		b[y][x] = FREE;
+            	} else if (b[y][x] == PLAYER_ON_GOAL) {
+	            	b[y][x] = GOAL;
+            	}
                 if(!found){
                     player = pos(x,y);
                 }else{

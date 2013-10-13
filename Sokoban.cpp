@@ -24,20 +24,12 @@ string answer(vector<GameState*> path){
 vector<vector<char> > readBoard(){
 	vector<vector<char> > board;
 	unsigned int width = 0;
-	pos player;
 	vector<char> line;
 	for (char input = getchar(); input != EOF ;input = getchar()) {
 		if (input == '\n') {
 			board.push_back(line);
 			line.clear();
 		} else {
-			if (input == PLAYER) {
-				player = pos(line.size(), board.size());
-				input = FREE;
-			} else if (input == PLAYER_ON_GOAL) {
-				player = pos(line.size(), board.size());
-				input = GOAL;
-			}
 			line.push_back(input);
 		}
 		if (line.size() > width) {

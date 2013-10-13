@@ -1,10 +1,91 @@
-Before detecting deadlocks:
+NEXTMOVES RETURNED
 ############
-# @   $  . #
+#     @$ . #
 #     $  . #
 ############
-After detecting deadlocks:
+
+NEXTMOVES RETURNED
 ############
-#X    $  .X#
-#X    $  .X#
+#     $  . #
+#     @$ . #
 ############
+
+NEXTMOVES RETURNED
+############
+#      @$. #
+#     $  . #
+############
+
+NEXTMOVES RETURNED
+############
+#      $ . #
+#     @$ . #
+############
+
+NEXTMOVES RETURNED
+############
+#       @* #
+#     $  . #
+############
+
+NEXTMOVES RETURNED
+############
+#       $. #
+#    $@  . #
+############
+
+NEXTMOVES RETURNED
+############
+#       $. #
+#     @$ . #
+############
+
+NEXTMOVES RETURNED
+############
+#        +$#
+#     $  . #
+############
+
+NEXTMOVES RETURNED
+############
+#        * #
+#    $@  . #
+############
+
+NEXTMOVES RETURNED
+############
+#        * #
+#     @$ . #
+############
+
+NEXTMOVES RETURNED
+############
+#        * #
+#      @$. #
+############
+
+NEXTMOVES RETURNED
+############
+#        +$#
+#      $ . #
+############
+
+NEXTMOVES RETURNED
+############
+#       $+ #
+#      $ . #
+############
+
+NEXTMOVES RETURNED
+############
+#        * #
+#       @* #
+############
+
+NEXTMOVES RETURNED
+############
+#        +$#
+#       $. #
+############
+
+RRRRRRLLLDRRR
