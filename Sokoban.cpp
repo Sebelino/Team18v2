@@ -31,8 +31,12 @@ vector<vector<char> > readBoard(){
 			board.push_back(line);
 			line.clear();
 		} else {
-			if (input == PLAYER || input == PLAYER_ON_GOAL) {
+			if (input == PLAYER) {
 				player = pos(line.size(), board.size());
+				input = FREE;
+			} else if (input == PLAYER_ON_GOAL) {
+				player = pos(line.size(), board.size());
+				input = GOAL;
 			}
 			line.push_back(input);
 		}
