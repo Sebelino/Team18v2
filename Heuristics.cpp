@@ -110,7 +110,14 @@ void heuristicEvenBetter(GameState& g) {
 		score += binds[i].second;
 	}
 
+	score += aStarDistance(g);
+
+
 	g.score = -score;
+}
+
+int aStarDistance(GameState& g) {
+	return g.depth;
 }
 
 /*

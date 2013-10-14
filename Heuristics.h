@@ -18,6 +18,7 @@ static int _DRA[DIM_RETURN_DISTANCE] = {0,9,17,24,30,35,39,42,44,45}; //diminish
 //#endif
 
 void heuristicEvenBetter(GameState& g);
+int aStarDistance(GameState& g);
 void heuristicSmarter(GameState& g);
 int checkGoalClass(GameState& g, int i, int j);
 bool isBoxWall(GameState& g, int i, int j);
