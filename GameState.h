@@ -26,6 +26,7 @@ public:
     std::string hash() const;
 	bool isSolution();
     int heuristic() const;
+    bool makeMove(pos dir);
 
 	std::vector<std::vector<char> > board;
     pos player;

@@ -72,7 +72,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	}
 	
 	//Detect dynamic deadlocks:
-	detectDynamicDeadlocks(this, src.end);
+	findDynamicDeadlocks(this, src.end);
 	
     heuristicSmarter(*this);
 }
@@ -82,14 +82,44 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 GameState::~GameState(){}
 
 // Returns the state that results from pushing a box.
-/*
-GameState GameState::pushBox(const struct boxMove & m){
-    vector<vector<char> > stringmap = map;
-    stringmap[m.startY][m.startX] = ' ';
-    stringmap[m.endY][m.endX] = '$';
-    return GameState(stringmap,0,0);
+// Only used by the verifier function.
+// This function has to manually check whether the move is possible.
+// Returns true if the player managed to move, false otherwise.
+bool GameState::makeMove(pos dir) {
+	pos start = player+dir;
+	
+	char &c1 = board[start.y][start.x]; 
+	char &c2 = board[start.y+dir.y][start.x+dir.x];
 
-}*/
+	if (c1 == WALL) {
+		//Cannot push a wall. Nothing happens.
+		return false;
+	} else if (c1 == BOX || c1 == BOX_ON_GOAL) {
+		//Player attempts to push a box
+		if (c2 == WALL || c2 == BOX || c2 == BOX_ON_GOAL) {
+			//Cannot push a box onto an obstacle. Nothing happens.
+			return false;
+		}
+		
+		//Else, the box can be moved
+		if (c1 == BOX) {
+			c1 = FREE;
+		} else if (c1 == BOX_ON_GOAL) {
+			c1 = GOAL;
+		}
+		if (c2 == GOAL) {
+			c2 = BOX_ON_GOAL;
+		} else if (c2 == FREE) {
+			c2 = BOX;
+		}
+		player = src.start;
+		return true;	
+	}
+	
+	//Else, player walks onto c1, moving no boxes
+	player = src.start;
+	return true;
+}
 
 /* Just a way to sort the GameStates. */
 bool GameState::operator<(GameState other) const {
