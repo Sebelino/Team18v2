@@ -58,64 +58,27 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
     parent = prev;
     board = prev->board;
 	depth = prev->depth + 1;
-    
+
     if (board[src.start.y][src.start.x] == BOX) {
     	board[src.start.y][src.start.x] = FREE;
     } else if (board[src.start.y][src.start.x] == BOX_ON_GOAL) {
 		board[src.start.y][src.start.x] = GOAL;
 	}
-	
+
 	if (board[src.end.y][src.end.x] == GOAL) {
 		board[src.end.y][src.end.x] = BOX_ON_GOAL;
 	} else if (board[src.end.y][src.end.x] == FREE) {
 		board[src.end.y][src.end.x] = BOX;
 	}
-	
+
 	//Detect dynamic deadlocks:
 	findDynamicDeadlocks(this);
-	
     heuristicEvenBetter(*this);
 }
 
 
 // Destructor.
 GameState::~GameState(){}
-
-// Returns the state that results from pushing a box.
-// Only used by the verifier function.
-// This function has to manually check whether the move is possible.
-// Returns true if the player managed to move, false otherwise.
-bool GameState::makeMove(pos dir) {
-	pos start = player+dir;
-	char c1 = board[start.y][start.x]; 
-	char c2 = board[start.y+dir.y][start.x+dir.x];
-	if (c1 == WALL) {
-		//Cannot push a wall. Nothing happens.
-		return false;
-	} else if (c1 == BOX || c1 == BOX_ON_GOAL) {
-		//Player attempts to push a box
-		if (c2 == WALL || c2 == BOX || c2 == BOX_ON_GOAL) {
-			//Cannot push a box onto an obstacle. Nothing happens.
-			return false;
-		}
-		//Else, the box can be moved
-		if (c1 == BOX) {
-			board[start.y][start.x] = FREE;
-		} else if (c1 == BOX_ON_GOAL) {
-			board[start.y][start.x] = GOAL;
-		}
-		if (c2 == GOAL) {
-			board[start.y+dir.y][start.x+dir.x] = BOX_ON_GOAL;
-		} else if (c2 == FREE) {
-			board[start.y+dir.y][start.x+dir.x] = BOX;
-		}
-		player = start;
-		return true;	
-	}
-	//Else, player walks onto c1, moving no boxes
-	player = start;
-	return true;
-}
 
 /* Just a way to sort the GameStates. */
 bool GameState::operator<(GameState other) const {
@@ -156,7 +119,6 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 
 /* Returns a set of all succeeding states. */
 vector<GameState*> GameState::findNextMoves(){
-	
 	vector<GameState*> successors;
 	vector<boxMove> moves;
 	
@@ -171,6 +133,7 @@ vector<GameState*> GameState::findNextMoves(){
 	queue<pos> q;
 	//fprintf(stderr, "player pos: %d, %d\n", player.x, player.y);
 	//fprintf(stderr, "dirMap size is:%d x %d\n", (int)dirMap.size(), (int)dirMap[0].size());
+	//fprintf(stderr, "f1\n");
 	dirMap[player.y][player.x] = 'V';
 
 	q.push(player);
@@ -180,6 +143,7 @@ vector<GameState*> GameState::findNextMoves(){
 	char a, b;
 	boxMove bm;
 	
+	//fprintf(stderr, "f2\n");
 	//Search the graph
 	while (!q.empty()) {
 	    curPos = q.front();
@@ -196,7 +160,6 @@ vector<GameState*> GameState::findNextMoves(){
 		}
 		*/
         
-	    
 	    for (int i = 0;i<4;i++) {
 	    	d = directions[i];
 	        //dir = dirs(d);
@@ -218,7 +181,7 @@ vector<GameState*> GameState::findNextMoves(){
 	        }
 	    }
 	}
-
+	//fprintf(stderr, "f4, moves.size() = %d\n", (int)moves.size());
 	for (int i = 0;i < (int)moves.size();i++) {
 		successors.push_back(new GameState(this,&(moves[i])));
 	}

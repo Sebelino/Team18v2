@@ -1,4 +1,7 @@
+#include <string>
+
 #ifndef _TESTER_H__
 #define _TESTER_H__
-void runTests();
+void unitTest();
+void verify(std::vector<std::vector<char> > board);
 #endif
