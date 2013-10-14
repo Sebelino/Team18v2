@@ -62,12 +62,13 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		nC = dst+directions[i];
 		for (int j = 0;j<8;j++) {
 			nE = dst+curDir+directions[j];
-			if (nE.y >= gs->board.size()) {
-				fprintf(stderr, "nE.y is:%d\n", nE.y);
-			} else if (nE.x >= gs->board[nE.y].size()) {
-				fprintf(stderr, "nE.x is:%d\n", nE.y);
+			if (nE.y >= gs->board.size() || nE.y < 0) {
+				s.push_back(WALL);
+			} else if (nE.x >= gs->board[nE.y].size() || nE.x < 0) {
+				s.push_back(WALL);
+			} else {
+				s.push_back(gs->board[nE.y][nE.x]);
 			}
-			s.push_back(gs->board[nE.y][nE.x]);
 		}
 		s.push_back(gs->board[nC.y][nC.x]);
 		
