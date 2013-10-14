@@ -59,8 +59,9 @@ vector<GameState*> solve(GameState * gs) {
 			}
 			return retv;
 		}
-		
+		//fprintf(stderr, "before findNextMoves()\n");
 		vector<GameState*> nextMoves = next->findNextMoves();
+		//fprintf(stderr, "after findNextMoves()\n");
         //cerr << "findnextmo=" << nextMoves.size() << endl;
 		//cerr << "parent should be " << next << endl;
         //for(int i = 0;i < nextMoves.size();i++){
