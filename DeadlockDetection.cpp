@@ -27,13 +27,17 @@ bool findDynamicDeadlocks(GameState * gs) {
 	pos curDir;
 	std::vector<pos> directions;
 	directions.push_back(pos(1,0));
+	directions.push_back(pos(1,1));
 	directions.push_back(pos(0,1));
+	directions.push_back(pos(-1,1));
 	directions.push_back(pos(-1,0));
+	directions.push_back(pos(-1,-1));
 	directions.push_back(pos(0,-1));
+	directions.push_back(pos(1,-1));
 	char c1, c2, c3, c4;
 	
 	//First test. Find certain types of deadlocks.
-	for (int i = 0;i<4;i++) {
+	for (int i = 0;i<8;i+=2) {
 		curDir = directions[i];
 		c1 = gs->board[dst.y+curDir.y][dst.x+curDir.x];
 		if (c1 == BOX || c1 == BOX_ON_GOAL || c1 == WALL) {
@@ -49,12 +53,70 @@ bool findDynamicDeadlocks(GameState * gs) {
 		}
 	}
 	
-	//Second test. 
-	//TODO
-	for (int i = 1;i<3;i++) {
-		for (int j = 0;j<3;j++) {
-		
+	//Second test. Test for 3x3 deadlock patterns
+	pos nC, nE;
+
+	string s;
+	s.reserve(9);
+	for (int i = 0;i<8;i++) {
+		nC = dst+directions[i];
+		for (int j = 0;j<8;j++) {
+			nE = dst+curDir+directions[j];
+			s.push_back(gs->board[nE.y][nE.x]);
 		}
+		s.push_back(gs->board[nC.y][nC.x]);
+		
+		//DETECT DEADLOCKS IN THIS AREA
+		
+		if (s[8] != GOAL) {
+			bool cornersQualify = false;
+			bool edgesQualify = false;
+			
+			if (s[1] == WALL || s[1] == BOX || s[1] == BOX_ON_GOAL) {
+				if (s[3] == WALL || s[3] == BOX || s[3] == BOX_ON_GOAL) {
+					if (s[5] == WALL || s[5] == BOX || s[5] == BOX_ON_GOAL) {
+						if (s[7] == WALL || s[7] == BOX || s[7] == BOX_ON_GOAL) {
+							edgesQualify = true;
+						}
+					}
+				}
+			}
+			
+			if ((s[0] == WALL || s[0] == BOX || s[0] == BOX_ON_GOAL) && (s[4] == WALL || s[4] == BOX || s[4] == BOX_ON_GOAL)) {
+				cornersQualify = true;
+			}
+			if ((s[2] == WALL || s[2] == BOX || s[2] == BOX_ON_GOAL) && (s[6] == WALL || s[6] == BOX || s[6] == BOX_ON_GOAL)) {
+				cornersQualify = true;
+			}
+			
+			
+			if ((s[0] == WALL || s[0] == BOX || s[0] == BOX_ON_GOAL) && (s[2] == WALL || s[2] == BOX || s[2] == BOX_ON_GOAL)) {
+				if (s[5] == WALL) {
+					cornersQualify = true;
+				}
+			}
+			if ((s[2] == WALL || s[2] == BOX || s[2] == BOX_ON_GOAL) && (s[4] == WALL || s[4] == BOX || s[4] == BOX_ON_GOAL)) {
+				if (s[7] == WALL) {
+					cornersQualify = true;
+				}
+			}
+			if ((s[4] == WALL || s[4] == BOX || s[4] == BOX_ON_GOAL) && (s[6] == WALL || s[6] == BOX || s[6] == BOX_ON_GOAL)) {
+				if (s[1] == WALL) {
+					cornersQualify = true;
+				}
+			}
+			if ((s[6] == WALL || s[6] == BOX || s[6] == BOX_ON_GOAL) && (s[0] == WALL || s[0] == BOX || s[0] == BOX_ON_GOAL)) {
+				if (s[3] == WALL) {
+					cornersQualify = true;
+				}
+			}
+			
+			if (cornersQualify && edgesQualify) {
+				//Found deadlock
+				return true;
+			}
+		}
+		s.clear();
 	}
 	
 	
