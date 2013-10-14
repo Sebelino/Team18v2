@@ -44,7 +44,7 @@ GameState::GameState(vector<vector<char> > b) {
 	src = s;
     parent = NULL;
     findStaticDeadLocks(board);
-	heuristicSmarter(*this);
+	heuristicEvenBetter(*this);
 	
 }
 
@@ -73,9 +73,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 
 	//Detect dynamic deadlocks:
 	findDynamicDeadlocks(this);
-
-    heuristicSmarter(*this);
-
+    heuristicEvenBetter(*this);
 }
 
 

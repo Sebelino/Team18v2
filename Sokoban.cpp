@@ -2,11 +2,12 @@
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <ctime>
 #include <queue>
 #include <algorithm>
 #include "GameState.h"
 #include "Constants.h"
-#include "Map.h"
+//#include "Map.h"
 
 using namespace std;
 
@@ -66,6 +67,7 @@ string answer(vector<GameState*> path){
     return directions;
 }
 
+
 string sokoban(vector<vector<char> > board){
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
@@ -95,6 +97,5 @@ string sokoban(vector<vector<char> > board){
 	//fprintf(stderr,"3\n");
 	// Return answer.
     return answer(solution);
-	
 }
 
