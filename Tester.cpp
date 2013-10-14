@@ -7,7 +7,6 @@
 #include <bitset>
 #include "GameState.h"
 #include "Constants.h"
-#include "AI.h"
 #include "Sokoban.h"
 
 using namespace std;

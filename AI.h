@@ -7,6 +7,6 @@
 #ifndef _AI_H__
 #define _AI_H__
 //TODO Make sense of this function
-std::vector<GameState*> solve(GameState * gs);
+std::vector<GameState*> aisolve(GameState * gs);
 //test
 #endif
