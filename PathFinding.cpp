@@ -45,7 +45,6 @@ char dirs(pos p) {
 }
 
 std::vector<char> moveToPath (GameState * gs, boxMove bm) {
-
 	int h = gs->board.size();
 	int w = gs->board[0].size();
 	

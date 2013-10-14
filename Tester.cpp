@@ -8,6 +8,8 @@
 #include "GameState.h"
 #include "Constants.h"
 #include "Sokoban.h"
+#include "DeadlockDetection.h"
+#include "Structs.h"
 
 using namespace std;
 
@@ -164,7 +166,12 @@ vector<vector<char> > applyDirection(vector<vector<char> > board,char direction)
             }
         }
     }
-    // TODO: If nothing changed, throw execption.
+    bool nothingChanged = (b[playerY][playerX] == first)
+        && (b[playerY+deltaY][playerX+deltaX] == second)
+        && (b[playerY+2*deltaY][playerX+2*deltaX] == second && third != '!');
+    if(nothingChanged){
+        cerr << "Invalid move!" << endl;
+    }
     b[playerY][playerX] = first;
     b[playerY+deltaY][playerX+deltaX] = second;
     if(third != '!'){
@@ -195,28 +202,43 @@ bool solvedBoard(vector<vector<char> > b){
     return true;
 }
 
-void verify(vector<vector<char> > board){
+void outputBoard(vector<vector<char> > board){
+    for(int y = 0;y < board.size();y++){
+        for(int x = 0;x < board[y].size();x++){
+            char cell = board[y][x];
+            cout << cell;
+        }
+        cout << endl;
+    }
+}
+
+void verify(vector<vector<char> > board,bool detailed){
     cout << "Testing solution...";
     string returned = sokoban(board);
     vector<vector<vector<char> > > output = applyDirections(board,returned);
     vector<vector<char> > finalBoard = output[output.size()-1];
     if(solvedBoard(finalBoard)){
-        cout << "passed! Solution:" << endl;
-        for(int y = 0;y < finalBoard.size();y++){
-            for(int x = 0;x < finalBoard[y].size();x++){
-                char cell = finalBoard[y][x];
-                cout << cell;
-            }
-            cout << endl;
+        cout << "passed! Returned:" << endl << returned << endl;
+        cout << "Solution:" << endl;
+    }else{
+        cout << "failed! Returned:" << endl << returned << endl;
+        cout << "Incorrect solution:" << endl;
+    }
+    if(detailed){
+        for(int i = 0;i < output.size();i++){
+            outputBoard(output[i]);
         }
     }else{
-        cout << "failed! Incorrect solution:" << endl;
-        for(int y = 0;y < finalBoard.size();y++){
-            for(int x = 0;x < finalBoard[y].size();x++){
-                char cell = finalBoard[y][x];
-                cout << cell;
-            }
-            cout << endl;
+        outputBoard(finalBoard);
+    }
+}
+
+void testDeadlocks(vector<vector<char> > board){
+    cout << "Testing dynamic deadlocks...";
+    vector<GameState*> s = solution(board);
+    for(int i = 0;i < s.size();i++){
+        if(findDynamicDeadlocks(s[i],pos(0,0))){
+            cout << "GameState no. " << i << "contains dynamic deadlocks." << endl;
         }
     }
 }

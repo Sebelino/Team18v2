@@ -68,7 +68,7 @@ string answer(vector<GameState*> path){
 }
 
 
-string sokoban(vector<vector<char> > board){
+vector<GameState*> solution(vector<vector<char> > board){
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
 		board[board.size()-1][i] = WALL;
@@ -79,7 +79,7 @@ string sokoban(vector<vector<char> > board){
 	}
 	
 	// Create gamestate
-	GameState gs = GameState(board);
+	GameState* gs = new GameState(board);
     //cerr << "Initial GameState hash = " << gs.hash() << endl;
     //cerr << "Initial heuristic = " << gs.heuristic() << endl;
     //cerr << "Initial GameState appearence =\n" << gs << endl;
@@ -87,16 +87,21 @@ string sokoban(vector<vector<char> > board){
 	//call the solver
 	vector<char> str;
 	//fprintf(stderr,"0\n");
-	vector<GameState*> solution = solve(&gs);
+	vector<GameState*> solution = solve(gs);
 
 	//fprintf(stderr,"1\n");
 	vector<string> movements(solution.size());
 	//fprintf(stderr,"2\n");
 
 	// Output answer.
-
 	//fprintf(stderr,"3\n");
 	// Return answer.
-    return answer(solution);
+    return solution;
 }
+
+string sokoban(vector<vector<char> > board){
+    return answer(solution(board));
+}
+
+
 
