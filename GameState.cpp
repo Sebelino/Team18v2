@@ -72,7 +72,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	}
 
 	//Detect dynamic deadlocks:
-	findDynamicDeadlocks(this);
+	findDynamicDeadlocks(this, src.end);
     heuristicEvenBetter(*this);
 }
 

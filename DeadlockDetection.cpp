@@ -15,8 +15,8 @@ class GameState;
  * The function returns true if a deadlock is found.
  * Only local search is necessary.
  */
-bool findDynamicDeadlocks(GameState * gs) {
-	pos dst = gs->player;
+bool findDynamicDeadlocks(GameState * gs, pos dst) {
+	//pos dst = gs->src.end;
 	char chdest = gs->board[dst.y][dst.x];
 	if (chdest != BOX && chdest != BOX_ON_GOAL) {
 		//This shouldn't happen
@@ -62,6 +62,11 @@ bool findDynamicDeadlocks(GameState * gs) {
 		nC = dst+directions[i];
 		for (int j = 0;j<8;j++) {
 			nE = dst+curDir+directions[j];
+			if (nE.y >= gs->board.size()) {
+				fprintf(stderr, "nE.y is:%d\n", nE.y);
+			} else if (nE.x >= gs->board[nE.y].size()) {
+				fprintf(stderr, "nE.x is:%d\n", nE.y);
+			}
 			s.push_back(gs->board[nE.y][nE.x]);
 		}
 		s.push_back(gs->board[nC.y][nC.x]);
