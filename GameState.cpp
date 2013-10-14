@@ -72,7 +72,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	}
 
 	//Detect dynamic deadlocks:
-	if(findDynamicDeadlocks(this))
+	if(findDynamicDeadlocks(this,src.end))
 		score = -10000000;
 	else
 		heuristicEvenBetter(*this);
