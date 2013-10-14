@@ -81,42 +81,6 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 // Destructor.
 GameState::~GameState(){}
 
-// Returns the state that results from pushing a box.
-// Only used by the verifier function.
-// This function has to manually check whether the move is possible.
-// Returns true if the player managed to move, false otherwise.
-bool GameState::makeMove(pos dir) {
-	pos start = player+dir;
-	char c1 = board[start.y][start.x]; 
-	char c2 = board[start.y+dir.y][start.x+dir.x];
-	if (c1 == WALL) {
-		//Cannot push a wall. Nothing happens.
-		return false;
-	} else if (c1 == BOX || c1 == BOX_ON_GOAL) {
-		//Player attempts to push a box
-		if (c2 == WALL || c2 == BOX || c2 == BOX_ON_GOAL) {
-			//Cannot push a box onto an obstacle. Nothing happens.
-			return false;
-		}
-		//Else, the box can be moved
-		if (c1 == BOX) {
-			board[start.y][start.x] = FREE;
-		} else if (c1 == BOX_ON_GOAL) {
-			board[start.y][start.x] = GOAL;
-		}
-		if (c2 == GOAL) {
-			board[start.y+dir.y][start.x+dir.x] = BOX_ON_GOAL;
-		} else if (c2 == FREE) {
-			board[start.y+dir.y][start.x+dir.x] = BOX;
-		}
-		player = start;
-		return true;	
-	}
-	//Else, player walks onto c1, moving no boxes
-	player = start;
-	return true;
-}
-
 /* Just a way to sort the GameStates. */
 bool GameState::operator<(GameState other) const {
     return score < other.score;

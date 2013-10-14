@@ -4,22 +4,50 @@
 #include <cstdio>
 #include "Sokoban.h"
 #include "Tester.h"
-#include "Verifier.h"
+#include "Constants.h"
 
 using namespace std;
 
+vector<vector<char> > readBoard(){
+	vector<vector<char> > board;
+	unsigned int width = 0;
+	vector<char> line;
+	for (char input = getchar(); input != EOF ;input = getchar()) {
+		if (input == '\n') {
+			board.push_back(line);
+			line.clear();
+		} else {
+			line.push_back(input);
+		}
+		if (line.size() > width) {
+			width = line.size();
+		}
+	}
+	// Add padding to avoid indexing errors.
+	for (int i = 0;i<board.size();i++) {
+		for (int j = board[i].size();j<width;j++) {
+			board[i].push_back(FREE);
+		}
+	}
+    return board;
+}
+
 /**
- * Performs unit tests if called with the test parameter:
+ * Perform unit tests and acceptance tests:
  * ./sokoban test
- * and runs the program otherwise.
+ * Verify that the solution to maps/test is correct:
+ * ./sokoban verify < maps/test
+ * Run the program normally:
+ * ./sokoban < maps/test
  */
 int main(int argc, char **argv) {
+    vector<vector<char> > board = readBoard();
     if(argc == 2 && argv[1] == string("test")){
-        runTests();
+        unitTest();
     }else if(argc == 2 && argv[1] == string("verify")){
-        verify();
+        verify(board);
     }else{
-        sokoban();
+        cout << sokoban(board) << endl;
     }
     return 0;
 }

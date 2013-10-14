@@ -20,33 +20,7 @@ string answer(vector<GameState*> path){
     return directions;
 }
 
-vector<vector<char> > readBoard(){
-	vector<vector<char> > board;
-	unsigned int width = 0;
-	vector<char> line;
-	for (char input = getchar(); input != EOF ;input = getchar()) {
-		if (input == '\n') {
-			board.push_back(line);
-			line.clear();
-		} else {
-			line.push_back(input);
-		}
-		if (line.size() > width) {
-			width = line.size();
-		}
-	}
-	// Add padding to avoid indexing errors.
-	for (int i = 0;i<board.size();i++) {
-		for (int j = board[i].size();j<width;j++) {
-			board[i].push_back(FREE);
-		}
-	}
-    return board;
-}
-
-void sokoban(){
-    vector<vector<char> > board = readBoard();
-    
+string sokoban(vector<vector<char> > board){
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
 		board[board.size()-1][i] = WALL;
@@ -71,8 +45,8 @@ void sokoban(){
 	vector<string> movements(solution.size());
 	//fprintf(stderr,"2\n");
 
-	// Output answer.
-    cout << answer(solution) << endl;
+	// Return answer.
+    return answer(solution);
 	//fprintf(stderr,"3\n");
 	
 }
