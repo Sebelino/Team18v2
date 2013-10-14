@@ -79,22 +79,128 @@ string hashToBitmap(vector<vector<char> > board){
 void hashAssertEquals(string path){
     const GameState gs = GameState(readFile(path));
     cout << "Testing " << path << "...";
-    string hash = readableHash(gs.hash());
+    string returned = readableHash(gs.hash());
     string expected = hashToBitmap(readFile(path));
-    if(hash != expected){
+    if(returned != expected){
         cout << endl;
-        cout << "Returned: " << hash << ", expected: " << expected << endl;
+        cout << "Returned: " << returned << ", expected: " << expected << endl;
     }else{
         cout << "passed!" << endl;
     }
 }
 
-void runTests() {
+void unitTest() {
     hashAssertEquals("maps/test");
     hashAssertEquals("maps/test2");
     hashAssertEquals("maps/test3");
     hashAssertEquals("maps/test4");
     hashAssertEquals("maps/test5");
     hashAssertEquals("maps/test6");
+}
+
+vector<vector<char> > applyDirection(vector<vector<char> > board,char direction){
+    vector<vector<char> > b = board;
+    int deltaX = 0;
+    int deltaY = 0;
+    if(direction == 'R'){
+        deltaX = 1; deltaY = 0;
+    }else if(direction == 'L'){
+        deltaX = -1; deltaY = 0;
+    }else if(direction == 'D'){
+        deltaX = 0; deltaY = 1;
+    }else if(direction == 'U'){
+        deltaX = 0; deltaY = -1;
+    }
+    int playerX = -7;
+    int playerY = -7;
+    for(int y = 0;y < b.size();y++){
+        for(int x = 0;x < b[y].size();x++){
+            char cell = b[y][x];
+            if(cell == PLAYER || cell == PLAYER_ON_GOAL){
+                playerX = x;
+                playerY = y;
+            }
+        }
+    }
+    // 12 disjunct cases; here we go:
+    bool inBounds = 0 <= playerY+deltaY*2 && playerY+deltaY*2 < b.size()
+        && 0 <= playerX+deltaX*2 && playerX+deltaX*2 < b[0].size();
+    char first = b[playerY][playerX];
+    char second = b[playerY+deltaY][playerX+deltaX];
+    char third = inBounds ? b[playerY+2*deltaY][playerX+2*deltaX] : '!';
+    if(first == PLAYER){
+        if(second == FREE){
+            first = FREE; second = PLAYER;
+        }else if(second == GOAL){
+            first = FREE; second = PLAYER_ON_GOAL;
+        }else if(second == BOX){
+            if(third == FREE && third != '!'){
+                first = FREE; second = PLAYER; third = BOX;
+            }else if(third == GOAL && third != '!'){
+                first = FREE; second = PLAYER; third = BOX_ON_GOAL;
+            }
+        }else if(second == BOX_ON_GOAL){
+            if(third == FREE && third != '!'){
+                first = FREE; second = PLAYER_ON_GOAL; third = BOX;
+            }else if(third == GOAL && third != '!'){
+                first = FREE; second = PLAYER_ON_GOAL; third = BOX_ON_GOAL;
+            }
+        }
+    }else if(first == PLAYER_ON_GOAL){
+        if(second == FREE){
+            first = GOAL; second = PLAYER;
+        }else if(second == GOAL){
+            first = GOAL; second = PLAYER_ON_GOAL;
+        }else if(second == BOX){
+            if(third == FREE && third != '!'){
+                first = GOAL; second = PLAYER; third = BOX;
+            }else if(third == GOAL && third != '!'){
+                first = GOAL; second = PLAYER; third = BOX_ON_GOAL;
+            }
+        }else if(second == BOX_ON_GOAL){
+            if(third == FREE && third != '!'){
+                first = GOAL; second = PLAYER_ON_GOAL; third = BOX;
+            }else if(third == GOAL && third != '!'){
+                first = GOAL; second = PLAYER_ON_GOAL; third = BOX_ON_GOAL;
+            }
+        }
+    }
+    // If nothing changed, throw execption.
+    b[playerY][playerX] = first;
+    b[playerY+deltaY][playerX+deltaX] = second;
+    if(third != '!'){
+        b[playerY+2*deltaY][playerX+2*deltaX] = third;
+    }
+    for(int y = 0;y < b.size();y++){
+        for(int x = 0;x < b[y].size();x++){
+            char cell = b[y][x];
+            cout << cell;
+        }
+        cout << endl;
+    }
+    return b;
+}
+
+vector<vector<vector<char> > > applyDirections(vector<vector<char> > board,string solution){
+    vector<vector<vector<char> > > boards;
+    boards.push_back(board);
+    for(int i = 0;i < solution.size();i++){
+        vector<vector<char> > b = applyDirection(boards[boards.size()-1],solution[i]);
+        boards.push_back(b);
+    }
+    return boards;
+}
+
+void verify(vector<vector<char> > board){
+    cout << "Testing solution...";
+    cout << endl;
+    string returned = sokoban(board);
+    vector<vector<vector<char> > > output = applyDirections(board,returned);
+//    if(true){
+//        cout << "passed! The solution is:" << endl;
+//        vector<vector<char> > output = applyDirections(board,returned);
+//    }else{
+//        cout << "failed!" << endl;
+//    }
 }
 

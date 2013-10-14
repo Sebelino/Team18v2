@@ -20,33 +20,7 @@ string answer(vector<GameState*> path){
     return directions;
 }
 
-vector<vector<char> > readBoard(){
-	vector<vector<char> > board;
-	unsigned int width = 0;
-	vector<char> line;
-	for (char input = getchar(); input != EOF ;input = getchar()) {
-		if (input == '\n') {
-			board.push_back(line);
-			line.clear();
-		} else {
-			line.push_back(input);
-		}
-		if (line.size() > width) {
-			width = line.size();
-		}
-	}
-	// Add padding to avoid indexing errors.
-	for (int i = 0;i<board.size();i++) {
-		for (int j = board[i].size();j<width;j++) {
-			board[i].push_back(FREE);
-		}
-	}
-    return board;
-}
-
-void sokoban(){
-    vector<vector<char> > board = readBoard();
-    
+string sokoban(vector<vector<char> > board){
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
 		board[board.size()-1][i] = WALL;
@@ -60,7 +34,7 @@ void sokoban(){
 	GameState gs = GameState(board);
     //cerr << "Initial GameState hash = " << gs.hash() << endl;
     //cerr << "Initial heuristic = " << gs.heuristic() << endl;
-    //cerr << "Initial GameState apparence =\n" << gs << endl;
+    //cerr << "Initial GameState appearence =\n" << gs << endl;
 
 	//call the solver
 	vector<char> str;
@@ -74,6 +48,8 @@ void sokoban(){
 	// Output answer.
     cout << answer(solution) << endl;
 	fprintf(stderr,"3\n");
+	// Return answer.
+    return answer(solution);
 	
 }
 

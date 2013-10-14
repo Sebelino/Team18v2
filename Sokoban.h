@@ -8,7 +8,6 @@
 
 #ifndef _SOKOBAN_H__
 #define _SOKOBAN_H__
-void sokoban();
-std::vector<std::vector<char> > readBoard();
+std::string sokoban(std::vector<std::vector<char> > board);
 #endif
 
