@@ -165,18 +165,11 @@ vector<vector<char> > applyDirection(vector<vector<char> > board,char direction)
             }
         }
     }
-    // If nothing changed, throw execption.
+    // TODO: If nothing changed, throw execption.
     b[playerY][playerX] = first;
     b[playerY+deltaY][playerX+deltaX] = second;
     if(third != '!'){
         b[playerY+2*deltaY][playerX+2*deltaX] = third;
-    }
-    for(int y = 0;y < b.size();y++){
-        for(int x = 0;x < b[y].size();x++){
-            char cell = b[y][x];
-            cout << cell;
-        }
-        cout << endl;
     }
     return b;
 }
@@ -191,16 +184,41 @@ vector<vector<vector<char> > > applyDirections(vector<vector<char> > board,strin
     return boards;
 }
 
+bool solvedBoard(vector<vector<char> > b){
+    for(int y = 0;y < b.size();y++){
+        for(int x = 0;x < b[y].size();x++){
+            char cell = b[y][x];
+            if(cell == '$'){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void verify(vector<vector<char> > board){
     cout << "Testing solution...";
-    cout << endl;
     string returned = sokoban(board);
     vector<vector<vector<char> > > output = applyDirections(board,returned);
-//    if(true){
-//        cout << "passed! The solution is:" << endl;
-//        vector<vector<char> > output = applyDirections(board,returned);
-//    }else{
-//        cout << "failed!" << endl;
-//    }
+    vector<vector<char> > finalBoard = output[output.size()-1];
+    if(solvedBoard(finalBoard)){
+        cout << "passed! Solution:" << endl;
+        for(int y = 0;y < finalBoard.size();y++){
+            for(int x = 0;x < finalBoard[y].size();x++){
+                char cell = finalBoard[y][x];
+                cout << cell;
+            }
+            cout << endl;
+        }
+    }else{
+        cout << "failed! Incorrect solution:" << endl;
+        for(int y = 0;y < finalBoard.size();y++){
+            for(int x = 0;x < finalBoard[y].size();x++){
+                char cell = finalBoard[y][x];
+                cout << cell;
+            }
+            cout << endl;
+        }
+    }
 }
 
