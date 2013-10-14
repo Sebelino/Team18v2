@@ -14,7 +14,7 @@ using namespace std;
 
 struct lex_compare {
 	bool operator() (GameState*& g1, GameState*& g2) const{
-		return (g1->score - ((g1->depth)/2)) < (g2->score - ((g1->depth)/2));
+		return (g1->score - ((g1->depth)*1)) < (g2->score - ((g1->depth)*1));
 	}
 };
 

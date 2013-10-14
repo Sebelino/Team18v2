@@ -2,10 +2,11 @@
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <ctime>
 #include "GameState.h"
 #include "AI.h"
 #include "Constants.h"
-#include "Map.h"
+//#include "Map.h"
 
 using namespace std;
 
@@ -47,6 +48,8 @@ vector<vector<char> > readBoard(){
 void sokoban(){
     vector<vector<char> > board = readBoard();
     
+	//printf("**MyProgram::before time= %ld\n", time(NULL));
+
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
 		board[board.size()-1][i] = WALL;
@@ -74,6 +77,6 @@ void sokoban(){
 	// Output answer.
     cout << answer(solution) << endl;
 	//fprintf(stderr,"3\n");
-	
+	//fprintf(stderr, "**MyProgram::after time= %ld\n", time(NULL));
 }
 

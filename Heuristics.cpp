@@ -6,6 +6,113 @@
 
 using namespace std;
 
+
+void heuristicEvenBetter(GameState& g) {
+	vector<pos> boxes;
+	vector<pos> goals;
+	vector<pair<int,int> > binds; //first int is the box the goal is bound to, the second int is the score.
+
+	int numPairs = 0;
+	int score = 0;
+
+	//do some counting first, find all boxes and goals.
+	for(int i = 1; i < g.board.size() -1; i++) {
+		for(int j = 1; j < g.board[i].size()-1;j++) {
+			if(g.board[i][j] == GOAL || g.board[i][j] == PLAYER_ON_GOAL || g.board[i][j] == BOX_ON_GOAL) {
+				if(g.board[i][j] == BOX_ON_GOAL && isBoxWall(g,i,j)) {
+					g.board[i][j] = WALL; //TODO ganska fult
+				} else {
+					goals.push_back(pos(i,j));
+				}
+			} 
+
+			if(g.board[i][j] == BOX || g.board[i][j] == BOX_ON_GOAL) {
+				boxes.push_back(pos(i,j));
+			}
+		}
+	}
+
+	numPairs = goals.size();
+
+	//do the initial assignment, start from the goal side.
+
+	//initialization vector, initialize to false
+	vector<bool> assigned(numPairs);
+	for(int i = 0; i < numPairs; i++) {
+		assigned[i] = false;
+	}
+
+	for(int i = 0; i < numPairs; i++) {
+		pos& goal = goals[i];
+		int shortestDist = 100000000;
+		int shortestIndex = 0;
+		for(int j = 0; j < numPairs; j++) {
+			int dist = heuristicDistance(goal,boxes[j]);
+			if(dist < shortestDist && !assigned[j]) {
+				shortestDist = dist;
+				shortestIndex = j;
+			}
+		}
+		binds.push_back(pair<int,int>(shortestIndex,shortestDist));
+		assigned[shortestIndex] = true;
+	}
+
+	//initial assignments done. Now improve it.
+
+	//note that this is not guranteed to give a 100% perfect assignment. However, it should be pretty good.
+
+	int numIterations = numPairs/2; //number of times we will improve our bindings at maximum.
+								  //note that during each iteration
+	for(int iter = 0; iter < numIterations; iter++) {
+
+		//int variant = numIterations%2;
+		
+		for(int i = 0; i < numPairs; i++) {
+			pos& gp = goals[i];
+			pair<int,int>& pcon = binds[i];
+			pos& bp = boxes[pcon.first];
+
+			//the other pair to try and swap with
+			for(int j = 0; j < numPairs; j++) {
+				if(i != j) { //dont try and swap with self
+					pos& go = goals[j];
+					pair<int,int>& ocon = binds[j];
+					pos& bo = boxes[ocon.first];
+
+					int curDist = pcon.second + ocon.second;
+					int gpboDist = heuristicDistance(gp, bo);
+					int gobpDist = heuristicDistance(go, bp);
+
+					int newDist = gpboDist + gobpDist;
+
+					if(newDist < curDist) {
+						//then swap
+						//swap binds
+						int tmp = pcon.first;
+						pcon.first = ocon.first;
+						ocon.first = tmp;
+	
+						//set new distances
+						pcon.second = gpboDist;
+						ocon.second = gobpDist;
+
+						//update total score
+
+
+					}
+				}
+			}
+		}
+	}
+
+	//before returning, calculate the final score
+	for(int i = 0; i < numPairs; i++) {
+		score += binds[i].second;
+	}
+
+	g.score = -score;
+}
+
 /*
 Set the heuristic score of the given gamestate.
 Note: the reference to the GameState is not a const because two things may
