@@ -165,7 +165,7 @@ vector<vector<char> > applyDirection(vector<vector<char> > board,char direction)
             }
         }
     }
-    // If nothing changed, throw execption.
+    // TODO: If nothing changed, throw execption.
     b[playerY][playerX] = first;
     b[playerY+deltaY][playerX+deltaX] = second;
     if(third != '!'){
