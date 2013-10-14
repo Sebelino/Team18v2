@@ -79,7 +79,7 @@ vector<GameState*> solution(vector<vector<char> > board){
 	}
 	
 	// Create gamestate
-	GameState gs = GameState(board);
+	GameState* gs = new GameState(board);
     //cerr << "Initial GameState hash = " << gs.hash() << endl;
     //cerr << "Initial heuristic = " << gs.heuristic() << endl;
     //cerr << "Initial GameState appearence =\n" << gs << endl;
@@ -87,7 +87,7 @@ vector<GameState*> solution(vector<vector<char> > board){
 	//call the solver
 	vector<char> str;
 	//fprintf(stderr,"0\n");
-	vector<GameState*> solution = solve(&gs);
+	vector<GameState*> solution = solve(gs);
 
 	//fprintf(stderr,"1\n");
 	vector<string> movements(solution.size());
