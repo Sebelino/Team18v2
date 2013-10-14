@@ -28,7 +28,16 @@ void heuristicSmarter(GameState& g) {
 				if(g.board[i][j] == BOX_ON_GOAL && isBoxWall(g,i,j)) {
 					g.board[i][j] = WALL; //TODO ganska fult
 				} else {
-					buckets[checkGoalClass(g,i,j)].push_back(pos(i,j));
+					int tmp = checkGoalClass(g,i,j);
+					//if(tmp < 0 || tmp > 3)
+					//	cerr << "whining, tmp is " << tmp << endl;
+					if(tmp == -1) {
+						//deadlock detected
+						g.score = -10000000;
+						return;
+					}
+
+					buckets[tmp].push_back(pos(i,j));
 				}
 			} 
 		}
@@ -119,6 +128,11 @@ int checkGoalClass(GameState& g, int i, int j) {
 	if((clas == 2) && ((topWall && botWall) || (leftWall && rightWall))) {
 		clas = 0; //a so-called pathway
 	}
+
+	//if(clas == 4) {
+	//	cerr << g.board[i-1][j] << " " << g.board[i+1][j] << " " << g.board[i][j+1] << " " << g.board[i][j-1] << endl;
+	//}
+		//clas = 3;
 
 	return 3-clas; //reverse, so that high priority gets class 0.
 
