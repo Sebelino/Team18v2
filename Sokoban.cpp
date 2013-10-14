@@ -86,16 +86,16 @@ string sokoban(vector<vector<char> > board){
 
 	//call the solver
 	vector<char> str;
-	fprintf(stderr,"0\n");
+	//fprintf(stderr,"0\n");
 	vector<GameState*> solution = solve(&gs);
 
-	fprintf(stderr,"1\n");
+	//fprintf(stderr,"1\n");
 	vector<string> movements(solution.size());
-	fprintf(stderr,"2\n");
+	//fprintf(stderr,"2\n");
 
 	// Output answer.
 
-	fprintf(stderr,"3\n");
+	//fprintf(stderr,"3\n");
 	// Return answer.
     return answer(solution);
 }
