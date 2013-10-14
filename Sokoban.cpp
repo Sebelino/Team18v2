@@ -68,7 +68,7 @@ string answer(vector<GameState*> path){
 }
 
 
-string sokoban(vector<vector<char> > board){
+vector<GameState*> solution(vector<vector<char> > board){
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
 		board[board.size()-1][i] = WALL;
@@ -96,6 +96,12 @@ string sokoban(vector<vector<char> > board){
 	// Output answer.
 	//fprintf(stderr,"3\n");
 	// Return answer.
-    return answer(solution);
+    return solution;
 }
+
+string sokoban(vector<vector<char> > board){
+    return answer(solution(board));
+}
+
+
 

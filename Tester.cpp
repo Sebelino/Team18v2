@@ -8,6 +8,8 @@
 #include "GameState.h"
 #include "Constants.h"
 #include "Sokoban.h"
+#include "DeadlockDetection.h"
+#include "Structs.h"
 
 using namespace std;
 
@@ -228,6 +230,16 @@ void verify(vector<vector<char> > board,bool detailed){
         }
     }else{
         outputBoard(finalBoard);
+    }
+}
+
+void testDeadlocks(vector<vector<char> > board){
+    cout << "Testing dynamic deadlocks...";
+    vector<GameState*> s = solution(board);
+    for(int i = 0;i < s.size();i++){
+        if(findDynamicDeadlocks(s[i],pos(0,0))){
+            cout << "GameState no. " << i << "contains dynamic deadlocks." << endl;
+        }
     }
 }
 

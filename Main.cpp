@@ -39,6 +39,8 @@ vector<vector<char> > readBoard(){
  * ./sokoban verify < maps/test
  * Verify that the solution to maps/test is correct (detailed):
  * ./sokoban verifyd < maps/test
+ * Test deadlocks:
+ * ./sokoban deadlocks < maps/test
  * Run the program normally:
  * ./sokoban < maps/test
  */
@@ -50,6 +52,8 @@ int main(int argc, char **argv) {
         verify(board,false);
     }else if(argc == 2 && argv[1] == string("verifyd")){
         verify(board,true);
+    }else if(argc == 2 && argv[1] == string("deadlocks")){
+        testDeadlocks(board);
     }else{
         cout << sokoban(board) << endl;
     }
