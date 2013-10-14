@@ -19,7 +19,7 @@ vector<vector<char> > readBoard(char &solFirst){
 		if (input == '\n') {
 			board.push_back(line);
 			line.clear();
-		} else if (input == 'U' || input == 'R' ||input == 'L' ||input == 'D') {
+		} else if (input == 'U'||input == 'R'||input == 'L'||input == 'D') {
 			solFirst = input;
 			return board;
 		} else {
@@ -40,25 +40,39 @@ vector<vector<char> > readBoard(char &solFirst){
 bool verify() {
 	char input = ' ';
     vector<vector<char> > board = readBoard(input);
-    
+
     if (input == ' ') {
     	//There was no solution input
     	fprintf(stderr, "No solution provided.\n");
     	return false;
     }
-	
+
 	// Create a first gamestate
 	GameState gs = GameState(board);
 	pos player = gs.player;
-
+	pos dir;
+	
 	//Start reading the solution
 	for (; input != EOF ;input = getchar()) {
-		gs.makeMove(direction(input));
+		//fprintf(stderr, "In for loop; input is now %c\n", input);
+		if (input != 'U' && input != 'R' && input != 'L' && input != 'D') {
+			//Non-move input. Could be space or newline
+			continue;
+		}
+		dir = direction(input);
+		//fprintf(stderr, "direction is %d %d\n", dir.x, dir.y);
+		gs.makeMove(dir);
 	}
 	
 	if (gs.isSolution()) {
+		fprintf(stderr, "Solution is correct!\n");
+		fprintf(stderr, "The final state looks like:\n");
+		cerr << gs;
 		return true;
 	} else {
+		fprintf(stderr, "Solution is not correct!\n");
+		fprintf(stderr, "The final state looks like:\n");
+		cerr << gs;
 		return false;
 	}
 }

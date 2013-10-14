@@ -72,7 +72,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	}
 	
 	//Detect dynamic deadlocks:
-	findDynamicDeadlocks(this, src.end);
+	findDynamicDeadlocks(this);
 	
     heuristicSmarter(*this);
 }
@@ -87,10 +87,8 @@ GameState::~GameState(){}
 // Returns true if the player managed to move, false otherwise.
 bool GameState::makeMove(pos dir) {
 	pos start = player+dir;
-	
-	char &c1 = board[start.y][start.x]; 
-	char &c2 = board[start.y+dir.y][start.x+dir.x];
-
+	char c1 = board[start.y][start.x]; 
+	char c2 = board[start.y+dir.y][start.x+dir.x];
 	if (c1 == WALL) {
 		//Cannot push a wall. Nothing happens.
 		return false;
@@ -100,24 +98,22 @@ bool GameState::makeMove(pos dir) {
 			//Cannot push a box onto an obstacle. Nothing happens.
 			return false;
 		}
-		
 		//Else, the box can be moved
 		if (c1 == BOX) {
-			c1 = FREE;
+			board[start.y][start.x] = FREE;
 		} else if (c1 == BOX_ON_GOAL) {
-			c1 = GOAL;
+			board[start.y][start.x] = GOAL;
 		}
 		if (c2 == GOAL) {
-			c2 = BOX_ON_GOAL;
+			board[start.y+dir.y][start.x+dir.x] = BOX_ON_GOAL;
 		} else if (c2 == FREE) {
-			c2 = BOX;
+			board[start.y+dir.y][start.x+dir.x] = BOX;
 		}
-		player = src.start;
+		player = start;
 		return true;	
 	}
-	
 	//Else, player walks onto c1, moving no boxes
-	player = src.start;
+	player = start;
 	return true;
 }
 

@@ -15,11 +15,12 @@ class GameState;
  * The function returns true if a deadlock is found.
  * Only local search is necessary.
  */
-bool findDynamicDeadlocks(GameState * gs, pos dst) {
+bool findDynamicDeadlocks(GameState * gs) {
+	pos dst = gs->src.end;
 	char chdest = gs->board[dst.y][dst.x];
-	if (chdest != BOX || chdest != BOX_ON_GOAL) {
+	if (chdest != BOX && chdest != BOX_ON_GOAL) {
 		//This shouldn't happen
-		fprintf(stderr, "Wrong pos parameter passed to findDynamicDeadlocks()\n");
+		fprintf(stderr, "Parameter error in findDynamicDeadlocks()\n");
 		return true;
 	}
 	
