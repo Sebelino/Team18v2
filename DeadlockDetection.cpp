@@ -16,7 +16,7 @@ class GameState;
  * Only local search is necessary.
  */
 bool findDynamicDeadlocks(GameState * gs) {
-	pos dst = gs->src.end;
+	pos dst = gs->player;
 	char chdest = gs->board[dst.y][dst.x];
 	if (chdest != BOX && chdest != BOX_ON_GOAL) {
 		//This shouldn't happen
