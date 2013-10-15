@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <string>
 #include <set>
-#include <omp.h>
+//#include <omp.h>
 #include <sstream>
 #include <iterator>
 #include <queue>
@@ -11,7 +11,7 @@
 #include <list>
 #include "GameState.h"
 #include "Constants.h"
-#include "Heuristics.h"
+//#include "Heuristics.h"
 #include "DeadlockDetection.h"
 
 using namespace std;
@@ -45,7 +45,8 @@ GameState::GameState(vector<vector<char> > b) {
 	src = s;
     parent = NULL;
     findStaticDeadLocks(board);
-	heuristicEvenBetter(*this);
+	score = 0;
+	//heuristicEvenBetter(*this);
 	
 }
 
@@ -72,26 +73,18 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 		board[src.end.y][src.end.x] = BOX;
 	}
 
-	//Detect dynamic deadlocks:
-	//if(findDynamicDeadlocks(this,src.end))
-	//	score = -10000000;
-
-
 	//else
-		heuristicEvenBetter(*this);
+	//double start = omp_get_wtime();
+	//findDynamicDeadlocks(this,src.end);
+	//double end = omp_get_wtime();
+	//cerr << "Deadlock detection took " << (end-start )* 1000000 << endl;
 
-	//else
-	double start = omp_get_wtime();
-	findDynamicDeadlocks(this,src.end);
-	double end = omp_get_wtime();
-	cerr << "Deadlock detection took " << (end-start )* 1000000 << endl;
+	//start = omp_get_wtime();
 
-	start = omp_get_wtime();
+	//heuristicEvenBetter(*this);
 
-	heuristicEvenBetter(*this);
-
-	end = omp_get_wtime();
-	cerr << "Heuristic took " << (end-start )* 1000000 << endl;
+	//end = omp_get_wtime();
+	//cerr << "Heuristic took " << (end-start )* 1000000 << endl;
 
 }
 

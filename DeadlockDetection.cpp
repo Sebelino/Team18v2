@@ -23,8 +23,13 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		fprintf(stderr, "Parameter error in findDynamicDeadlocks()\n");
 		return true;
 	}
+
+	if (chdest == BOX_ON_GOAL) {
+		//Cannot handle these cases yet, return false for now (TODO)
+		return false;
+	}
 	
-	pos curDir;
+	pos curDir = dst-gs->src.start;
 	std::vector<pos> directions;
 	directions.push_back(pos(1,0));
 	directions.push_back(pos(1,1));
@@ -34,197 +39,209 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	directions.push_back(pos(-1,-1));
 	directions.push_back(pos(0,-1));
 	directions.push_back(pos(1,-1));
-	char c1, c2, c3, c4, c5, c6, c7, c8, c9;
+	pos refPos;
 	
-	//First test. Find certain types of deadlocks.
-	for (int i = 0;i<8;i+=2) {
-		curDir = directions[i];
-		c1 = gs->board[dst.y+curDir.y][dst.x+curDir.x];
-		if (c1 == BOX || c1 == BOX_ON_GOAL || c1 == WALL) {
-			//If there is a neighboring obstacle
-			c1 = gs->board[dst.y+curDir.x][dst.x+curDir.y];
-			c2 = gs->board[dst.y-curDir.x][dst.x-curDir.y];
-			c3 = gs->board[dst.y+curDir.x+curDir.y][dst.x+curDir.y+curDir.x];
-			c4 = gs->board[dst.y-curDir.x-curDir.y][dst.x-curDir.y-curDir.x];
-			if ((c1 == WALL || c2 == WALL) && (c3 == WALL || c4 == WALL)) {
-				//Deadlock found!
+	int a, b;
+	char c[4][5];
+	
+	
+	for (int i = -2;i<=1;i++) {
+		fprintf(stderr,"i is: %d\n", i);
+		for (int j = -2;j<=2;j++) {
+			fprintf(stderr,"j is: %i\n", j);
+			a = dst.y-i*curDir.y-j*curDir.x;
+			b = dst.x-i*curDir.x-j*curDir.y;
+			if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+				c[i][j] = WALL;
+			} else {
+				c[i][j] = gs->board[a][b];
+			}
+		}
+	}
+	
+	/*
+	if (curDir == pos(0,1)) {	//If last move was downwards
+		refPos = pos(dst.x+2 , dst.y+2);
+		for (int i = 0;i<4;i++) {
+			for (int j = 0;j<5;j++) {
+				a = refPos.y+3-i;
+				b = refPos.x+4-j;
+				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+					c[a][b] = WALL;
+				} else {
+					c[a][b] = gs->board[a][b];
+				}
+			}
+		}
+	} else if (curDir == pos(0,-1)) {	//If last move was upwards
+		refPos = pos(dst.x-2, dst.y-2);
+		for (int i = 0;i<4;i++) {
+			for (int j = 0;j<5;j++) {
+				a = refPos.y+i;
+				b = refPos.x+j;
+				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+					c[a][b] = WALL;
+				} else {
+					c[a][b] = gs->board[a][b];
+				}
+			}
+		}		
+	} else if (curDir == pos(1,0)) {	//If last move was to the right
+		refPos = pos(dst.x+2 , dst.y-2);
+		for (int i = 0;i<4;i++) {
+			for (int j = 0;j<5;j++) {
+				a = refPos.x+4-j;
+				b = refPos.y+3-i;
+				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+					c[a][b] = WALL;
+				} else {
+					c[a][b] = gs->board[a][b];
+				}
+			}
+		}			
+	} else if (curDir == pos(-1,0)) {	//If last move was to the left
+		refPos = pos(dst.x-2 , dst.y+2);
+		for (int i = 0;i<4;i++) {
+			for (int j = 0;j<5;j++) {
+				a = refPos.x+4-j;
+				b = refPos.y+3-i;
+				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+					c[a][b] = WALL;
+				} else {
+					c[a][b] = gs->board[a][b];
+				}
+			}
+		}		
+	}*/
+	
+	
+	//First test. Detect 2x2 deadlock patterns.
+	if (c[1][3] == FREE || c[1][3] == GOAL) {
+		//Cannot be 2x2 deadlock pattern
+	} else {
+		if (((c[1][1] == WALL) + (c[2][1] == WALL) + (c[1][3] == WALL) + (c[2][3] == WALL)) > 1) {
+			//Deadlock found
+			return true;
+		} else {
+			if (c[1][1] != GOAL && c[1][1] != FREE && c[2][1] != GOAL && c[2][1] != FREE) {
+				return true;
+			}
+			if (c[1][2] != GOAL && c[1][2] != FREE && c[1][3] != GOAL && c[1][3] != FREE) {
 				return true;
 			}
 		}
 	}
 	
+	
 	//New attempt at 3x3 deadlock pattern detection
-	curDir = dst-gs->src.start;
-	c1 = gs->board[dst.y+curDir.x][dst.x+curDir.y];
-	c3 = gs->board[dst.y-curDir.x][dst.x-curDir.y];
-
-	if ((c1 == GOAL || c1 == FREE) && (c3 == GOAL || c3 == FREE)) {
+	if ((c[2][1] == GOAL || c[2][1] == FREE) && (c[2][3] == GOAL || c[2][3] == FREE)) {
 		//Likely not a deadlock, although not certain (TODO)
 		//return false for now
 		return false;
 	}
-	
-	c5 = gs->board[dst.y+curDir.y*2][dst.x+curDir.x*2];
-	if (c5 == FREE || c5 == GOAL || c5 == DEADLOCK) {
+
+	if (c[1][2] == FREE || c[1][2] == GOAL || c[1][2] == DEADLOCK) {
 		//Only possible deadlock is with dst as bottom middle tile
-		c4 = gs->board[dst.y+curDir.x+curDir.y*2][dst.x+curDir.y+curDir.x*2];
-		if (c4 == FREE || c4 == GOAL) {
+		if (c[1][1] == FREE || c[1][1] == GOAL) {
 			return false;
 		}
-		c6 = gs->board[dst.y-curDir.x+curDir.y*2][dst.x-curDir.y+curDir.x*2];
-		if (c6 == FREE || c6 == GOAL) {
+		if (c[1][3] == FREE || c[1][3] == GOAL) {
 			return false;
 		}
-		try {
-			c8 = gs->board[dst.y+curDir.y*3][dst.x+curDir.x*3];
-		} catch (Exception e) {
-			//Out of bounds
-			c8 = WALL;
-		}
-		if (c8 == FREE || c8 == GOAL) {
+		if (c[0][2] == FREE || c[0][2] == GOAL) {
 			return false;
 		}
 		
 		//All non-corner edges are obstacles.
-		
-		
-		
-		
-		
-	} else {
-		//TODO
-		//c4 = gs->board[dst.y+curDir.x+curDir.y*2][dst.x+curDir.y+curDir.x*2];
-		//c6 = gs->board[dst.y-curDir.x+curDir.y*2][dst.x-curDir.y+curDir.x*2];
-		
-	
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	if (c1 == GOAL || c1 == FREE) {
-		//c3 must be an obstacle
-		c5 = gs->board[dst.y+curDir.y*2][dst.x+curDir.x*2];
-		c6 = gs->board[dst.y-curDir.x+curDir.y*2][dst.x-curDir.y+curDir.x*2];
-		
-		if (c5 == FREE) {
-			//dst cannot be corner box of a deadlock pattern
-			if (c6 == FREE || c6 == GOAL) {
-				//No deadlock
-				return false;
-			}
-			c4 = gs->board[dst.y+curDir.x+curDir.y*2][dst.x+curDir.y+curDir.x*2];
-			c8 = gs->board[dst.y+curDir.y*3][dst.x+curDir.x*3];
-			if (c4 == FREE || c4 == GOAL || c8 == FREE || c8 == GOAL) {
-				//No deadlock
-				return false;
-			}
-
-			c7 = gs->board[dst.y+curDir.x+curDir.y*3][dst.x+curDir.y+curDir.x*3];
-			c9 = gs->board[dst.y-curDir.x+curDir.y*3][dst.x-curDir.y+curDir.x*3];
-			
-			if (c7 == FREE || c7 == GOAL) {
-				if (c9 == FREE || c9 == GOAL) {
-					if (c4 == WALL && c8 == WALL) {
-						return true;
-					}
-					//No deadlock
+		if (c[2][1] == FREE || c[2][1] == GOAL) {
+			//c3 is an obstacle
+			if (c[0][1] == FREE || c[0][1] == GOAL) {
+				if (c[1][1] != WALL)	 {
+					//Box in c[1][1] can move vertically
 					return false;
 				} else {
-					if (c4 == WALL) {
-						return true;
-					}
-					return false;
-				}
-				
-			}
-		} else { //If c5 is an obstacle
-			
-		}
-	
-	}
-	*/
-
-	/*
-	//Second test. Test for 3x3 deadlock patterns
-	pos nC, nE;
-
-	string s;
-	s.reserve(9);
-	for (int i = 0;i<8;i++) {
-		nC = dst+directions[i];
-		for (int j = 0;j<8;j++) {
-			nE = dst+curDir+directions[j];
-			if (nE.y >= gs->board.size() || nE.y < 0) {
-				s.push_back(WALL);
-			} else if (nE.x >= gs->board[nE.y].size() || nE.x < 0) {
-				s.push_back(WALL);
-			} else {
-				s.push_back(gs->board[nE.y][nE.x]);
-			}
-		}
-		s.push_back(gs->board[nC.y][nC.x]);
-		
-		//DETECT DEADLOCKS IN THIS AREA
-		
-		if (s[8] != GOAL) {
-			bool cornersQualify = false;
-			bool edgesQualify = false;
-			
-			if (s[1] == WALL || s[1] == BOX || s[1] == BOX_ON_GOAL) {
-				if (s[3] == WALL || s[3] == BOX || s[3] == BOX_ON_GOAL) {
-					if (s[5] == WALL || s[5] == BOX || s[5] == BOX_ON_GOAL) {
-						if (s[7] == WALL || s[7] == BOX || s[7] == BOX_ON_GOAL) {
-							edgesQualify = true;
+					if (c[0][3] == FREE || c[0][3] == GOAL) {
+						if (c[0][2] == WALL) {
+							return true;
+						} else {
+							return false;
 						}
+					} else {
+						return false;
 					}
 				}
+			} else {
+				//Deadlock
+				return true;
 			}
-			
-			if ((s[0] == WALL || s[0] == BOX || s[0] == BOX_ON_GOAL) && (s[4] == WALL || s[4] == BOX || s[4] == BOX_ON_GOAL)) {
-				cornersQualify = true;
-			}
-			if ((s[2] == WALL || s[2] == BOX || s[2] == BOX_ON_GOAL) && (s[6] == WALL || s[6] == BOX || s[6] == BOX_ON_GOAL)) {
-				cornersQualify = true;
-			}
-			
-			
-			if ((s[0] == WALL || s[0] == BOX || s[0] == BOX_ON_GOAL) && (s[2] == WALL || s[2] == BOX || s[2] == BOX_ON_GOAL)) {
-				if (s[5] == WALL) {
-					cornersQualify = true;
+		} else {
+			//c1 is an obstacle
+			if (c[0][3] == FREE || c[0][3] == GOAL) {
+				if (c[1][3] != WALL)	 {
+					//Box in c4 can move vertically
+					return false;
+				} else {
+					if (c[0][1] == FREE || c[0][1] == GOAL) {
+						if (c[0][2] == WALL) {
+							return true;
+						} else {
+							return false;
+						}
+					} else {
+						return false;
+					}
 				}
-			}
-			if ((s[2] == WALL || s[2] == BOX || s[2] == BOX_ON_GOAL) && (s[4] == WALL || s[4] == BOX || s[4] == BOX_ON_GOAL)) {
-				if (s[7] == WALL) {
-					cornersQualify = true;
-				}
-			}
-			if ((s[4] == WALL || s[4] == BOX || s[4] == BOX_ON_GOAL) && (s[6] == WALL || s[6] == BOX || s[6] == BOX_ON_GOAL)) {
-				if (s[1] == WALL) {
-					cornersQualify = true;
-				}
-			}
-			if ((s[6] == WALL || s[6] == BOX || s[6] == BOX_ON_GOAL) && (s[0] == WALL || s[0] == BOX || s[0] == BOX_ON_GOAL)) {
-				if (s[3] == WALL) {
-					cornersQualify = true;
-				}
-			}
-			
-			if (cornersQualify && edgesQualify) {
-				//Found deadlock
+			} else {
+				//Deadlock
 				return true;
 			}
 		}
-		s.clear();
+	} else {
+		//TODO
+		//dst can be bottom corner box or side middle
+		if (c[2][1] == FREE || c[2][1] == GOAL) {
+			//c[2][3] must be obstacle. dst can be bottom left
+			
+			if (c[0][3] == FREE || c[0][3] == GOAL) {
+				//Cannot be deadlock
+				return false;
+			}
+			if (c[1][4] == FREE || c[1][4] == GOAL) {
+				//Cannot be deadlock
+				return false;
+			}
+			if (c[0][4] == FREE || c[0][4] == GOAL) {
+				if (c[1][4] == WALL || (c[2][4] != FREE && c[0][2] != GOAL)) {
+					if ((c[0][3] == WALL) || (c[0][2] != FREE && c[0][2] != GOAL)) {
+						return true;
+					}
+				}
+			} else {
+				return true;
+			}
+		} else {
+			//c[2][1] must be obstacle. dst can be bottom right
+			
+			if (c[0][1] == FREE || c[0][1] == GOAL) {
+				//Cannot be deadlock
+				return false;
+			}
+			if (c[1][0] == FREE || c[1][0] == GOAL) {
+				//Cannot be deadlock
+				return false;
+			}
+			if (c[0][0] == FREE || c[0][0] == GOAL) {
+				if (c[1][0] == WALL || (c[2][0] != FREE && c[0][2] != GOAL)) {
+					if ((c[0][1] == WALL) || (c[0][2] != FREE && c[0][2] != GOAL)) {
+						return true;
+					}
+				}
+			} else {
+				return true;
+			}
+		}
 	}
-	*/
-	
+
 	//If no deadlocks were found: return false.
 	return false;
 }
@@ -351,16 +368,6 @@ wallUp:
     			}
     		}
     		
-    		/*
-			fprintf(stderr, "After partly detecting deadlocks:\n");
-			for(int l = 0;l < map.size();l++){
-				for(int m = 0;m < map[i].size();m++){
-					fprintf(stderr, "%c", map[l][m]);
-				}
-				fprintf(stderr, "\n");
-			}
-			*/
-    		
         }
     }
     
@@ -371,8 +378,7 @@ wallUp:
         	}
         }
     }
-	
-    
+
     //Debug print with deadlocks
     /*fprintf(stderr, "After detecting deadlocks:\n");
 	for(int i = 0;i < map.size();i++){
