@@ -243,3 +243,11 @@ void testDeadlocks(vector<vector<char> > board){
     }
 }
 
+void testMaps(){
+    verify(readFile("inmaps/test000.in"),false);
+    verify(readFile("inmaps/test001.in"),false);
+    verify(readFile("inmaps/test002.in"),false);
+    verify(readFile("inmaps/test003.in"),false);
+    verify(readFile("inmaps/test004.in"),false);
+}
+

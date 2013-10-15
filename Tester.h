@@ -5,4 +5,5 @@
 void unitTest();
 void verify(std::vector<std::vector<char> > board,bool detailed);
 void testDeadlocks(std::vector<std::vector<char> > board);
+void testMaps();
 #endif
