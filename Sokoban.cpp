@@ -3,12 +3,22 @@
 #include <vector>
 #include <cstdio>
 #include <ctime>
+
 #include <queue>
 #include <map>
 #include <algorithm>
 #include "GameState.h"
 #include "Constants.h"
 #include "PathFinding.h"
+#include "Heuristics.h"
+
+
+//uncomment the line below to measure time, works in VS.
+//other than that please dont touch these macros.
+//#define MEASURE_TIME_YES
+#ifdef MEASURE_TIME_YES
+#include <omp.h>
+#endif
 
 using namespace std;
 
@@ -28,12 +38,36 @@ vector<GameState*> solve(GameState * gs) {
 
 	queue.push(gs);
 
+#ifdef MEASURE_TIME_YES
+	double findNextMovesTime = 0;
+	double hashingTime = 0;
+	double heuristicTime = 0;
+	int numGameStatesVisited = 0;
+#endif
+
 	while(!queue.empty()) {
 		GameState* next = queue.top(); 
 		queue.pop();
 
+		//cerr << "NEXT GAMESTATE IS " << endl;
+		//cerr << *next;
+#ifdef MEASURE_TIME_YES
+		numGameStatesVisited++;
+#endif
+
+
 		if(next->isSolution()) {
 			//Solution found. Return the GameStates in order.
+#ifdef MEASURE_TIME_YES
+			cerr << "Solution found! Total time taken for each task: " << endl 
+				<< "FindNextMoves: " << findNextMovesTime << endl
+				<< "Hashing and inserting: " << hashingTime << endl
+				<< "Heuristics: " << heuristicTime << endl 
+				<< "We have searched num gamestates: " << numGameStatesVisited << endl;
+#endif
+				
+
+
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
@@ -43,8 +77,14 @@ vector<GameState*> solve(GameState * gs) {
 			}
 			return retv;
 		}
-		
+#ifdef MEASURE_TIME_YES
+		double start = omp_get_wtime();
+#endif
 		vector<GameState*> nextMoves = next->findNextMoves();
+#ifdef MEASURE_TIME_YES
+		double end = omp_get_wtime();
+		findNextMovesTime += (end-start);
+#endif
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState* g = *it;
@@ -67,6 +107,7 @@ vector<GameState*> solve(GameState * gs) {
 	}
 	
 	//if we are here, something is wrong.
+	cerr << "Answer not found " << endl;
 	return vector<GameState*>();
 }
 
@@ -115,7 +156,21 @@ vector<GameState*> solution(vector<vector<char> > board){
 }
 
 string sokoban(vector<vector<char> > board){
+#ifdef MEASURE_TIME_YES
+	double start = omp_get_wtime();
+	vector<GameState*> ans = solution(board);
+	double end = omp_get_wtime();
+	cerr << "Finding answer took " << (end-start )<< endl;
+
+	start = omp_get_wtime();
+	string s = answer(ans);
+	end = omp_get_wtime();
+	cerr << "Lapping ihop answer took " << (end-start ) << endl;
+
+	return s;
+#else
     return answer(solution(board));
+#endif
 }
 
 
