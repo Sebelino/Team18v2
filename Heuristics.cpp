@@ -8,6 +8,10 @@ using namespace std;
 
 
 void heuristicEvenBetter(GameState& g) {
+	bool debug = false;
+
+	if(debug)
+		cerr << "=========================" << endl;
 	vector<pos> boxes;
 	vector<pos> goals;
 	vector<int> binds; //each index is the goal which is bound to the box which is the value of that index.
@@ -32,49 +36,56 @@ void heuristicEvenBetter(GameState& g) {
 		}
 	}
 
+	
 	numPairs = goals.size();
-
+	//for(int i = 0; i < numPairs; i++) {
+		//score += heuristicDistance(goals[i],boxes[i]);
+	//}
+	
 	//do the initial assignment, start from the goal side.
 	vector<vector<int> > dists(numPairs);
 
-
-	//initialization vector, initialize to false
-	vector<bool> assigned(numPairs);
-	for(int i = 0; i < numPairs; i++) {
-		assigned[i] = false;
-	}
-
 	for(int i = 0; i < numPairs; i++) {
 		pos& goal = goals[i];
-		int shortestDist = 100000000;
-		int shortestIndex = 0;
 		for(int j = 0; j < numPairs; j++) {
-			int dist = heuristicDistance(goal,boxes[j]);
-			dists[i].push_back(dist);
-			score += dist;
-			if(dist < shortestDist && !assigned[j]) {
-				shortestDist = dist;
-				shortestIndex = j;
-			}
+			dists[i].push_back(heuristicDistance(goal,boxes[j]));
+			
 		}
-		binds.push_back(shortestIndex);
-		assigned[shortestIndex] = true;
+		binds.push_back(i);
+		score += dists[i][i];
 	}
 
 	//initial assignments done. Now improve it.
 
 	//note that this is not guranteed to give a 100% perfect assignment. However, it should be pretty good.
-
+	
 	int numIterations = numPairs/2; //number of times we will improve our bindings at maximum.
 								  //note that during each iteration
+
+	if(debug) {
+		cerr << "Current score is " << score;
+		cerr << "Number of pairs is " << numPairs << endl;
+		for(int i = 0; i < numPairs;i++) {
+			cerr << "Initial bounds : (" << goals[i].x << "," << goals[i].y << ")-(" << boxes[i].x << "," <<boxes[i].y << ")" << endl;
+		}
+	}
+
+	bool *changes = new bool[numPairs];
+
 	for(int iter = 0; iter < numIterations; iter++) {
 
 		//int variant = numIterations%2;
+		bool changeFound = false;
 		
 		for(int i = 0; i < numPairs; i++) {
-
+			changes[i] = false;
+		}
+		
+		for(int i = 0; i < numPairs; i++) {
+			bool localChange = false;
 			//the other pair to try and swap with
 			for(int j = 0; j < numPairs; j++) {
+				if(!(j < i && !changes[j]))
 				if(i != j) { //dont try and swap with self
 					//pos& gp = goals[i];
 					//pos& bp = boxes[binds[i]];
@@ -84,8 +95,12 @@ void heuristicEvenBetter(GameState& g) {
 
 					int curDist = dists[i][binds[i]] + dists[j][binds[j]];
 					int newDist = dists[i][binds[j]] + dists[j][binds[i]];
+					if(debug)
+						cerr << "cureDist " << curDist << ", newDist " << newDist << endl;
 
 					if(newDist < curDist) {
+						localChange = true;
+						changeFound = true;
 						//then swap
 						//swap binds
 						int tmp = binds[i];
@@ -95,20 +110,41 @@ void heuristicEvenBetter(GameState& g) {
 						//update total score
 						score = score - (curDist - newDist);
 
+						if(debug)
+							cerr << "Updating score to " << score << endl;
+
 					}
 				}
 			}
+			if(localChange) {
+				changes[i] = true;
+			}
+
 		}
+		if(!changeFound)
+			break;
 	}
 
-	score += aStarDistance(g);
-
-
+	delete changes;
+	//cerr << "Heuristic score is " << score << endl;
+	//cerr << "Heuristic distance is " << aStarDistance(g) << endl;
+	//score += aStarDistance(g);
+	/*
+	if(g.parent != NULL) {
+		if(g.src.start == g.parent->src.end)  {//same box
+			score -= 30;
+			cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
+				<< g.parent->src.end.x << g.parent->src.end.y << endl;
+		}
+	}*/
+	if(debug)
+		cerr << "final score is " << score << endl;
+	
 	g.score = -score;
 }
 
 int aStarDistance(GameState& g) {
-	return g.depth*1.5;
+	return g.depth/8;
 }
 
 /*
@@ -273,11 +309,11 @@ bool isBoxWall(GameState& g, int i, int j) {
 
 int heuristicDistance(const pos& p1, const pos& p2) {
 	int dist = abs(p1.x-p2.x)+abs(p1.y-p2.y);
-	int extra_dist = 0;
-	if(dist >= DIM_RETURN_DISTANCE)
-		extra_dist = _DRA[DIM_RETURN_DISTANCE-1];
-	else
-		extra_dist = _DRA[dist];
-	return dist+extra_dist;
+	//int extra_dist = 0;
+	//if(dist >= DIM_RETURN_DISTANCE)
+	//	extra_dist = _DRA[DIM_RETURN_DISTANCE-1];
+	//else
+	//	extra_dist = _DRA[dist];
+	//return dist+extra_dist;
 	return dist;
 }
