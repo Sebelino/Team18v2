@@ -75,7 +75,12 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 
 	//else
 	//double start = omp_get_wtime();
-	//findDynamicDeadlocks(this,src.end);
+	
+	if (findDynamicDeadlocks(this,src.end)) {
+		fprintf(stderr,"Deadlock found! In:\n");
+		cerr << *this;
+	}
+	
 	//double end = omp_get_wtime();
 	//cerr << "Deadlock detection took " << (end-start )* 1000000 << endl;
 

@@ -9,6 +9,32 @@ using namespace std;
 
 class GameState;
 
+bool isObstacle(char c) {
+	switch (c) {
+		case FREE:
+		case DEADLOCK:
+		case GOAL:
+			return false;
+		case BOX:
+		case BOX_ON_GOAL:
+		case WALL:
+			return true;
+	}
+}
+
+bool isOpen(char c) {
+	switch (c) {
+		case GOAL:
+		case FREE:
+		case DEADLOCK:
+			return true;
+		case BOX:
+		case BOX_ON_GOAL:
+		case WALL:
+			return false;
+	}
+}
+
 /**
  * Detects dynamic deadlocks on the map, caused by moving boxes. 
  * If a dynamic deadlock is found, the game is over.
@@ -17,6 +43,9 @@ class GameState;
  */
 bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	//pos dst = gs->src.end;
+	//cerr << *gs;
+	//fprintf(stderr, "dst is %d, %d\n", dst.x, dst.y);
+	
 	char chdest = gs->board[dst.y][dst.x];
 	if (chdest != BOX && chdest != BOX_ON_GOAL) {
 		//This shouldn't happen
@@ -44,11 +73,11 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	int a, b;
 	char c[4][5];
 	
-	
+	/*
 	for (int i = -2;i<=1;i++) {
-		fprintf(stderr,"i is: %d\n", i);
+		//fprintf(stderr,"i is: %d\n", i);
 		for (int j = -2;j<=2;j++) {
-			fprintf(stderr,"j is: %i\n", j);
+			//fprintf(stderr,"j is: %i\n", j);
 			a = dst.y-i*curDir.y-j*curDir.x;
 			b = dst.x-i*curDir.x-j*curDir.y;
 			if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
@@ -57,110 +86,124 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 				c[i][j] = gs->board[a][b];
 			}
 		}
-	}
+	}*/
 	
-	/*
 	if (curDir == pos(0,1)) {	//If last move was downwards
+		//fprintf(stderr,"Downwards move\n");
 		refPos = pos(dst.x+2 , dst.y+2);
 		for (int i = 0;i<4;i++) {
 			for (int j = 0;j<5;j++) {
-				a = refPos.y+3-i;
-				b = refPos.x+4-j;
+				a = refPos.y-i;
+				b = refPos.x-j;
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
-					c[a][b] = WALL;
+					c[i][j] = WALL;
 				} else {
-					c[a][b] = gs->board[a][b];
+					c[i][j] = gs->board[a][b];
 				}
 			}
 		}
 	} else if (curDir == pos(0,-1)) {	//If last move was upwards
+		//fprintf(stderr,"Upwards move\n");
 		refPos = pos(dst.x-2, dst.y-2);
 		for (int i = 0;i<4;i++) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y+i;
 				b = refPos.x+j;
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
-					c[a][b] = WALL;
+					c[i][j] = WALL;
 				} else {
-					c[a][b] = gs->board[a][b];
+					c[i][j] = gs->board[a][b];
 				}
 			}
 		}		
 	} else if (curDir == pos(1,0)) {	//If last move was to the right
+		//fprintf(stderr,"Rightwards move\n");
 		refPos = pos(dst.x+2 , dst.y-2);
 		for (int i = 0;i<4;i++) {
 			for (int j = 0;j<5;j++) {
-				a = refPos.x+4-j;
-				b = refPos.y+3-i;
+				a = refPos.y+j;
+				b = refPos.x-i;
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
-					c[a][b] = WALL;
+					c[i][j] = WALL;
 				} else {
-					c[a][b] = gs->board[a][b];
+					c[i][j] = gs->board[a][b];
 				}
 			}
 		}			
 	} else if (curDir == pos(-1,0)) {	//If last move was to the left
+		//fprintf(stderr,"Leftwards move\n");
 		refPos = pos(dst.x-2 , dst.y+2);
 		for (int i = 0;i<4;i++) {
 			for (int j = 0;j<5;j++) {
-				a = refPos.x+4-j;
-				b = refPos.y+3-i;
+				a = refPos.y-j;
+				b = refPos.x+i;
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
-					c[a][b] = WALL;
+					c[i][j] = WALL;
 				} else {
-					c[a][b] = gs->board[a][b];
+					c[i][j] = gs->board[a][b];
 				}
 			}
 		}		
+	}
+	
+	/*
+	fprintf(stderr,"The contents are:\n");
+	for (int i = 0;i<4;i++) {
+		for (int j = 0;j<5;j++) {
+			//Print everything
+			fprintf(stderr,"%c", c[i][j]);
+		}
+		fprintf(stderr,"\n");
 	}*/
-	
-	
+
+	/*
 	//First test. Detect 2x2 deadlock patterns.
-	if (c[1][3] == FREE || c[1][3] == GOAL) {
-		//Cannot be 2x2 deadlock pattern
-	} else {
-		if (((c[1][1] == WALL) + (c[2][1] == WALL) + (c[1][3] == WALL) + (c[2][3] == WALL)) > 1) {
+	if (isObstacle(c[1][2])) {
+		if (((c[1][1] == WALL) + (c[2][1] == WALL) + (c[1][3] == WALL) + (c[2][3] == WALL)) > 2) {
 			//Deadlock found
+			fprintf(stderr, "Returned true from here, 1\n");
 			return true;
 		} else {
-			if (c[1][1] != GOAL && c[1][1] != FREE && c[2][1] != GOAL && c[2][1] != FREE) {
+			if (isObstacle(c[1][1]) && isObstacle(c[2][1])) {
+				//fprintf(stderr, "Returned true from here, 2\n");
 				return true;
 			}
-			if (c[1][2] != GOAL && c[1][2] != FREE && c[1][3] != GOAL && c[1][3] != FREE) {
+			if (isObstacle(c[1][3]) && isObstacle(c[2][3])) {
+				//fprintf(stderr, "Returned true from here, 3\n");
 				return true;
 			}
 		}
-	}
-	
+	}*/
 	
 	//New attempt at 3x3 deadlock pattern detection
-	if ((c[2][1] == GOAL || c[2][1] == FREE) && (c[2][3] == GOAL || c[2][3] == FREE)) {
+	if (isOpen(c[2][1]) && isOpen(c[2][3])) {
 		//Likely not a deadlock, although not certain (TODO)
 		//return false for now
 		return false;
 	}
 
-	if (c[1][2] == FREE || c[1][2] == GOAL || c[1][2] == DEADLOCK) {
+	
+	if (c[1][2] == FREE || c[1][2] == DEADLOCK) {
 		//Only possible deadlock is with dst as bottom middle tile
-		if (c[1][1] == FREE || c[1][1] == GOAL) {
+		if (isOpen(c[1][1])) {
 			return false;
 		}
-		if (c[1][3] == FREE || c[1][3] == GOAL) {
+		if (isOpen(c[1][3])) {
 			return false;
 		}
-		if (c[0][2] == FREE || c[0][2] == GOAL) {
+		if (isOpen(c[0][2])) {
 			return false;
 		}
 		
 		//All non-corner edges are obstacles.
-		if (c[2][1] == FREE || c[2][1] == GOAL) {
+		if (isOpen(c[2][1])) {
 			//c3 is an obstacle
-			if (c[0][1] == FREE || c[0][1] == GOAL) {
+			if (isOpen(c[0][1])) {
 				if (c[1][1] != WALL)	 {
 					//Box in c[1][1] can move vertically
 					return false;
 				} else {
-					if (c[0][3] == FREE || c[0][3] == GOAL) {
+					if (isOpen(c[0][3])) {
 						if (c[0][2] == WALL) {
 							return true;
 						} else {
@@ -176,12 +219,12 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			}
 		} else {
 			//c1 is an obstacle
-			if (c[0][3] == FREE || c[0][3] == GOAL) {
+			if (isOpen(c[0][3])) {
 				if (c[1][3] != WALL)	 {
 					//Box in c4 can move vertically
 					return false;
 				} else {
-					if (c[0][1] == FREE || c[0][1] == GOAL) {
+					if (isOpen(c[0][1])) {
 						if (c[0][2] == WALL) {
 							return true;
 						} else {
@@ -199,20 +242,20 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	} else {
 		//TODO
 		//dst can be bottom corner box or side middle
-		if (c[2][1] == FREE || c[2][1] == GOAL) {
+		if (isOpen(c[2][1])) {
 			//c[2][3] must be obstacle. dst can be bottom left
 			
-			if (c[0][3] == FREE || c[0][3] == GOAL) {
+			if (isOpen(c[0][3])) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (c[1][4] == FREE || c[1][4] == GOAL) {
+			if (isOpen(c[1][4])) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (c[0][4] == FREE || c[0][4] == GOAL) {
-				if (c[1][4] == WALL || (c[2][4] != FREE && c[0][2] != GOAL)) {
-					if ((c[0][3] == WALL) || (c[0][2] != FREE && c[0][2] != GOAL)) {
+			if (isOpen(c[0][4])) {
+				if (c[1][4] == WALL || isObstacle(c[2][4])) {
+					if ((c[0][3] == WALL) || isObstacle(c[0][2])) {
 						return true;
 					}
 				}
@@ -222,17 +265,17 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		} else {
 			//c[2][1] must be obstacle. dst can be bottom right
 			
-			if (c[0][1] == FREE || c[0][1] == GOAL) {
+			if (isOpen(c[0][1])) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (c[1][0] == FREE || c[1][0] == GOAL) {
+			if (isOpen(c[1][0])) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (c[0][0] == FREE || c[0][0] == GOAL) {
-				if (c[1][0] == WALL || (c[2][0] != FREE && c[0][2] != GOAL)) {
-					if ((c[0][1] == WALL) || (c[0][2] != FREE && c[0][2] != GOAL)) {
+			if (isOpen(c[0][0])) {
+				if (c[1][0] == WALL || isObstacle(c[2][0])) {
+					if ((c[0][1] == WALL) || isObstacle(c[0][2])) {
 						return true;
 					}
 				}
@@ -241,7 +284,8 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			}
 		}
 	}
-
+	
+	
 	//If no deadlocks were found: return false.
 	return false;
 }
