@@ -129,14 +129,15 @@ int heuristicEvenBetter(GameState& g) {
 	//cerr << "Heuristic score is " << score << endl;
 	//cerr << "Heuristic distance is " << aStarDistance(g) << endl;
 	score += aStarDistance(g);
-	/*
+
 	if(g.parent != NULL) {
 		if(g.src.start == g.parent->src.end)  {//same box
-			score -= 30;
+			score = score/2;
+			if(debug)
 			cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
 				<< g.parent->src.end.x << g.parent->src.end.y << endl;
 		}
-	}*/
+	}
 	if(debug)
 		cerr << "final score is " << score << endl;
 	
