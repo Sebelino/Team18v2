@@ -34,7 +34,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	directions.push_back(pos(-1,-1));
 	directions.push_back(pos(0,-1));
 	directions.push_back(pos(1,-1));
-	char c1, c2, c3, c4;
+	char c1, c2, c3, c4, c5, c6, c7, c8, c9;
 	
 	//First test. Find certain types of deadlocks.
 	for (int i = 0;i<8;i+=2) {
@@ -53,6 +53,105 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		}
 	}
 	
+	//New attempt at 3x3 deadlock pattern detection
+	curDir = dst-gs->src.start;
+	c1 = gs->board[dst.y+curDir.x][dst.x+curDir.y];
+	c3 = gs->board[dst.y-curDir.x][dst.x-curDir.y];
+
+	if ((c1 == GOAL || c1 == FREE) && (c3 == GOAL || c3 == FREE)) {
+		//Likely not a deadlock, although not certain (TODO)
+		//return false for now
+		return false;
+	}
+	
+	c5 = gs->board[dst.y+curDir.y*2][dst.x+curDir.x*2];
+	if (c5 == FREE || c5 == GOAL || c5 == DEADLOCK) {
+		//Only possible deadlock is with dst as bottom middle tile
+		c4 = gs->board[dst.y+curDir.x+curDir.y*2][dst.x+curDir.y+curDir.x*2];
+		if (c4 == FREE || c4 == GOAL) {
+			return false;
+		}
+		c6 = gs->board[dst.y-curDir.x+curDir.y*2][dst.x-curDir.y+curDir.x*2];
+		if (c6 == FREE || c6 == GOAL) {
+			return false;
+		}
+		try {
+			c8 = gs->board[dst.y+curDir.y*3][dst.x+curDir.x*3];
+		} catch (Exception e) {
+			//Out of bounds
+			c8 = WALL;
+		}
+		if (c8 == FREE || c8 == GOAL) {
+			return false;
+		}
+		
+		//All non-corner edges are obstacles.
+		
+		
+		
+		
+		
+	} else {
+		//TODO
+		//c4 = gs->board[dst.y+curDir.x+curDir.y*2][dst.x+curDir.y+curDir.x*2];
+		//c6 = gs->board[dst.y-curDir.x+curDir.y*2][dst.x-curDir.y+curDir.x*2];
+		
+	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	if (c1 == GOAL || c1 == FREE) {
+		//c3 must be an obstacle
+		c5 = gs->board[dst.y+curDir.y*2][dst.x+curDir.x*2];
+		c6 = gs->board[dst.y-curDir.x+curDir.y*2][dst.x-curDir.y+curDir.x*2];
+		
+		if (c5 == FREE) {
+			//dst cannot be corner box of a deadlock pattern
+			if (c6 == FREE || c6 == GOAL) {
+				//No deadlock
+				return false;
+			}
+			c4 = gs->board[dst.y+curDir.x+curDir.y*2][dst.x+curDir.y+curDir.x*2];
+			c8 = gs->board[dst.y+curDir.y*3][dst.x+curDir.x*3];
+			if (c4 == FREE || c4 == GOAL || c8 == FREE || c8 == GOAL) {
+				//No deadlock
+				return false;
+			}
+
+			c7 = gs->board[dst.y+curDir.x+curDir.y*3][dst.x+curDir.y+curDir.x*3];
+			c9 = gs->board[dst.y-curDir.x+curDir.y*3][dst.x-curDir.y+curDir.x*3];
+			
+			if (c7 == FREE || c7 == GOAL) {
+				if (c9 == FREE || c9 == GOAL) {
+					if (c4 == WALL && c8 == WALL) {
+						return true;
+					}
+					//No deadlock
+					return false;
+				} else {
+					if (c4 == WALL) {
+						return true;
+					}
+					return false;
+				}
+				
+			}
+		} else { //If c5 is an obstacle
+			
+		}
+	
+	}
+	*/
+
+	/*
 	//Second test. Test for 3x3 deadlock patterns
 	pos nC, nE;
 
@@ -124,7 +223,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		}
 		s.clear();
 	}
-	
+	*/
 	
 	//If no deadlocks were found: return false.
 	return false;
