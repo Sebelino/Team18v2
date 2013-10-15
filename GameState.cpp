@@ -159,6 +159,9 @@ vector<GameState*> GameState::findNextMoves(){
 	
 	//fprintf(stderr, "f2\n");
 	//Search the graph
+	//cerr << "================================" << endl;
+	//double start = omp_get_wtime();
+
 	while (!q.empty()) {
 	    curPos = q.front();
 	    q.pop();
@@ -195,11 +198,18 @@ vector<GameState*> GameState::findNextMoves(){
 	        }
 	    }
 	}
+	//double end = omp_get_wtime();
+	//cerr << "Findnextmoves search took " << (end-start)*1000000 << endl;
+
+
 	//fprintf(stderr, "f4, moves.size() = %d\n", (int)moves.size());
+	//start = omp_get_wtime();
 	for (int i = 0;i < (int)moves.size();i++) {
 		successors.push_back(new GameState(this,&(moves[i])));
 	}
-	
+	//end = omp_get_wtime();
+	//cerr << "Findnextmoves creating gamestates took " << (end-start)*1000000 << endl;
+
     return successors;
 }
 
