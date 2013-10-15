@@ -34,6 +34,12 @@ vector<GameState*> solve(GameState * gs) {
 	visited.insert(gs->hash());
 	queue.push(gs);
 
+#ifdef MEASURE_TIME_YES
+	double findNextMovesTime = 0;
+	double hashingTime = 0;
+	double heuristicTime = 0;
+#endif
+
 	while(!queue.empty()) {
 		GameState* next = queue.top(); 
 		queue.pop();
@@ -43,6 +49,15 @@ vector<GameState*> solve(GameState * gs) {
 
 		if(next->isSolution()) {
 			//Solution found. Return the GameStates in order.
+#ifdef MEASURE_TIME_YES
+			cerr << "Solution found! Total time taken for each task: " << endl 
+				<< "FindNextMoves: " << findNextMovesTime << endl
+				<< "Hashing and inserting: " << hashingTime << endl
+				<< "Heuristics: " << heuristicTime << endl;
+#endif
+				
+
+
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
@@ -52,14 +67,33 @@ vector<GameState*> solve(GameState * gs) {
 			}
 			return retv;
 		}
-		
+#ifdef MEASURE_TIME_YES
+		double start = omp_get_wtime();
+#endif
 		vector<GameState*> nextMoves = next->findNextMoves();
+#ifdef MEASURE_TIME_YES
+		double end = omp_get_wtime();
+		findNextMovesTime += (end-start);
+#endif
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState* g = *it;
 			if(visited.find(g->hash()) == visited.end()) {
+#ifdef MEASURE_TIME_YES
+				start = omp_get_wtime();
+#endif
 				visited.insert(g->hash());
+#ifdef MEASURE_TIME_YES
+				end = omp_get_wtime();
+				hashingTime += (end-start);
+
+				start = omp_get_wtime();
+#endif
 				g->score = heuristicEvenBetter(*g);
+#ifdef MEASURE_TIME_YES
+				end = omp_get_wtime();
+				heuristicTime += (end-start);
+#endif
 				queue.push(g);
 			}
 		}
@@ -119,12 +153,12 @@ string sokoban(vector<vector<char> > board){
 	double start = omp_get_wtime();
 	vector<GameState*> ans = solution(board);
 	double end = omp_get_wtime();
-	cerr << "Finding answer took " << (end-start )* 1000000 << endl;
+	cerr << "Finding answer took " << (end-start )<< endl;
 
 	start = omp_get_wtime();
 	string s = answer(ans);
 	end = omp_get_wtime();
-	cerr << "Lapping ihop answer took " << (end-start )* 1000000 << endl;
+	cerr << "Lapping ihop answer took " << (end-start ) << endl;
 
 	return s;
 #else
