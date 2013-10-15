@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <string>
 #include <set>
-#include <omp.h>
 #include <sstream>
 #include <iterator>
 #include <queue>
@@ -76,17 +75,8 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	//if(findDynamicDeadlocks(this,src.end))
 	//	score = -10000000;
 	//else
-	double start = omp_get_wtime();
 	findDynamicDeadlocks(this,src.end);
-	double end = omp_get_wtime();
-	cerr << "Deadlock detection took " << (end-start )* 1000000 << endl;
-
-	start = omp_get_wtime();
-
 	heuristicEvenBetter(*this);
-
-	end = omp_get_wtime();
-	cerr << "Heuristic took " << (end-start )* 1000000 << endl;
 }
 
 
@@ -219,15 +209,15 @@ int GameState::heuristic() const{
 
 /**
  * Format:
- * "<player.x><player.y><segment>...<segment>"
+ * "<segment>...<segment>"
  * where <segment>...<segment> constitue a bit map for all boxes.
  **/
 string GameState::hash() const {
     string hash;
     int bsize = board.size()*board[0].size();
     hash.reserve(bsize+2);
-    hash.push_back(player.x);
-    hash.push_back(player.y);
+    //hash.push_back(player.x);
+    //hash.push_back(player.y);
     char i = 1;
     int position = 0;
     char ch = 0;

@@ -4,10 +4,11 @@
 #include <cstdio>
 #include <ctime>
 #include <queue>
+#include <map>
 #include <algorithm>
 #include "GameState.h"
 #include "Constants.h"
-//#include "Map.h"
+#include "PathFinding.h"
 
 using namespace std;
 
@@ -19,9 +20,12 @@ struct lex_compare {
 
 vector<GameState*> solve(GameState * gs) {
 	priority_queue<GameState*,vector<GameState*>,lex_compare> queue;
-	set<string> visited;
+	map<string,vector<pos> > visited;
 
-	visited.insert(gs->hash());
+    vector<pos> initPositions; // TODO: new?
+    initPositions.push_back(gs->player);
+	visited[gs->hash()] = initPositions;
+
 	queue.push(gs);
 
 	while(!queue.empty()) {
@@ -44,10 +48,21 @@ vector<GameState*> solve(GameState * gs) {
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState* g = *it;
-			if(visited.find(g->hash()) == visited.end()) {
-				visited.insert(g->hash());
-				queue.push(g);
-			}
+			// If g->hash() not in visited...
+			map<string,vector<pos> >::iterator iter = visited.find(g->hash());if(visited.end() == iter){ 
+                // ...Insert entry (g->hash) -> (g->player).
+                vector<pos> positionList; // TODO: new?
+                positionList.push_back(g->player);
+                visited[g->hash()] = positionList;
+            }
+            for(int i = 0;i < visited[g->hash()].size();i++){
+                pos p = visited[g->hash()][i];
+                if(!(g->player == p) && pathExists(g->player,p,g->board)){
+                    visited[g->hash()].push_back(g->player);
+                }else{
+                    queue.push(g);
+                }
+            }
 		}
 	}
 	
