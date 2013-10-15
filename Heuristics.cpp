@@ -7,7 +7,7 @@
 using namespace std;
 
 
-void heuristicEvenBetter(GameState& g) {
+int heuristicEvenBetter(GameState& g) {
 	bool debug = false;
 
 	if(debug)
@@ -128,7 +128,7 @@ void heuristicEvenBetter(GameState& g) {
 	delete changes;
 	//cerr << "Heuristic score is " << score << endl;
 	//cerr << "Heuristic distance is " << aStarDistance(g) << endl;
-	//score += aStarDistance(g);
+	score += aStarDistance(g);
 	/*
 	if(g.parent != NULL) {
 		if(g.src.start == g.parent->src.end)  {//same box
@@ -140,11 +140,11 @@ void heuristicEvenBetter(GameState& g) {
 	if(debug)
 		cerr << "final score is " << score << endl;
 	
-	g.score = -score;
+	return -score;
 }
 
 int aStarDistance(GameState& g) {
-	return g.depth/8;
+	return g.depth/4;
 }
 
 /*

@@ -3,10 +3,12 @@
 #include <vector>
 #include <cstdio>
 #include <ctime>
+//#include <omp.h>
 #include <queue>
 #include <algorithm>
 #include "GameState.h"
 #include "Constants.h"
+#include "Heuristics.h"
 //#include "Map.h"
 
 using namespace std;
@@ -46,6 +48,7 @@ vector<GameState*> solve(GameState * gs) {
 			GameState* g = *it;
 			if(visited.find(g->hash()) == visited.end()) {
 				visited.insert(g->hash());
+				g->score = heuristicEvenBetter(*g);
 				queue.push(g);
 			}
 		}
@@ -100,6 +103,17 @@ vector<GameState*> solution(vector<vector<char> > board){
 }
 
 string sokoban(vector<vector<char> > board){
+	/*double start = omp_get_wtime();
+	vector<GameState*> ans = solution(board);
+	double end = omp_get_wtime();
+	cerr << "Finding answer took " << (end-start )* 1000000 << endl;
+
+	start = omp_get_wtime();
+	string s = answer(ans);
+	end = omp_get_wtime();
+	cerr << "Lapping ihop answer took " << (end-start )* 1000000 << endl;
+
+	return s;*/
     return answer(solution(board));
 }
 
