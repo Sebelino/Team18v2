@@ -10,7 +10,7 @@ using namespace std;
 void heuristicEvenBetter(GameState& g) {
 	vector<pos> boxes;
 	vector<pos> goals;
-	vector<pair<int,int> > binds; //first int is the box the goal is bound to, the second int is the score.
+	vector<int> binds; //each index is the goal which is bound to the box which is the value of that index.
 
 	int numPairs = 0;
 	int score = 0;
@@ -35,6 +35,8 @@ void heuristicEvenBetter(GameState& g) {
 	numPairs = goals.size();
 
 	//do the initial assignment, start from the goal side.
+	vector<vector<int> > dists(numPairs);
+
 
 	//initialization vector, initialize to false
 	vector<bool> assigned(numPairs);
@@ -48,12 +50,14 @@ void heuristicEvenBetter(GameState& g) {
 		int shortestIndex = 0;
 		for(int j = 0; j < numPairs; j++) {
 			int dist = heuristicDistance(goal,boxes[j]);
+			dists[i].push_back(dist);
+			score += dist;
 			if(dist < shortestDist && !assigned[j]) {
 				shortestDist = dist;
 				shortestIndex = j;
 			}
 		}
-		binds.push_back(pair<int,int>(shortestIndex,shortestDist));
+		binds.push_back(shortestIndex);
 		assigned[shortestIndex] = true;
 	}
 
@@ -68,46 +72,33 @@ void heuristicEvenBetter(GameState& g) {
 		//int variant = numIterations%2;
 		
 		for(int i = 0; i < numPairs; i++) {
-			pos& gp = goals[i];
-			pair<int,int>& pcon = binds[i];
-			pos& bp = boxes[pcon.first];
 
 			//the other pair to try and swap with
 			for(int j = 0; j < numPairs; j++) {
 				if(i != j) { //dont try and swap with self
-					pos& go = goals[j];
-					pair<int,int>& ocon = binds[j];
-					pos& bo = boxes[ocon.first];
+					//pos& gp = goals[i];
+					//pos& bp = boxes[binds[i]];
 
-					int curDist = pcon.second + ocon.second;
-					int gpboDist = heuristicDistance(gp, bo);
-					int gobpDist = heuristicDistance(go, bp);
+					//pos& go = goals[j];
+					//pos& bo = boxes[binds[j]];
 
-					int newDist = gpboDist + gobpDist;
+					int curDist = dists[i][binds[i]] + dists[j][binds[j]];
+					int newDist = dists[i][binds[j]] + dists[j][binds[i]];
 
 					if(newDist < curDist) {
 						//then swap
 						//swap binds
-						int tmp = pcon.first;
-						pcon.first = ocon.first;
-						ocon.first = tmp;
+						int tmp = binds[i];
+						binds[i] = binds[j];
+						binds[j] = tmp;
 	
-						//set new distances
-						pcon.second = gpboDist;
-						ocon.second = gobpDist;
-
 						//update total score
-
+						score = score - (curDist - newDist);
 
 					}
 				}
 			}
 		}
-	}
-
-	//before returning, calculate the final score
-	for(int i = 0; i < numPairs; i++) {
-		score += binds[i].second;
 	}
 
 	score += aStarDistance(g);
@@ -117,7 +108,7 @@ void heuristicEvenBetter(GameState& g) {
 }
 
 int aStarDistance(GameState& g) {
-	return g.depth;
+	return g.depth*1.5;
 }
 
 /*
