@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <string>
 #include <set>
-//#include <omp.h>
 #include <sstream>
 #include <iterator>
 #include <queue>
@@ -223,15 +222,15 @@ int GameState::heuristic() const{
 
 /**
  * Format:
- * "<player.x><player.y><segment>...<segment>"
+ * "<segment>...<segment>"
  * where <segment>...<segment> constitue a bit map for all boxes.
  **/
 string GameState::hash() const {
     string hash;
     int bsize = board.size()*board[0].size();
     hash.reserve(bsize+2);
-    hash.push_back(player.x);
-    hash.push_back(player.y);
+    //hash.push_back(player.x);
+    //hash.push_back(player.y);
     char i = 1;
     int position = 0;
     char ch = 0;
