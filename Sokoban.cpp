@@ -3,13 +3,21 @@
 #include <vector>
 #include <cstdio>
 #include <ctime>
-//#include <omp.h>
+
 #include <queue>
 #include <algorithm>
 #include "GameState.h"
 #include "Constants.h"
 #include "Heuristics.h"
 //#include "Map.h"
+
+
+//uncomment the line below to measure time, works in VS.
+//other than that please dont touch these macros.
+//#define MEASURE_TIME_YES
+#ifdef MEASURE_TIME_YES
+#include <omp.h>
+#endif
 
 using namespace std;
 
@@ -29,6 +37,9 @@ vector<GameState*> solve(GameState * gs) {
 	while(!queue.empty()) {
 		GameState* next = queue.top(); 
 		queue.pop();
+
+		//cerr << "NEXT GAMESTATE IS " << endl;
+		//cerr << *next;
 
 		if(next->isSolution()) {
 			//Solution found. Return the GameStates in order.
@@ -55,6 +66,7 @@ vector<GameState*> solve(GameState * gs) {
 	}
 	
 	//if we are here, something is wrong.
+	cerr << "Answer not found " << endl;
 	return vector<GameState*>();
 }
 
@@ -103,7 +115,8 @@ vector<GameState*> solution(vector<vector<char> > board){
 }
 
 string sokoban(vector<vector<char> > board){
-	/*double start = omp_get_wtime();
+#ifdef MEASURE_TIME_YES
+	double start = omp_get_wtime();
 	vector<GameState*> ans = solution(board);
 	double end = omp_get_wtime();
 	cerr << "Finding answer took " << (end-start )* 1000000 << endl;
@@ -113,8 +126,10 @@ string sokoban(vector<vector<char> > board){
 	end = omp_get_wtime();
 	cerr << "Lapping ihop answer took " << (end-start )* 1000000 << endl;
 
-	return s;*/
+	return s;
+#else
     return answer(solution(board));
+#endif
 }
 
 

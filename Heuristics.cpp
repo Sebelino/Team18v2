@@ -23,11 +23,7 @@ int heuristicEvenBetter(GameState& g) {
 	for(int i = 1; i < g.board.size() -1; i++) {
 		for(int j = 1; j < g.board[i].size()-1;j++) {
 			if(g.board[i][j] == GOAL || g.board[i][j] == PLAYER_ON_GOAL || g.board[i][j] == BOX_ON_GOAL) {
-				if(g.board[i][j] == BOX_ON_GOAL && isBoxWall(g,i,j)) {
-					g.board[i][j] = WALL; //TODO ganska fult
-				} else {
-					goals.push_back(pos(i,j));
-				}
+				goals.push_back(pos(i,j));
 			} 
 
 			if(g.board[i][j] == BOX || g.board[i][j] == BOX_ON_GOAL) {
@@ -132,7 +128,7 @@ int heuristicEvenBetter(GameState& g) {
 
 	if(g.parent != NULL) {
 		if(g.src.start == g.parent->src.end)  {//same box
-			score = score/2;
+			score = score/1.5;
 			if(debug)
 			cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
 				<< g.parent->src.end.x << g.parent->src.end.y << endl;
@@ -145,7 +141,7 @@ int heuristicEvenBetter(GameState& g) {
 }
 
 int aStarDistance(GameState& g) {
-	return g.depth/4;
+	return g.depth>>2;
 }
 
 /*
