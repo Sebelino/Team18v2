@@ -38,6 +38,7 @@ vector<GameState*> solve(GameState * gs) {
 	double findNextMovesTime = 0;
 	double hashingTime = 0;
 	double heuristicTime = 0;
+	int numGameStatesVisited = 0;
 #endif
 
 	while(!queue.empty()) {
@@ -46,6 +47,10 @@ vector<GameState*> solve(GameState * gs) {
 
 		//cerr << "NEXT GAMESTATE IS " << endl;
 		//cerr << *next;
+#ifdef MEASURE_TIME_YES
+		numGameStatesVisited++;
+#endif
+
 
 		if(next->isSolution()) {
 			//Solution found. Return the GameStates in order.
@@ -53,7 +58,8 @@ vector<GameState*> solve(GameState * gs) {
 			cerr << "Solution found! Total time taken for each task: " << endl 
 				<< "FindNextMoves: " << findNextMovesTime << endl
 				<< "Hashing and inserting: " << hashingTime << endl
-				<< "Heuristics: " << heuristicTime << endl;
+				<< "Heuristics: " << heuristicTime << endl 
+				<< "We have searched num gamestates: " << numGameStatesVisited << endl;
 #endif
 				
 

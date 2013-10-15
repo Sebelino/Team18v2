@@ -35,7 +35,7 @@ int heuristicEvenBetter(GameState& g) {
 	
 	numPairs = goals.size();
 	//for(int i = 0; i < numPairs; i++) {
-		//score += heuristicDistance(goals[i],boxes[i]);
+	//	score += heuristicDistance(goals[i],boxes[i]);
 	//}
 	
 	//do the initial assignment, start from the goal side.
@@ -121,7 +121,7 @@ int heuristicEvenBetter(GameState& g) {
 			break;
 	}
 
-	delete changes;
+	delete changes; 
 	//cerr << "Heuristic score is " << score << endl;
 	//cerr << "Heuristic distance is " << aStarDistance(g) << endl;
 	score += aStarDistance(g);
