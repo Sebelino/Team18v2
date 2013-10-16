@@ -301,7 +301,6 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		}
 	}
 	
-	
 	//If no deadlocks were found: return false.
 	return false;
 }
@@ -311,16 +310,16 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
  * These deadlocks won't change throughout the game.
  */
 void findStaticDeadLocks(vector<vector<char> > &map) {
-	//TODO
-
+	/*
 	//Debug print with deadlocks
-   /* fprintf(stdout, "Before detecting deadlocks:\n");
+    fprintf(stdout, "Before detecting deadlocks:\n");
 	for(int i = 0;i < map.size();i++){
         for(int j = 0;j < map[i].size();j++){
         	fprintf(stdout, "%c", map[i][j]);
         }
         fprintf(stdout, "\n");
-    }*/
+    }
+    */
 	
 	static const char EXAMINED = 'e';
 	int i, j, k;
@@ -344,7 +343,7 @@ void findStaticDeadLocks(vector<vector<char> > &map) {
 							}
 							goto wallRight;
 						} else {
-							if (map[i][j+k] != BOX) {
+							if (map[i][j+k] != BOX && map[i][j+k] != BOX_ON_GOAL) {
 								map[i][j+k] = EXAMINED;
 							}
 						}
@@ -359,7 +358,7 @@ wallRight:
 								}
 								goto wallLeft;
 							} else {
-								if (map[i][j+k] != BOX) {
+								if (map[i][j+k] != BOX && map[i][j+k] != BOX_ON_GOAL) {
 									map[i][j+k] = EXAMINED;
 								}
 							}
@@ -388,7 +387,7 @@ wallLeft:
 							}
 							goto wallDown;
 						} else {
-							if (map[i+k][j] != BOX) {
+							if (map[i+k][j] != BOX && map[i+k][j] != BOX_ON_GOAL) {
 								map[i+k][j] = EXAMINED;
 							}
 						}
@@ -403,7 +402,7 @@ wallDown:
 								}
 								goto wallUp;
 							} else {
-								if (map[i+k][j] != BOX) {
+								if (map[i+k][j] != BOX && map[i+k][j] != BOX_ON_GOAL) {
 									map[i+k][j] = EXAMINED;
 								}
 							}
@@ -439,13 +438,15 @@ wallUp:
         }
     }
 
+	/*
     //Debug print with deadlocks
-    /*fprintf(stderr, "After detecting deadlocks:\n");
+    fprintf(stdout, "After detecting deadlocks:\n");
 	for(int i = 0;i < map.size();i++){
         for(int j = 0;j < map[i].size();j++){
         	fprintf(stdout, "%c", map[i][j]);
         }
         fprintf(stdout, "\n");
-    }*/
+    }
+    */
 }
 

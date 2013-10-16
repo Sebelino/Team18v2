@@ -29,6 +29,7 @@ vector<vector<char> > readBoard(){
 			board[i].push_back(FREE);
 		}
 	}
+
     return board;
 }
 

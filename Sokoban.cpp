@@ -62,8 +62,6 @@ vector<GameState*> solve(GameState * gs) {
 				<< "Heuristics: " << heuristicTime << endl 
 				<< "We have searched num gamestates: " << numGameStatesVisited << endl;
 #endif
-				
-
 
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
@@ -139,7 +137,7 @@ vector<GameState*> solution(vector<vector<char> > board){
 		board[i][0] = WALL;
 		board[i][board[0].size()-1] = WALL;
 	}
-	
+
 	// Create gamestate
 	GameState* gs = new GameState(board);
     //cerr << "Initial GameState hash = " << gs.hash() << endl;
