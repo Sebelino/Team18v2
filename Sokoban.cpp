@@ -95,8 +95,8 @@ vector<GameState*> solve(GameState * gs) {
 				start = omp_get_wtime();
 #endif
 				if(findDynamicDeadlocks(g, g->src.end)) {
-					//g->score = -100000000;
-					delete g;
+					g->score = -100000000;
+					//delete g;
 					//cerr << "Deadlock found in position: " << endl << *g;
 				} else {
 					g->score = heuristicEvenBetter(*g);
