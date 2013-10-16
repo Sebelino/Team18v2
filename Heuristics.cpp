@@ -121,7 +121,7 @@ int heuristicEvenBetter(GameState& g) {
 			break;
 	}
 
-	delete changes; 
+	delete[] changes; 
 	//cerr << "Heuristic score is " << score << endl;
 	//cerr << "Heuristic distance is " << aStarDistance(g) << endl;
 	score += aStarDistance(g);

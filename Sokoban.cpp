@@ -160,6 +160,7 @@ vector<GameState*> solve(GameState * gs) {
 					}            		
 	
             		visited[g->hash()].push_back(g->player);
+            		queue.push(g);
             	}
 			}
 		}

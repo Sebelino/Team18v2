@@ -245,8 +245,8 @@ string GameState::hash() const {
     string hash;
     int bsize = (board.size()-2)*(board[0].size()-2);
     hash.reserve(bsize+2);
-    hash.push_back(player.x);
-    hash.push_back(player.y);
+    //hash.push_back(player.x);
+    //hash.push_back(player.y);
     //char i = 1;
     unsigned char i = 128;
     int position = 0;
