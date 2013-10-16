@@ -80,6 +80,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 		cerr << *this;
 	}
 	*/
+
 	//	score = -10000000;
 	//else
 	//double start = omp_get_wtime();
