@@ -12,14 +12,6 @@
 #include "PathFinding.h"
 #include "Heuristics.h"
 
-
-//uncomment the line below to measure time, works in VS.
-//other than that please dont touch these macros.
-//#define MEASURE_TIME_YES
-#ifdef MEASURE_TIME_YES
-#include <omp.h>
-#endif
-
 using namespace std;
 
 struct lex_compare {
@@ -136,21 +128,7 @@ vector<GameState*> solution(vector<vector<char> > board){
 }
 
 string sokoban(vector<vector<char> > board){
-#ifdef MEASURE_TIME_YES
-	double start = omp_get_wtime();
-	vector<GameState*> ans = solution(board);
-	double end = omp_get_wtime();
-	cerr << "Finding answer took " << (end-start )<< endl;
-
-	start = omp_get_wtime();
-	string s = answer(ans);
-	end = omp_get_wtime();
-	cerr << "Lapping ihop answer took " << (end-start ) << endl;
-
-	return s;
-#else
     return answer(solution(board));
-#endif
 }
 
 
