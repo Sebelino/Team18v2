@@ -65,7 +65,7 @@ vector<GameState*> solve(GameState * gs) {
 				<< "Heuristics: " << heuristicTime << endl 
 				<< "We have searched num gamestates: " << numGameStatesVisited << endl;
 #endif
-			cerr << "We have searched num gamestates: " << numGameStatesVisited << endl;
+			cout << "We have searched num gamestates: " << numGameStatesVisited << endl;
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
