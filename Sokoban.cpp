@@ -154,6 +154,7 @@ vector<GameState*> solve(GameState * gs) {
 		                //Already in visited. Don't add to queue.
 		                //fprintf(stderr,"Visited, in the same zone\n");
 		                forQueue = false;
+						break;
 		            }
             	}
 #ifdef MEASURE_TIME_YES
