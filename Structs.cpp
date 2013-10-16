@@ -5,7 +5,7 @@
 #include "Structs.h"
 //#include "PathFinding.h"
 
-pos::pos(int x, int y) {
+pos::pos(char x, char y) {
 	this->x = x;
 	this->y = y;
 }
@@ -32,7 +32,7 @@ pos pos::operator-() const {
 	p.y = -y;
 	return p;
 }
-pos pos::operator*(int factor) const {
+pos pos::operator*(char factor) const {
 	pos p;
 	p.x = x*factor;
 	p.y = y*factor;
