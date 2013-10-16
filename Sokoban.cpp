@@ -15,7 +15,7 @@
 
 //uncomment the line below to measure time, works in VS.
 //other than that please dont touch these macros.
-#define MEASURE_TIME_YES
+//#define MEASURE_TIME_YES
 #ifdef MEASURE_TIME_YES
 #include <omp.h>
 #endif
