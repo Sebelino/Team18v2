@@ -28,6 +28,8 @@ struct dirEntry {
 pos direction(char ch);
 char dirs(pos p);
 std::vector<char> moveToPath (GameState * gs, boxMove bm);
+bool pathExists(pos p1,pos p2,std::vector<std::vector<char> > board);
+std::vector<char> findPath(pos p1,pos p2,std::vector<std::vector<char> > b);
 
 #endif
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <ctime>
+#include <map>
 
 #include <queue>
 #include <algorithm>
@@ -30,9 +31,10 @@ struct lex_compare {
 
 vector<GameState*> solve(GameState * gs) {
 	priority_queue<GameState*,vector<GameState*>,lex_compare> queue;
-	set<string> visited;
-
-	visited.insert(gs->hash());
+	map<string,vector<pos> > visited;
+	vector<pos> tmp;
+	tmp.push_back(gs->player);
+	visited[gs->hash()] = tmp;
 	queue.push(gs);
 
 #ifdef MEASURE_TIME_YES
@@ -41,11 +43,12 @@ vector<GameState*> solve(GameState * gs) {
 	double heuristicTime = 0;
 	int numGameStatesVisited = 0;
 #endif
-
+	int numGameStatesVisited = 0;
 	while(!queue.empty()) {
 		GameState* next = queue.top(); 
 		queue.pop();
-
+		numGameStatesVisited++;
+		
 		//cerr << "NEXT GAMESTATE IS " << endl;
 		//cerr << *next;
 #ifdef MEASURE_TIME_YES
@@ -62,7 +65,7 @@ vector<GameState*> solve(GameState * gs) {
 				<< "Heuristics: " << heuristicTime << endl 
 				<< "We have searched num gamestates: " << numGameStatesVisited << endl;
 #endif
-
+			cerr << "We have searched num gamestates: " << numGameStatesVisited << endl;
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
@@ -83,29 +86,81 @@ vector<GameState*> solve(GameState * gs) {
 		vector<GameState*>::iterator it;
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState* g = *it;
-			if(visited.find(g->hash()) == visited.end()) {
+			string hash = g->hash();
+			bool forQueue = false;
+			map<string,vector<pos> >::iterator iter = visited.find(hash);
+			if(visited.end() == iter) {
+				//Not in visited. Push.
+				//fprintf(stderr,"Not in visited at all\n");
+
 #ifdef MEASURE_TIME_YES
 				start = omp_get_wtime();
 #endif
-				visited.insert(g->hash());
+
+				vector<pos> tmp;
+				tmp.push_back(gs->player);
+				visited[hash] = tmp;
+				//fprintf(stderr,"visited.size() is: %d\n", (int)visited.size());
+				
 #ifdef MEASURE_TIME_YES
 				end = omp_get_wtime();
 				hashingTime += (end-start);
-
 				start = omp_get_wtime();
 #endif
+
 				if(findDynamicDeadlocks(g, g->src.end)) {
 					g->score = -100000000;
 					//delete g;
 					//cerr << "Deadlock found in position: " << endl << *g;
 				} else {
 					g->score = heuristicEvenBetter(*g);
+					
 #ifdef MEASURE_TIME_YES
-				end = omp_get_wtime();
-				heuristicTime += (end-start);
+					end = omp_get_wtime();
+					heuristicTime += (end-start);
 #endif
-					queue.push(g);
 				}
+
+				queue.push(g);
+			} else {
+				//Found in set. Check poses.
+				forQueue = true;
+				vector<pos> poses = iter->second;
+				for(int i = 0;i < poses.size();i++){
+		            pos p = poses[i];
+		            if (g->player == p || pathExists(g->player,p,g->board)) {
+		                //Already in visited. Don't add to queue.
+		                //fprintf(stderr,"Visited, in the same zone\n");
+		                forQueue = false;
+		            }
+            	}
+            	if (forQueue) {
+            		//Add to list		
+#ifdef MEASURE_TIME_YES
+					start = omp_get_wtime();
+#endif
+				
+#ifdef MEASURE_TIME_YES
+					end = omp_get_wtime();
+					hashingTime += (end-start);
+					start = omp_get_wtime();
+#endif
+
+					if(findDynamicDeadlocks(g, g->src.end)) {
+						g->score = -100000000;
+						//delete g;
+						//cerr << "Deadlock found in position: " << endl << *g;
+					} else {
+						g->score = heuristicEvenBetter(*g);
+					
+#ifdef MEASURE_TIME_YES
+						end = omp_get_wtime();
+						heuristicTime += (end-start);
+#endif
+					}            		
+	
+            		visited[g->hash()].push_back(g->player);
+            	}
 			}
 		}
 	}

@@ -235,6 +235,7 @@ int GameState::heuristic() const{
     return score;
 }
 
+
 /**
  * Format:
  * "<player.x><player.y><segment>...<segment>"
@@ -242,18 +243,20 @@ int GameState::heuristic() const{
  **/
 string GameState::hash() const {
     string hash;
-    int bsize = board.size()*board[0].size();
+    int bsize = (board.size()-2)*(board[0].size()-2);
     hash.reserve(bsize+2);
     hash.push_back(player.x);
     hash.push_back(player.y);
-    char i = 1;
+    //char i = 1;
+    unsigned char i = 128;
     int position = 0;
     char ch = 0;
     for(int y = 1;y < board.size()-1;y++){
         for(int x = 1;x < board[y].size()-1;x++){
             if (board[y][x] == BOX || board[y][x] == BOX_ON_GOAL){
             	//If there was a box here
-                ch += (i << (7-position));
+            	//ch += (i << (7-position));
+                ch += (i >> position);
             }
             position = (position+1) % 8;
             if(position == 0){

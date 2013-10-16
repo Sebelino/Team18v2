@@ -146,3 +146,91 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	return path;
 }
 
+/** Returns the path between p1 and p2 on board b, specified by letters.
+ *  Returns ['X'] if no such path exists. */
+std::vector<char> findPath(pos p1,pos p2,vector<vector<char> > b) {
+	int h = b.size();
+	int w = b[0].size();
+	
+	std::vector<dirEntry> directions;
+	directions.push_back(dirEntry(pos(0,-1),0));
+	directions.push_back(dirEntry(pos(1, 0),0));
+	directions.push_back(dirEntry(pos(0, 1),0));
+	directions.push_back(dirEntry(pos(-1,0),0));
+	
+	vector<vector<char> > dirMap = b;
+	
+	dirMap[p1.y][p1.x] = 'S';
+	
+	bool goalReached = false;
+	
+	stack<pos> q;
+	q.push(p1);
+	
+	//Search the graph
+	while (!q.empty()) {
+	    pos curPos = q.top();
+	    q.pop();
+	    
+	    if (curPos == p2) {
+			//Goal reached!
+			//fprintf(stderr, "Entered if statement, as the goal was found!\n");
+			goalReached = true;
+			break;
+	    }
+	    
+	    pos d;
+	    char dir;
+
+		for (int i = 0;i<4;i++) {
+			directions[i].weight = (p2.x-curPos.x)*directions[i].p.x + (p2.y-curPos.y)*directions[i].p.y;
+			directions[i].weight *= (-1);
+		}
+
+	    std::sort(directions.begin(), directions.end());
+	    
+	    for (int i = 0;i<4;i++) {
+	    	d = directions[i].p;
+	        dir = dirs(d);
+	        
+	        //Check if visited or unreachable
+	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
+	        
+	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
+	            //Visit
+	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
+	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
+	        }
+	    }
+	}
+	
+	if (!goalReached) {
+	    //Invalid move
+	    std::vector<char> ret;
+	    ret.push_back('X');
+		return ret;
+	}	
+	
+	//Else
+	pos curPos = p2;
+	char nd = dirMap[p2.y][p2.x];
+	std::vector<char> path;
+	while (nd != 'S') {
+	    path.push_back(nd);
+	    pos pnd = direction(nd);
+	    curPos = pos(curPos.x-pnd.x, curPos.y-pnd.y);
+	    nd = dirMap[curPos.y][curPos.x];
+	}
+	std::reverse(path.begin(),path.end());
+	return path;
+}
+
+bool pathExists(pos p1,pos p2,vector<vector<char> > board){
+    vector<char> path = findPath(p1,p2,board);
+    if(path.size() >= 1 && path[0] == 'X'){
+        return false;
+    }
+    return true;
+}
+
+
