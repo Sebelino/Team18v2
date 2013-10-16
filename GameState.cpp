@@ -28,7 +28,6 @@ GameState::GameState(vector<vector<char> > b) {
             	}
                 if(!found){
                     player = pos(x,y);
-                    found = true;
                 }else{
                     cerr << "WTH? The map contains more than 1 player!" << endl;
                     throw 777;
@@ -124,7 +123,7 @@ ostream& operator<<(ostream &strm, const GameState &state) {
     for(int i = 0;i < state.board.size();i++){
 		for(int j = 0;j < state.board[i].size();j++){
 			if (state.player.x == j && state.player.y == i) {
-				if (state.board[i][j] == FREE || state.board[i][j] == DEADLOCK) {
+				if (state.board[i][j] == FREE) {
 					stream << PLAYER;
 				} else if (state.board[i][j] == GOAL) {
 					stream << PLAYER_ON_GOAL;
