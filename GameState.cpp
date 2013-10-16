@@ -74,7 +74,10 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	}
 
 	//Detect dynamic deadlocks:
-	//if(findDynamicDeadlocks(this,src.end))
+	if(findDynamicDeadlocks(this,src.end)) {
+		fprintf(stderr, "Found deadlock in:\n");
+		cerr << *this;
+	}
 	//	score = -10000000;
 	//else
 	//double start = omp_get_wtime();

@@ -59,6 +59,8 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	}
 	
 	pos curDir = dst-gs->src.start;
+	
+	/*
 	std::vector<pos> directions;
 	directions.push_back(pos(1,0));
 	directions.push_back(pos(1,1));
@@ -68,6 +70,8 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	directions.push_back(pos(-1,-1));
 	directions.push_back(pos(0,-1));
 	directions.push_back(pos(1,-1));
+	*/
+	
 	pos refPos;
 	
 	int a, b;
@@ -183,8 +187,13 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	}
 
 	
-	if (c[1][2] == FREE || c[1][2] == DEADLOCK) {
+	if (isOpen(c[1][2])) {
 		//Only possible deadlock is with dst as bottom middle tile
+		if (c[1[]2] == GOAL) {
+			//Quick fix. Prevents serious mistakes, but might cause others
+			return false;
+		}
+		
 		if (isOpen(c[1][1])) {
 			return false;
 		}
