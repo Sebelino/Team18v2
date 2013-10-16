@@ -189,7 +189,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	
 	if (isOpen(c[1][2])) {
 		//Only possible deadlock is with dst as bottom middle tile
-		if (c[1[]2] == GOAL) {
+		if (c[1][2] == GOAL) {
 			//Quick fix. Prevents serious mistakes, but might cause others
 			return false;
 		}
