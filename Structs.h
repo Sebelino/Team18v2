@@ -7,14 +7,14 @@
 #include <set>
 
 struct pos {
-    int x;
-    int y;
-	pos(int x, int y);
+    char x;
+	char y;
+	pos(char x, char y);
 	pos();
     pos operator-(pos other) const;
     pos operator+(pos other) const;
     pos operator-() const;
-    pos operator*(int factor) const;
+    pos operator*(char factor) const;
     bool operator<(pos other) const;
     bool operator==(pos other) const;
 };
