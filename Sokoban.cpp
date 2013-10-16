@@ -37,37 +37,14 @@ vector<GameState*> solve(GameState * gs) {
 	visited[gs->hash()] = initPositions;
 
 	queue.push(gs);
-
-#ifdef MEASURE_TIME_YES
-	double findNextMovesTime = 0;
-	double hashingTime = 0;
-	double heuristicTime = 0;
-	int numGameStatesVisited = 0;
-#endif
+cerr << "Pushed, size=" << queue.size() << " " << gs << endl << *gs << endl;
 
 	while(!queue.empty()) {
 		GameState* next = queue.top(); 
 		queue.pop();
-
-		//cerr << "NEXT GAMESTATE IS " << endl;
-		//cerr << *next;
-#ifdef MEASURE_TIME_YES
-		numGameStatesVisited++;
-#endif
-
-
+cerr << "Popped, size=" << queue.size() << " " << next << endl << *next << endl;
 		if(next->isSolution()) {
 			//Solution found. Return the GameStates in order.
-#ifdef MEASURE_TIME_YES
-			cerr << "Solution found! Total time taken for each task: " << endl 
-				<< "FindNextMoves: " << findNextMovesTime << endl
-				<< "Hashing and inserting: " << hashingTime << endl
-				<< "Heuristics: " << heuristicTime << endl 
-				<< "We have searched num gamestates: " << numGameStatesVisited << endl;
-#endif
-				
-
-
 			vector<GameState*> retv;
 			GameState * gsp = next->parent;
 			retv.insert(retv.begin(),next);
@@ -77,15 +54,16 @@ vector<GameState*> solve(GameState * gs) {
 			}
 			return retv;
 		}
-#ifdef MEASURE_TIME_YES
-		double start = omp_get_wtime();
-#endif
 		vector<GameState*> nextMoves = next->findNextMoves();
-#ifdef MEASURE_TIME_YES
-		double end = omp_get_wtime();
-		findNextMovesTime += (end-start);
-#endif
 		vector<GameState*>::iterator it;
+        // for g in next:
+        //     if g.hash not in visited:
+        //         visited[g.hash] = [g.player]
+        //     for p in visited[g.hash]:
+        //        if g != p and pathExists(g.player,p,g.board):
+        //            visited[g.hash] += p
+        //        else:
+        //            queue += g
 		for(it = nextMoves.begin(); it != nextMoves.end(); it++) {
 			GameState* g = *it;
 			// If g->hash() not in visited...
@@ -95,12 +73,14 @@ vector<GameState*> solve(GameState * gs) {
                 positionList.push_back(g->player);
                 visited[g->hash()] = positionList;
             }
-            for(int i = 0;i < visited[g->hash()].size();i++){
-                pos p = visited[g->hash()][i];
+            vector<pos> poses = visited[g->hash()];
+            for(int i = 0;i < poses.size();i++){
+                pos p = poses[i];
                 if(!(g->player == p) && pathExists(g->player,p,g->board)){
                     visited[g->hash()].push_back(g->player);
                 }else{
                     queue.push(g);
+cerr << "Pushed, size=" << queue.size() << " " << g << endl << *g << endl;
                 }
             }
 		}
