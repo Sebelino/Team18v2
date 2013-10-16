@@ -164,7 +164,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	if (isObstacle(c[1][2])) {
 		if (((c[1][1] == WALL) + (c[2][1] == WALL) + (c[1][3] == WALL) + (c[2][3] == WALL)) > 2) {
 			//Deadlock found
-			fprintf(stderr, "Returned true from here, 1\n");
+			//fprintf(stderr, "Returned true from here, 1\n");
 			return true;
 		} else {
 			if (isObstacle(c[1][1]) && isObstacle(c[2][1])) {

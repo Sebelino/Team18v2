@@ -15,7 +15,7 @@
 
 //uncomment the line below to measure time, works in VS.
 //other than that please dont touch these macros.
-#define MEASURE_TIME_YES
+//#define MEASURE_TIME_YES
 #ifdef MEASURE_TIME_YES
 #include <omp.h>
 #endif
@@ -97,15 +97,17 @@ vector<GameState*> solve(GameState * gs) {
 				start = omp_get_wtime();
 #endif
 				if(findDynamicDeadlocks(g, g->src.end)) {
-					g->score = -100000000;
+					//g->score = -100000000;
+					delete g;
 					//cerr << "Deadlock found in position: " << endl << *g;
-				} else
+				} else {
 					g->score = heuristicEvenBetter(*g);
 #ifdef MEASURE_TIME_YES
 				end = omp_get_wtime();
 				heuristicTime += (end-start);
 #endif
-				queue.push(g);
+					queue.push(g);
+				}
 			}
 		}
 	}
