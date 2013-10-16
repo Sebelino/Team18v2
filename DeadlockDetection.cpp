@@ -160,7 +160,6 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		fprintf(stderr,"\n");
 	}*/
 
-	/*
 	//First test. Detect 2x2 deadlock patterns.
 	if (isObstacle(c[1][2])) {
 		if (((c[1][1] == WALL) + (c[2][1] == WALL) + (c[1][3] == WALL) + (c[2][3] == WALL)) > 2) {
@@ -177,7 +176,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 				return true;
 			}
 		}
-	}*/
+	}
 	
 	//New attempt at 3x3 deadlock pattern detection
 	if (isOpen(c[2][1]) && isOpen(c[2][3])) {
@@ -265,11 +264,15 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			if (isOpen(c[0][4])) {
 				if (c[1][4] == WALL || isObstacle(c[2][4])) {
 					if ((c[0][3] == WALL) || isObstacle(c[0][2])) {
-						return true;
+						if (c[1][3] != GOAL) {
+							return true;
+						}
 					}
 				}
 			} else {
-				return true;
+				if (c[1][3] != GOAL) {
+					return true;
+				}
 			}
 		} else {
 			//c[2][1] must be obstacle. dst can be bottom right
@@ -285,11 +288,15 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			if (isOpen(c[0][0])) {
 				if (c[1][0] == WALL || isObstacle(c[2][0])) {
 					if ((c[0][1] == WALL) || isObstacle(c[0][2])) {
-						return true;
+						if (c[1][1] != GOAL) {
+							return true;
+						}
 					}
 				}
 			} else {
-				return true;
+				if (c[1][1] != GOAL) {
+					return true;
+				}
 			}
 		}
 	}
