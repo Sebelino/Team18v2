@@ -5,8 +5,10 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
+#include <queue>
 #include "PathFinding.h"
 #include "Constants.h"
+#include "GameState.h"
 
 using namespace std;
 
@@ -231,6 +233,67 @@ bool pathExists(pos p1,pos p2,vector<vector<char> > board){
         return false;
     }
     return true;
+}
+
+bool pathExistsAStar(const pos& p1,const pos& p2,const vector<vector<char> >& board) {
+	priority_queue<posScore> q;
+	vector<vector<char> > dirMap = board;
+	dirMap[p1.y][p1.x] = 'v';
+	posScore start(p1.x,p1.y,aStarDist(p1,p2,p1));
+	q.push(start);
+
+	while(!q.empty()) {
+		posScore next = q.top();
+		q.pop();
+
+		if(next.x == p2.x && next.y == p2.y)
+			return true;
+
+		posScore m1(next.x,next.y-1);
+		posScore m2(next.x,next.y+1);
+		posScore m3(next.x+1,next.y);
+		posScore m4(next.x-1,next.y);
+		char c = dirMap[m1.y][m1.x];
+		if(IS_PASSABLE_FP(c)) {
+			m1.score = aStarDist(m1,p2,start);
+			q.push(m1);
+			dirMap[m1.y][m1.x] = 'v';
+		}
+		c = dirMap[m2.y][m2.x];
+		if(IS_PASSABLE_FP(c)) {
+			m2.score = aStarDist(m2,p2,start);
+			q.push(m2);
+			dirMap[m2.y][m2.x] = 'v';
+		}
+		c = dirMap[m3.y][m3.x];
+		if(IS_PASSABLE_FP(c)) {
+			m3.score = aStarDist(m3,p2,start);
+			q.push(m3);
+			dirMap[m3.y][m3.x] = 'v';
+		}
+		c = dirMap[m4.y][m4.x];
+		if(IS_PASSABLE_FP(c)) {
+			m4.score = aStarDist(m4,p2,start);
+			q.push(m4);
+			dirMap[m4.y][m4.x] = 'v';
+		}
+
+	}
+
+	return false;
+
+}
+
+int aStarDist(const pos& p1,const pos& p2,const  pos& start) {
+	int f = abs(p1.x-p2.x) + abs(p1.y-p2.y);
+	int h = abs(p1.x-start.x) + abs(p1.y-start.y);
+	return f + (h>>1);
+}
+
+int aStarDist(const posScore& p1,const pos& p2,const posScore& start) {
+	int f = abs(p1.x-p2.x) + abs(p1.y-p2.y);
+	int h = abs(p1.x-start.x) + abs(p1.y-start.y);
+	return f + (h>>1);
 }
 
 

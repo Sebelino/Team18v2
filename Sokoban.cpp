@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <ctime>
 #include <map>
-
+//#include <unordered_map>
 #include <queue>
 #include <algorithm>
 #include "GameState.h"
@@ -100,6 +100,7 @@ vector<GameState*> solve(GameState * gs) {
 #endif
 			bool forQueue = false;
 			map<string,vector<pos> >::iterator iter = visited.find(hash);
+			//unordered_map<string,vector<pos> >::iterator iter = visited.find(hash);
 			if(visited.end() == iter) {
 				//Not in visited. Push.
 				//fprintf(stderr,"Not in visited at all\n");
@@ -150,7 +151,8 @@ vector<GameState*> solve(GameState * gs) {
 				vector<pos> poses = iter->second;
 				for(int i = 0;i < poses.size();i++){
 		            pos p = poses[i];
-		            if (g->player == p || pathExists(g->player,p,g->board)) {
+		            //if (g->player == p || pathExists(g->player,p,g->board)) {
+					if (g->player == p || pathExistsAStar(g->player,p,g->board)) {
 		                //Already in visited. Don't add to queue.
 		                //fprintf(stderr,"Visited, in the same zone\n");
 		                forQueue = false;

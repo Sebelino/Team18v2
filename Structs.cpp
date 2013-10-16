@@ -65,3 +65,19 @@ bool boxMove::operator<(boxMove other) const {
     }
 }
 
+
+posScore::posScore(int x,int y) {
+	this->x = x;
+	this->y = y;
+}
+	
+posScore::posScore(int x, int y, int score) {
+	this->x = x;
+	this->y = y;
+	this->score = score;
+}
+
+bool posScore::operator<(const posScore& other) const {
+	return score > other.score;
+}
+
