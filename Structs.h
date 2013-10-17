@@ -26,14 +26,41 @@ struct boxMove{
 };
 
 struct posScore {
-	int x;
-	int y;
+	char x;
+	char y;
 	int score;
 
-	posScore(int x,int y);
-	posScore(int x, int y, int score);
+	posScore(char x,char y);
+	posScore(char x, char y, int score);
 	bool operator<(const posScore& other) const;
 };
+
+struct bitString {
+	//Variables
+	std::vector<int> data;
+
+	//Constructor
+	bitString(int size);
+	
+	//Functions
+	bool get(int i, int j);
+	bool getSafe(int i, int j, bool def);
+	void insert32(int value);
+	void set(int i, int j);
+	void reset(int i, int j);
+	bitString operator&(const bitString& other) const;
+	bitString operator|(const bitString& other) const;
+	bitString operator^(const bitString& other) const;
+	bitString operator~() const;
+	bool operator<(const bitString& other) const;
+	bool operator>(const bitString& other) const;
+	bool operator==(const bitString& other) const;
+	ostream& operator<<(ostream &strm, const GameState &state);
+};
+
+
+
+
 
 #endif
 
