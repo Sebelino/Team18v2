@@ -8,10 +8,10 @@ using namespace std;
 
 
 int heuristicEvenBetter(GameState& g) {
-	bool debug = false;
+	//bool debug = false;
 
-	if(debug)
-		cerr << "=========================" << endl;
+	//if(debug)
+	//	cerr << "=========================" << endl;
 	vector<pos> boxes;
 	vector<pos> goals;
 	vector<int> binds; //each index is the goal which is bound to the box which is the value of that index.
@@ -58,20 +58,20 @@ int heuristicEvenBetter(GameState& g) {
 	int numIterations = numPairs/2; //number of times we will improve our bindings at maximum.
 								  //note that during each iteration
 
-	if(debug) {
+	/*if(debug) {
 		cerr << "Current score is " << score;
 		cerr << "Number of pairs is " << numPairs << endl;
 		for(int i = 0; i < numPairs;i++) {
 			cerr << "Initial bounds : (" << goals[i].x << "," << goals[i].y << ")-(" << boxes[i].x << "," <<boxes[i].y << ")" << endl;
 		}
-	}
+	}*/
 
 	bool *changes = new bool[numPairs];
-
-	for(int iter = 0; iter < numIterations; iter++) {
+	bool changeFound = true;
+	for(int iter = 0; iter < numIterations && changeFound; iter++) {
 
 		//int variant = numIterations%2;
-		bool changeFound = false;
+		changeFound = false;
 		
 		for(int i = 0; i < numPairs; i++) {
 			changes[i] = false;
@@ -91,8 +91,8 @@ int heuristicEvenBetter(GameState& g) {
 
 					int curDist = dists[i][binds[i]] + dists[j][binds[j]];
 					int newDist = dists[i][binds[j]] + dists[j][binds[i]];
-					if(debug)
-						cerr << "cureDist " << curDist << ", newDist " << newDist << endl;
+					//if(debug)
+					//	cerr << "cureDist " << curDist << ", newDist " << newDist << endl;
 
 					if(newDist < curDist) {
 						localChange = true;
@@ -106,8 +106,8 @@ int heuristicEvenBetter(GameState& g) {
 						//update total score
 						score = score - (curDist - newDist);
 
-						if(debug)
-							cerr << "Updating score to " << score << endl;
+						//if(debug)
+						//	cerr << "Updating score to " << score << endl;
 
 					}
 				}
@@ -117,8 +117,8 @@ int heuristicEvenBetter(GameState& g) {
 			}
 
 		}
-		if(!changeFound)
-			break;
+		//if(!changeFound)
+		//	break;
 	}
 
 	delete[] changes; 
@@ -129,13 +129,13 @@ int heuristicEvenBetter(GameState& g) {
 	if(g.parent != NULL) {
 		if(g.src.start == g.parent->src.end)  {//same box
 			score = score/1.5;
-			if(debug)
-			cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
-				<< g.parent->src.end.x << g.parent->src.end.y << endl;
+			//if(debug)
+			//cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
+			//	<< g.parent->src.end.x << g.parent->src.end.y << endl;
 		}
 	}
-	if(debug)
-		cerr << "final score is " << score << endl;
+	//if(debug)
+	//	cerr << "final score is " << score << endl;
 	
 	return -score;
 }

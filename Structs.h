@@ -11,18 +11,18 @@ struct pos {
 	char y;
 	pos(char x, char y);
 	pos();
-    pos operator-(pos other) const;
-    pos operator+(pos other) const;
+    pos operator-(const pos& other) const;
+    pos operator+(const pos& other) const;
     pos operator-() const;
-    pos operator*(char factor) const;
-    bool operator<(pos other) const;
-    bool operator==(pos other) const;
+    pos operator*(const char factor) const;
+    bool operator<(const pos& other) const;
+    bool operator==(const pos& other) const;
 };
 
 struct boxMove{
 	pos start;
 	pos end;
-    bool operator<(boxMove other) const;
+    bool operator<(const boxMove& other) const;
 };
 
 struct posScore {

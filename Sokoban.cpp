@@ -151,16 +151,23 @@ vector<GameState*> solve(GameState * gs) {
 				//Found in set. Check poses.
 				forQueue = true;
 				vector<pos> poses = iter->second;
-				for(int i = 0;i < poses.size();i++){
+				for(int i = 0;i < poses.size() &&forQueue;i++){
 		            pos p = poses[i];
+					//if(pathExistsAStar(g->player,p,g->board) != pathExists(g->player,p,g->board)) {
+					//	cerr << "SHANENIGANS!!!!!!!!" << endl;
+					//}
+
+
 		            //if (g->player == p || pathExists(g->player,p,g->board)) {
 					if (g->player == p || pathExistsAStar(g->player,p,g->board)) {
 		                //Already in visited. Don't add to queue.
 		                //fprintf(stderr,"Visited, in the same zone\n");
 		                forQueue = false;
-						break;
+						//break;
+						//goto f;
 		            }
             	}
+				//f:
 #ifdef MEASURE_TIME_YES
 				end = omp_get_wtime();
 				hashPathfindingTime += (end-start);
