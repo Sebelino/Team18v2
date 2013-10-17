@@ -10,7 +10,12 @@
 #include <stdio.h>
 #include "GameState.h"
 
+//macro used by astar algorithm
+#define IS_PASSABLE_FP(c) (c == FREE || c == GOAL || c == DEADLOCK ||c == PLAYER || c == PLAYER_ON_GOAL) 
+
 class GameState;
+
+
 
 struct dirEntry {
 	pos p;
@@ -30,6 +35,10 @@ char dirs(pos p);
 std::vector<char> moveToPath (GameState * gs, boxMove bm);
 bool pathExists(pos p1,pos p2,std::vector<std::vector<char> > board);
 std::vector<char> findPath(pos p1,pos p2,std::vector<std::vector<char> > b);
+
+bool pathExistsAStar(const pos& p1,const pos& p2,const std::vector<std::vector<char> >& board);
+int aStarDist(const posScore& p1,const pos& p2,const posScore& start);
+int aStarDist(const pos& p1,const pos& p2,const  pos& start);
 
 #endif
 

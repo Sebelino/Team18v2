@@ -25,5 +25,15 @@ struct boxMove{
     bool operator<(boxMove other) const;
 };
 
+struct posScore {
+	int x;
+	int y;
+	int score;
+
+	posScore(int x,int y);
+	posScore(int x, int y, int score);
+	bool operator<(const posScore& other) const;
+};
+
 #endif
 
