@@ -1,3 +1,7 @@
+#ifndef _CONSTANTS_H__
+#define _CONSTANTS_H__
+
+
 #define FREE (' ')
 #define WALL ('#')
 #define GOAL ('.')
@@ -7,3 +11,4 @@
 #define BOX_ON_GOAL ('*')
 #define DEADLOCK ('X')
 
+#endif
