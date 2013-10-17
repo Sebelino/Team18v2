@@ -14,13 +14,13 @@ pos::pos() {
 	
 }
 
-pos pos::operator-(pos other) const {
+pos pos::operator-(const pos& other) const {
 	pos p;
 	p.x = x-other.x;
 	p.y = y-other.y;
 	return p;
 }
-pos pos::operator+(pos other) const {
+pos pos::operator+(const pos& other) const {
     pos p;
 	p.x = x+other.x;
 	p.y = y+other.y;
@@ -32,24 +32,24 @@ pos pos::operator-() const {
 	p.y = -y;
 	return p;
 }
-pos pos::operator*(char factor) const {
+pos pos::operator*(const char factor) const {
 	pos p;
 	p.x = x*factor;
 	p.y = y*factor;
 	return p;
 }
-bool pos::operator<(pos other) const {
+bool pos::operator<(const pos& other) const {
 	if (x == other.x)
 		return y-other.y;
     else
     	return x-other.x;
 }
-bool pos::operator==(pos other) const {
+bool pos::operator==(const pos& other) const {
 	return (x == other.x && y == other.y);
 }
 
 
-bool boxMove::operator<(boxMove other) const {
+bool boxMove::operator<(const boxMove& other) const {
 	if(start.x == other.start.x){
         if(start.y == other.start.y){
             if(end.x == other.end.x){
