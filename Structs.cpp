@@ -3,6 +3,7 @@
 #include <string>
 #include <set>
 #include <bitset>
+#include <sstream>
 #include "Structs.h"
 #include "Constants.h"
 //#include "PathFinding.h"
@@ -99,17 +100,19 @@ bitString::bitString(int size) {
 }
 
 //Functions
-//Get the bit at row i, column j in the matrix
-bool bitString::get(int i, int j) {
-	int arrIndex = i*NR_ROWS+j;
-	return get();
-}
 
+//Get the bit at position i
 bool bitString::get(int i) {
 	int vecIndex = i / sizeof(int);
 	int intIndex = i % sizeof(int);
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	return data[vecIndex] & bitmask;
+}
+
+//Get the bit at row i, column j in the matrix
+bool bitString::get(int i, int j) {
+	int arrIndex = i*NR_ROWS+j;
+	return get(arrIndex);
 }
 
 //Get the bit at row i, column j in the matrix. Return def if out of bounds
@@ -223,18 +226,18 @@ bool bitString::operator==(const bitString& other) const {
 	return true;
 }
 
-ostream& operator<<(ostream &strm, const bitString& bs) {
+std::ostream& operator<<(std::ostream &strm, bitString& bs) {
     std::ostream& stream = strm;
-    bitset<sizeof(int)> bitRepr;
+    std::bitset<sizeof(int)> bitRepr;
     int i;
-    for (i = 0;i<data.size()-1;i++) {
-    	bitRepr = bitset<sizeof(int)>(data[i]);
+    for (i = 0;i<bs.data.size()-1;i++) {
+    	bitRepr = std::bitset<sizeof(int)>(bs.data[i]);
     	stream << bitRepr;
     }
     for (int j = i*sizeof(int);j<BOARD_SIZE;j++) {
     	stream << (int)(bs.get(j));
     }
-    stream << endl;
+    stream << std::endl;
     return stream;
 }
 

@@ -2,6 +2,7 @@
 #define _STRUCTS_H__
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <set>
@@ -43,6 +44,7 @@ struct bitString {
 	bitString(int size);
 	
 	//Functions
+	bool get(int i);
 	bool get(int i, int j);
 	bool getSafe(int i, int j, bool def);
 	void insert32(int value);
@@ -55,10 +57,9 @@ struct bitString {
 	bool operator<(const bitString& other) const;
 	bool operator>(const bitString& other) const;
 	bool operator==(const bitString& other) const;
-	ostream& operator<<(ostream &strm, const GameState &state);
 };
 
-
+std::ostream& operator<<(std::ostream &strm, bitString& bs);
 
 
 
