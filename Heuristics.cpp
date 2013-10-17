@@ -1,10 +1,11 @@
 
 #include <list>
-
+//#include <omp.h>
 #include "Heuristics.h"
 #include "Constants.h"
 
 using namespace std;
+
 
 
 int heuristicEvenBetter(GameState& g) {
@@ -18,7 +19,7 @@ int heuristicEvenBetter(GameState& g) {
 
 	int numPairs = 0;
 	int score = 0;
-
+	//double start = omp_get_wtime();
 	//do some counting first, find all boxes and goals.
 	for(int i = 1; i < g.board.size() -1; i++) {
 		for(int j = 1; j < g.board[i].size()-1;j++) {
@@ -31,15 +32,21 @@ int heuristicEvenBetter(GameState& g) {
 			}
 		}
 	}
-
+	//double end = omp_get_wtime();
+	//cerr << "Part 1 took " << (end-start) * 1000000 << endl;
 	
 	numPairs = goals.size();
 	//for(int i = 0; i < numPairs; i++) {
 	//	score += heuristicDistance(goals[i],boxes[i]);
 	//}
-	
+	//start = omp_get_wtime();
 	//do the initial assignment, start from the goal side.
 	vector<vector<int> > dists(numPairs);
+	for(int i = 0; i < numPairs; i++) {
+		dists[i].reserve(numPairs);
+		//dists[i].reserve(numPairs);
+	}
+	binds.reserve(numPairs);
 
 	for(int i = 0; i < numPairs; i++) {
 		pos& goal = goals[i];
@@ -51,9 +58,12 @@ int heuristicEvenBetter(GameState& g) {
 		score += dists[i][i];
 	}
 
+	//end = omp_get_wtime();
+	//cerr << "Part 2 took " << (end-start) * 1000000 << endl;
 	//initial assignments done. Now improve it.
 
 	//note that this is not guranteed to give a 100% perfect assignment. However, it should be pretty good.
+	//start = omp_get_wtime();
 	
 	int numIterations = numPairs/2; //number of times we will improve our bindings at maximum.
 								  //note that during each iteration
@@ -120,6 +130,9 @@ int heuristicEvenBetter(GameState& g) {
 		//if(!changeFound)
 		//	break;
 	}
+
+	//end = omp_get_wtime();
+	//cerr << "Part 3 took " << (end-start) * 1000000 << endl;
 
 	delete[] changes; 
 	//cerr << "Heuristic score is " << score << endl;

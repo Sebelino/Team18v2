@@ -15,7 +15,6 @@
 #define DIM_RETURN_DISTANCE 6
 
 static int _DRA[DIM_RETURN_DISTANCE] = {0,5,9,12,14,15};
-
 //static int _DRA[DIM_RETURN_DISTANCE] = {0,9,17,24,30,35,39,42,44,45}; //diminishing returns array, size 10
 //#endif
 
