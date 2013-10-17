@@ -18,8 +18,19 @@ using namespace std;
 
 GameState::GameState(vector<vector<char> > b) {
     bool found = false;
-	for (int y = 0;y < b.size();y++) {
-        for (int x = 0;x < b[y].size();x++) {
+	numBoxes = 0;
+	height = b.size();
+	width = b[0].size();
+
+	//allocate map
+	board = new char*[height];
+	for(int i = 0; i < height; i++) {
+		board[i] = new char[width];
+	}
+
+	for (int y = 0;y < height;y++) {
+        for (int x = 0;x < width;x++) {
+			//copy value over
             if(b[y][x] == PLAYER || b[y][x] == PLAYER_ON_GOAL){
             	if(b[y][x] == PLAYER){
             		b[y][x] = FREE;
@@ -34,9 +45,13 @@ GameState::GameState(vector<vector<char> > b) {
                     throw 777;
                 }
             }
+			else if(b[y][x] == BOX || b[y][x] == BOX_ON_GOAL) {
+				numBoxes++;
+			}
+			board[y][x] = b[y][x]; //copy board
         }
 	}
-	board = b;
+	//board = b;
 	boxMove s;
 	s.start.x = -1;
 	s.start.y = -1;
@@ -45,7 +60,7 @@ GameState::GameState(vector<vector<char> > b) {
 	depth = 0;
 	src = s;
     parent = NULL;
-    findStaticDeadLocks(board);
+    findStaticDeadLocks(board,height,width); 
 	score = 0;
 	//heuristicEvenBetter(*this);
 	
@@ -59,9 +74,29 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	player = box_move->start;
 	src = *box_move;
     parent = prev;
-    board = prev->board;
 	depth = prev->depth + 1;
+	width = prev->width;
+	height = prev->height;
+	numBoxes = prev->numBoxes;
 
+	//do a smart copy of the board.
+	int row1 = box_move->start.y;
+	int row2 = box_move->end.y;
+
+	//allocate new rows
+	board = new char*[height];
+	for(int i = 0; i < height; i++) {
+		if(i == row1 || i == row2) {
+			board[i] = new char[width];
+			for(int j = 0; j < width; j++) { //copy entire row
+				board[i][j] = prev->board[i][j];
+			}
+		} else {
+			board[i] = prev->board[i]; //only copy the pointer!
+		}
+	}
+
+	//these changes should be safe to do, since we have allocated new rows for src.start.y and src.end.y.
     if (board[src.start.y][src.start.x] == BOX) {
     	board[src.start.y][src.start.x] = FREE;
     } else if (board[src.start.y][src.start.x] == BOX_ON_GOAL) {
@@ -73,28 +108,6 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	} else if (board[src.end.y][src.end.x] == FREE) {
 		board[src.end.y][src.end.x] = BOX;
 	}
-
-	//Detect dynamic deadlocks:
-	/*
-	if(findDynamicDeadlocks(this,src.end)) {
-		fprintf(stderr, "Found deadlock in:\n");
-		cerr << *this;
-	}
-	*/
-
-	//	score = -10000000;
-	//else
-	//double start = omp_get_wtime();
-	//findDynamicDeadlocks(this,src.end);
-	//double end = omp_get_wtime();
-	//cerr << "Deadlock detection took " << (end-start )* 1000000 << endl;
-
-	//start = omp_get_wtime();
-
-	//heuristicEvenBetter(*this);
-
-	//end = omp_get_wtime();
-	//cerr << "Heuristic took " << (end-start )* 1000000 << endl;
 }
 
 
@@ -108,8 +121,8 @@ bool GameState::operator<(GameState other) const {
 
 /* Returns true if the gamestate is a solution */
 bool GameState::isSolution() {
-	for (int i = 0;i<(int)board.size();i++) {
-		for (int j = 0;j<(int)board[i].size();j++) {
+	for (int i = 0;i<height;i++) {
+		for (int j = 0;j<width;j++) {
 			if (board[i][j] == BOX || board[i][j] == GOAL) {
 				return false;
 			}
@@ -118,11 +131,26 @@ bool GameState::isSolution() {
 	return true;
 }
 
+vector<vector<char> > GameState::getCopyOfBoard() {
+	vector<vector<char> > cBoard(height);
+	for(int i = 0; i < height; i++) {
+		cBoard[i].reserve(width);
+	}
+
+	for(int i = 0; i < height; i++) {
+		for(int j = 0; j < width; j++) {
+			cBoard[i][j] = board[i][j];
+		}
+	}
+
+	return cBoard;
+}
+
 /* Enables you to do cout << gamestate;. */
 ostream& operator<<(ostream &strm, const GameState &state) {
     std::ostream& stream = strm;
-    for(int i = 0;i < state.board.size();i++){
-		for(int j = 0;j < state.board[i].size();j++){
+	for(int i = 0;i < state.height;i++){
+		for(int j = 0;j < state.width;j++){
 			if (state.player.x == j && state.player.y == i) {
 				if (state.board[i][j] == FREE || state.board[i][j] == DEADLOCK) {
 					stream << PLAYER;
@@ -143,7 +171,7 @@ vector<GameState*> GameState::findNextMoves(){
 	vector<GameState*> successors;
 	vector<boxMove> moves;
 	
-	vector<vector<char> > dirMap = board;
+	vector<vector<char> > dirMap = getCopyOfBoard();
 	
 	vector<pos> directions;
 	directions.push_back(pos(0,-1));
@@ -222,8 +250,8 @@ vector<GameState*> GameState::findNextMoves(){
 
 int GameState::heuristic() const{
     int score;
-    for (int i = 0;i<board.size();i++) {
-    	for (int j = 0;j<board[i].size();j++) {
+	for (int i = 0;i<height;i++) {
+    	for (int j = 0;j<width;j++) {
     		if (board[i][j] == BOX_ON_GOAL) {
     			score += 5;
     		}
@@ -243,7 +271,7 @@ int GameState::heuristic() const{
  **/
 string GameState::hash() const {
     string hash;
-    int bsize = (board.size()-2)*(board[0].size()-2);
+    int bsize = (height-2)*(width-2);
     hash.reserve(bsize+2);
     //hash.push_back(player.x);
     //hash.push_back(player.y);
@@ -251,8 +279,8 @@ string GameState::hash() const {
     unsigned char i = 128;
     int position = 0;
     char ch = 0;
-    for(int y = 1;y < board.size()-1;y++){
-        for(int x = 1;x < board[y].size()-1;x++){
+    for(int y = 1;y < height-1;y++){
+        for(int x = 1;x < width-1;x++){
             if (board[y][x] == BOX || board[y][x] == BOX_ON_GOAL){
             	//If there was a box here
             	//ch += (i << (7-position));

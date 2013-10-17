@@ -99,7 +99,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y-i;
 				b = refPos.x-j;
-				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+				if (a < 0 || b < 0 || a >= gs->height || b >= gs->width) {
 					c[i][j] = WALL;
 				} else {
 					c[i][j] = gs->board[a][b];
@@ -113,7 +113,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y+i;
 				b = refPos.x+j;
-				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+				if (a < 0 || b < 0 || a >= gs->height || b >= gs->width) {
 					c[i][j] = WALL;
 				} else {
 					c[i][j] = gs->board[a][b];
@@ -127,7 +127,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y+j;
 				b = refPos.x-i;
-				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+				if (a < 0 || b < 0 || a >= gs->height || b >= gs->width) {
 					c[i][j] = WALL;
 				} else {
 					c[i][j] = gs->board[a][b];
@@ -141,7 +141,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y-j;
 				b = refPos.x+i;
-				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
+				if (a < 0 || b < 0 || a >= gs->height || b >= gs->width) {
 					c[i][j] = WALL;
 				} else {
 					c[i][j] = gs->board[a][b];
@@ -309,7 +309,7 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
  * Detects static deadlocks on the map. 
  * These deadlocks won't change throughout the game.
  */
-void findStaticDeadLocks(vector<vector<char> > &map) {
+void findStaticDeadLocks(char** map, int height, int width) {
 	/*
 	//Debug print with deadlocks
     fprintf(stdout, "Before detecting deadlocks:\n");
@@ -324,8 +324,8 @@ void findStaticDeadLocks(vector<vector<char> > &map) {
 	static const char EXAMINED = 'e';
 	int i, j, k;
 	//Aah, it's tricky to get it right
-	for (i = 1;i < map.size()-1;i++) {
-        for (j = 1;j < map[i].size()-1;j++) {
+	for (i = 1;i < height-1;i++) {
+        for (j = 1;j < width-1;j++) {
         	//fprintf(stderr, "pos: %d, %d\n", j, i);
 			if (map[i][j] == FREE) {	//Only free spaces can be deadlocks
 				
@@ -430,8 +430,8 @@ wallUp:
         }
     }
     
-    for(int i = 0;i < map.size();i++){
-        for(int j = 0;j < map[i].size();j++){
+    for(int i = 0;i < height;i++){
+        for(int j = 0;j < width;j++){
         	if (map[i][j] == EXAMINED) {
         		map[i][j] = FREE;
         	}

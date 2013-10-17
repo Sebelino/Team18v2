@@ -33,10 +33,10 @@ struct dirEntry {
 pos direction(char ch);
 char dirs(pos p);
 std::vector<char> moveToPath (GameState * gs, boxMove bm);
-bool pathExists(pos p1,pos p2,std::vector<std::vector<char> > board);
-std::vector<char> findPath(pos p1,pos p2,std::vector<std::vector<char> > b);
+bool pathExists(pos p1,pos p2,char** board);
+std::vector<char> findPath(pos p1,pos p2,GameState& gs);
 
-bool pathExistsAStar(const pos& p1,const pos& p2,const std::vector<std::vector<char> >& board);
+bool pathExistsAStar(const pos& p1,const pos& p2,GameState& gs);
 int aStarDist(const posScore& p1,const pos& p2,const posScore& start);
 int aStarDist(const pos& p1,const pos& p2,const  pos& start);
 

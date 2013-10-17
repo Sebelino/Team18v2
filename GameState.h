@@ -27,17 +27,18 @@ public:
 	bool isSolution();
     int heuristic() const;
     bool makeMove(pos dir);
+	std::vector<std::vector<char> > getCopyOfBoard();
 
-	std::vector<std::vector<char> > board;
+	char** board;
+	int width;
+	int height;
+	int numBoxes;
     pos player;
 	double score; //TODO
 	GameState * parent;
 	boxMove src;
 	
 	int depth;
-
-private:
-	void setBoxes(std::vector<std::vector<char> >* stringmap);
 };
 /*
 class Hasher {

@@ -7,7 +7,7 @@
 class GameState;
 
 bool findDynamicDeadlocks(GameState * gs, pos dst);
-void findStaticDeadLocks(std::vector<std::vector<char> > &map);
+void findStaticDeadLocks(char** map, int height, int width);
 bool isObstacle(char c);
 bool isOpen(char c);
 

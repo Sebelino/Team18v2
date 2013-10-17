@@ -10,19 +10,18 @@ using namespace std;
 
 int heuristicEvenBetter(GameState& g) {
 	//bool debug = false;
-
+	int numPairs = g.numBoxes;
 	//if(debug)
 	//	cerr << "=========================" << endl;
 	vector<pos> boxes;
 	vector<pos> goals;
 	vector<int> binds; //each index is the goal which is bound to the box which is the value of that index.
 
-	int numPairs = 0;
 	int score = 0;
 	//double start = omp_get_wtime();
 	//do some counting first, find all boxes and goals.
-	for(int i = 1; i < g.board.size() -1; i++) {
-		for(int j = 1; j < g.board[i].size()-1;j++) {
+	for(int i = 1; i < g.height -1; i++) {
+		for(int j = 1; j < g.width-1;j++) {
 			if(g.board[i][j] == GOAL || g.board[i][j] == PLAYER_ON_GOAL || g.board[i][j] == BOX_ON_GOAL) {
 				goals.push_back(pos(i,j));
 			} 
@@ -35,7 +34,7 @@ int heuristicEvenBetter(GameState& g) {
 	//double end = omp_get_wtime();
 	//cerr << "Part 1 took " << (end-start) * 1000000 << endl;
 	
-	numPairs = goals.size();
+	
 	//for(int i = 0; i < numPairs; i++) {
 	//	score += heuristicDistance(goals[i],boxes[i]);
 	//}
@@ -173,8 +172,8 @@ void heuristicSmarter(GameState& g) {
 	//4 classes of goals
 	vector<pos> buckets[4]; //puts each goal in a bucket.
 
-	for(int i = 1; i < g.board.size() -1; i++) {
-		for(int j = 1; j < g.board[i].size()-1;j++) {
+	for(int i = 1; i < g.height -1; i++) {
+		for(int j = 1; j < g.width-1;j++) {
 			if(g.board[i][j] == GOAL || g.board[i][j] == PLAYER_ON_GOAL || g.board[i][j] == BOX_ON_GOAL) {
 				if(g.board[i][j] == BOX_ON_GOAL && isBoxWall(g,i,j)) {
 					g.board[i][j] = WALL; //TODO ganska fult
@@ -203,8 +202,8 @@ void heuristicSmarter(GameState& g) {
 
 	//first get a list of all boxes
 	list<pos> allBoxes;
-	for(int i = 1; i < g.board.size() -1; i++) {
-		for(int j = 1; j < g.board[i].size()-1;j++) {
+	for(int i = 1; i < g.height -1; i++) {
+		for(int j = 1; j < g.height-1;j++) {
 			if(g.board[i][j] == BOX || g.board[i][j] == BOX_ON_GOAL) {
 				allBoxes.push_back(pos(i,j));
 			}

@@ -157,7 +157,7 @@ vector<GameState*> solve(GameState * gs) {
 
 
 		            //if (g->player == p || pathExists(g->player,p,g->board)) {
-					if (g->player == p || pathExistsAStar(g->player,p,g->board)) {
+					if (g->player == p || pathExistsAStar(g->player,p,*g)) {
 		                //Already in visited. Don't add to queue.
 		                //fprintf(stderr,"Visited, in the same zone\n");
 		                forQueue = false;

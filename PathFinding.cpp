@@ -47,8 +47,8 @@ char dirs(pos p) {
 }
 
 std::vector<char> moveToPath (GameState * gs, boxMove bm) {
-	int h = gs->board.size();
-	int w = gs->board[0].size();
+	int h = gs->height;
+	int w = gs->width;
 	
 	pos startPos, endPos;
 	startPos = gs->player;	
@@ -60,7 +60,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	directions.push_back(dirEntry(pos(0, 1),0));
 	directions.push_back(dirEntry(pos(-1,0),0));
 	
-	vector<vector<char> > dirMap = gs->board;
+	vector<vector<char> > dirMap = gs->getCopyOfBoard();
 	
 	dirMap[startPos.y][startPos.x] = 'S';
 	
@@ -150,9 +150,9 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 
 /** Returns the path between p1 and p2 on board b, specified by letters.
  *  Returns ['X'] if no such path exists. */
-std::vector<char> findPath(pos p1,pos p2,vector<vector<char> > b) {
-	int h = b.size();
-	int w = b[0].size();
+std::vector<char> findPath(pos p1,pos p2,GameState& gs) {
+	int h = gs.height;
+	int w = gs.width;
 	
 	std::vector<dirEntry> directions;
 	directions.push_back(dirEntry(pos(0,-1),0));
@@ -160,7 +160,7 @@ std::vector<char> findPath(pos p1,pos p2,vector<vector<char> > b) {
 	directions.push_back(dirEntry(pos(0, 1),0));
 	directions.push_back(dirEntry(pos(-1,0),0));
 	
-	vector<vector<char> > dirMap = b;
+	vector<vector<char> > dirMap = gs.getCopyOfBoard();
 	
 	dirMap[p1.y][p1.x] = 'S';
 	
@@ -227,17 +227,17 @@ std::vector<char> findPath(pos p1,pos p2,vector<vector<char> > b) {
 	return path;
 }
 
-bool pathExists(pos p1,pos p2,vector<vector<char> > board){
-    vector<char> path = findPath(p1,p2,board);
+bool pathExists(pos p1,pos p2,GameState& gs){
+    vector<char> path = findPath(p1,p2,gs);
     if(path.size() >= 1 && path[0] == 'X'){
         return false;
     }
     return true;
 }
 
-bool pathExistsAStar(const pos& p1,const pos& p2,const vector<vector<char> >& board) {
+bool pathExistsAStar(const pos& p1,const pos& p2, GameState& gs) {
 	priority_queue<posScore> q;
-	vector<vector<char> > dirMap = board;
+	vector<vector<char> > dirMap = gs.getCopyOfBoard();
 	dirMap[p1.y][p1.x] = 'v';
 	posScore start(p1.x,p1.y,aStarDist(p1,p2,p1));
 	q.push(start);
