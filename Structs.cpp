@@ -95,16 +95,19 @@ bool posScore::operator<(const posScore& other) const {
 //Constructor
 //Construct a vector with capacity at least 'size' bits
 bitString::bitString(int size) {
-	data = std::vector<int>();
-	data.reserve(size/sizeof(int)+1);
+	data = std::vector<unsigned int>();
+	data.reserve(size/(8*sizeof(unsigned int))+1);
+}
+
+bitString::bitString() {
 }
 
 //Functions
 
 //Get the bit at position i
 bool bitString::get(int i) {
-	int vecIndex = i / sizeof(int);
-	int intIndex = i % sizeof(int);
+	int vecIndex = i / (8*sizeof(unsigned int));
+	int intIndex = i % (8*sizeof(unsigned int));
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	return data[vecIndex] & bitmask;
 }
@@ -125,15 +128,15 @@ bool bitString::getSafe(int i, int j, bool def) {
 }
 
 //Insert a 32-bit integer at the back
-void bitString::insert32(int value) {
+void bitString::insert32(unsigned int value) {
 	data.push_back(value);
 }
 
 //Set the bit at row i, column j in the matrix to 1
 void bitString::set(int i, int j) {
 	int arrIndex = i*NR_ROWS+j;
-	int vecIndex = arrIndex / sizeof(int);
-	int intIndex = arrIndex % sizeof(int);
+	int vecIndex = arrIndex / (8*sizeof(unsigned int));
+	int intIndex = arrIndex % (8*sizeof(unsigned int));
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	data[vecIndex] = data[vecIndex] | bitmask;
 }
@@ -141,8 +144,8 @@ void bitString::set(int i, int j) {
 //Set the bit at row i, column j in the matrix to 0
 void bitString::reset(int i, int j) {
 	int arrIndex = i*NR_ROWS+j;
-	int vecIndex = arrIndex / sizeof(int);
-	int intIndex = arrIndex % sizeof(int);
+	int vecIndex = arrIndex / (8*sizeof(unsigned int));
+	int intIndex = arrIndex % (8*sizeof(unsigned int));
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	bitmask = ~bitmask;	//Invert bits
 	data[vecIndex] = data[vecIndex] & bitmask;
@@ -228,13 +231,15 @@ bool bitString::operator==(const bitString& other) const {
 
 std::ostream& operator<<(std::ostream &strm, bitString& bs) {
     std::ostream& stream = strm;
-    std::bitset<sizeof(int)> bitRepr;
+    std::bitset<8*sizeof(unsigned int)> bitRepr;
     int i;
     for (i = 0;i<bs.data.size()-1;i++) {
-    	bitRepr = std::bitset<sizeof(int)>(bs.data[i]);
+    	bitRepr = std::bitset<8*sizeof(unsigned int)>(bs.data[i]);
+    	//stream << "as int: " << bs.data[i];
+    	//stream << " as bitset: " << bitRepr << std::endl;
     	stream << bitRepr;
     }
-    for (int j = i*sizeof(int);j<BOARD_SIZE;j++) {
+    for (int j = i*8*sizeof(unsigned int);j<BOARD_SIZE;j++) {
     	stream << (int)(bs.get(j));
     }
     stream << std::endl;

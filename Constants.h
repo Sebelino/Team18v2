@@ -13,9 +13,15 @@
 #define ROW_SIZE ( NR_COLUMNS )
 #define COLUMN_SIZE ( NR_ROWS )
 
+#include "Structs.h"
+
 extern int NR_ROWS;
 extern int NR_COLUMNS;
 extern int BOARD_SIZE;
+extern bitString WALLS;
+extern bitString GOALS;
+extern bitString DEADLOCKS;
+extern bitString BOXES;
 
 #endif
 

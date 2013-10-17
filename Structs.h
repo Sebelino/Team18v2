@@ -38,16 +38,17 @@ struct posScore {
 
 struct bitString {
 	//Variables
-	std::vector<int> data;
+	std::vector<unsigned int> data;
 
 	//Constructor
 	bitString(int size);
+	bitString();
 	
 	//Functions
 	bool get(int i);
 	bool get(int i, int j);
 	bool getSafe(int i, int j, bool def);
-	void insert32(int value);
+	void insert32(unsigned int value);
 	void set(int i, int j);
 	void reset(int i, int j);
 	bitString operator&(const bitString& other) const;
