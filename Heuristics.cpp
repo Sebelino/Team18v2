@@ -64,7 +64,7 @@ int heuristicEvenBetter(GameState& g) {
 	//note that this is not guranteed to give a 100% perfect assignment. However, it should be pretty good.
 	//start = omp_get_wtime();
 	
-	int numIterations = numPairs/2; //number of times we will improve our bindings at maximum.
+	int numIterations = numPairs; //number of times we will improve our bindings at maximum.
 								  //note that during each iteration
 
 	/*if(debug) {
