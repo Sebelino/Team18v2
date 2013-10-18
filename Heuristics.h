@@ -19,12 +19,11 @@ static int _DRA[DIM_RETURN_DISTANCE] = {0,5,9,12,14,15};
 //#endif
 
 int heuristicEvenBetter(GameState& g);
-int aStarDistance(GameState& g);
+inline int aStarDistance(GameState& g);
 void heuristicSmarter(GameState& g);
-int checkGoalClass(GameState& g, int i, int j);
-bool isBoxWall(GameState& g, int i, int j);
-int heuristicDistance(const pos& p1,const pos& p2);
-
+inline int checkGoalClass(GameState& g, int i, int j);
+inline bool isBoxWall(GameState& g, int i, int j);
+inline int heuristicDistance(const pos& p1,const pos& p2);
 
 
 #endif

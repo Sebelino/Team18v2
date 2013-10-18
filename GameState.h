@@ -12,25 +12,27 @@
 
 class GameState{
 public:
-	GameState(std::vector<std::vector<char> > b);
+	//GameState(std::vector<std::vector<char> > b);
+	GameState(pos player_start);
 	GameState(GameState * prev, struct boxMove * box_move);
     //GameState(std::vector<std::string> stringmap,int width,int height);
 	//GameState(std::vector<std::vector<char> > stringmap,int width,int height);
     ~GameState();
 
-	GameState pushBox(const struct boxMove& m);
-	bool isValid(const struct boxMove& m);
+	//GameState pushBox(const struct boxMove& m);
+    //bool operator<(GameState other) const;
+    //int heuristic() const;
+	//bool isValid(const struct boxMove& m);
     std::set<boxMove> moves(pos boxPos);
-    std::vector<GameState*> findNextMoves(); //TODO
-    bool operator<(GameState other) const;
-    std::string hash() const;
+    std::vector<GameState*> findNextMoves();
+    bitString hash() const;
+    std::string hash(bool s) const;
 	bool isSolution();
-    int heuristic() const;
     bool makeMove(pos dir);
 
-	std::vector<std::vector<char> > board;
+	//std::vector<std::vector<char> > board;
     pos player;
-	double score; //TODO
+	double score;
 	GameState * parent;
 	boxMove src;
 	int depth;

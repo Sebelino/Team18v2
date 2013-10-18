@@ -47,9 +47,7 @@ char dirs(pos p) {
 }
 
 std::vector<char> moveToPath (GameState * gs, boxMove bm) {
-	int h = gs->board.size();
-	int w = gs->board[0].size();
-	
+
 	pos startPos, endPos;
 	startPos = gs->player;	
 	endPos = bm.start*2-bm.end;
@@ -60,8 +58,20 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	directions.push_back(dirEntry(pos(0, 1),0));
 	directions.push_back(dirEntry(pos(-1,0),0));
 	
-	vector<vector<char> > dirMap = gs->board;
+	vector<vector<char> > dirMap; // = gs->board;
 	
+	//With bitString, construct a dirMap...
+	dirMap = vector<vector<char> >();
+	vector<char> inner;
+	dirMap.reserve(NR_ROWS);
+	for (int i = 0;i<NR_ROWS;i++) {
+		inner = vector<char>(NR_COLUMNS, ' ');
+		dirMap.push_back(inner);
+	}
+	
+	bitString boxes = gs->boxes;
+	bitString obstacles = boxes | WALLS;
+
 	dirMap[startPos.y][startPos.x] = 'S';
 	
 	bool goalReached = false;
@@ -112,7 +122,7 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	        //Check if visited or unreachable
 	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
 	        
-	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
+	        if (a == FREE && !obstacles.get(curPos.y+d.y,curPos.x+d.x)) { //If space is free
 	            //Visit
 	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
@@ -148,97 +158,75 @@ std::vector<char> moveToPath (GameState * gs, boxMove bm) {
 	return path;
 }
 
-/** Returns the path between p1 and p2 on board b, specified by letters.
- *  Returns ['X'] if no such path exists. */
-std::vector<char> findPath(pos p1,pos p2,vector<vector<char> > b) {
-	int h = b.size();
-	int w = b[0].size();
-	
-	std::vector<dirEntry> directions;
-	directions.push_back(dirEntry(pos(0,-1),0));
-	directions.push_back(dirEntry(pos(1, 0),0));
-	directions.push_back(dirEntry(pos(0, 1),0));
-	directions.push_back(dirEntry(pos(-1,0),0));
-	
-	vector<vector<char> > dirMap = b;
-	
-	dirMap[p1.y][p1.x] = 'S';
-	
-	bool goalReached = false;
-	
-	stack<pos> q;
-	q.push(p1);
-	
-	//Search the graph
-	while (!q.empty()) {
-	    pos curPos = q.top();
-	    q.pop();
-	    
-	    if (curPos == p2) {
-			//Goal reached!
-			//fprintf(stderr, "Entered if statement, as the goal was found!\n");
-			goalReached = true;
-			break;
-	    }
-	    
-	    pos d;
-	    char dir;
 
-		for (int i = 0;i<4;i++) {
-			directions[i].weight = (p2.x-curPos.x)*directions[i].p.x + (p2.y-curPos.y)*directions[i].p.y;
-			directions[i].weight *= (-1);
+//new
+bool pathExistsAStar(const pos& p1, const pos& p2, GameState * gs) {
+	priority_queue<posScore> q;
+	//vector<vector<char> > dirMap = board;
+	bitString visitedList = GOALS;
+	visitedList.clear();
+	bitString obstacles = gs->boxes | WALLS;
+	
+	//dirMap[p1.y][p1.x] = 'V';
+	visitedList.set(p1.y,p1.x);
+	
+	posScore start(p1.x,p1.y,aStarDist(p1,p2,p1));
+	q.push(start);
+
+	while(!q.empty()) {
+		posScore next = q.top();
+		q.pop();
+		
+		//cerr << "obstacles: " << obstacles << endl;
+		//cerr << "visitedList: " << visitedList << endl;
+
+		if(next.x == p2.x && next.y == p2.y) {
+			//fprintf(stderr, "Returned true from A*\n");
+			return true;
 		}
 
-	    std::sort(directions.begin(), directions.end());
-	    
-	    for (int i = 0;i<4;i++) {
-	    	d = directions[i].p;
-	        dir = dirs(d);
-	        
-	        //Check if visited or unreachable
-	        char a = dirMap[curPos.y+d.y][curPos.x+d.x];
-	        
-	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
-	            //Visit
-	            dirMap[curPos.y+d.y][curPos.x+d.x] = dirs(d);
-	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
-	        }
-	    }
+		posScore m1(next.x,next.y-1);
+		posScore m2(next.x,next.y+1);
+		posScore m3(next.x+1,next.y);
+		posScore m4(next.x-1,next.y);
+		
+		if(!obstacles.get(m1.y,m1.x) && !visitedList.get(m1.y,m1.x)) {
+			m1.score = aStarDist(m1,p2,start);
+			q.push(m1);
+			//dirMap[m1.y][m1.x] = 'V';
+			visitedList.set(m1.y, m1.x);
+		}
+		if(!obstacles.get(m2.y,m2.x) && !visitedList.get(m2.y,m2.x)) {
+			m2.score = aStarDist(m2,p2,start);
+			q.push(m2);
+			//dirMap[m2.y][m2.x] = 'V';
+			visitedList.set(m2.y, m2.x);
+		}
+		if(!obstacles.get(m3.y,m3.x) && !visitedList.get(m3.y,m3.x)) {
+			m3.score = aStarDist(m3,p2,start);
+			q.push(m3);
+			//dirMap[m3.y][m3.x] = 'V';
+			visitedList.set(m3.y, m3.x);
+		}
+		if(!obstacles.get(m4.y,m4.x) && !visitedList.get(m4.y,m4.x)) {
+			m4.score = aStarDist(m4,p2,start);
+			q.push(m4);
+			//dirMap[m4.y][m4.x] = 'V';
+			visitedList.set(m4.y, m4.x);
+		}
+
 	}
-	
-	if (!goalReached) {
-	    //Invalid move
-	    std::vector<char> ret;
-	    ret.push_back('X');
-		return ret;
-	}	
-	
-	//Else
-	pos curPos = p2;
-	char nd = dirMap[p2.y][p2.x];
-	std::vector<char> path;
-	while (nd != 'S') {
-	    path.push_back(nd);
-	    pos pnd = direction(nd);
-	    curPos = pos(curPos.x-pnd.x, curPos.y-pnd.y);
-	    nd = dirMap[curPos.y][curPos.x];
-	}
-	std::reverse(path.begin(),path.end());
-	return path;
+
+	//fprintf(stderr, "Returned false from A*\n");
+	return false;
+
 }
 
-bool pathExists(pos p1,pos p2,vector<vector<char> > board){
-    vector<char> path = findPath(p1,p2,board);
-    if(path.size() >= 1 && path[0] == 'X'){
-        return false;
-    }
-    return true;
-}
-
+/*
 bool pathExistsAStar(const pos& p1,const pos& p2,const vector<vector<char> >& board) {
 	priority_queue<posScore> q;
 	vector<vector<char> > dirMap = board;
-	dirMap[p1.y][p1.x] = 'v';
+	dirMap[p1.y][p1.x] = 'V';
 	posScore start(p1.x,p1.y,aStarDist(p1,p2,p1));
 	q.push(start);
 
@@ -257,25 +245,25 @@ bool pathExistsAStar(const pos& p1,const pos& p2,const vector<vector<char> >& bo
 		if(IS_PASSABLE_FP(c)) {
 			m1.score = aStarDist(m1,p2,start);
 			q.push(m1);
-			dirMap[m1.y][m1.x] = 'v';
+			dirMap[m1.y][m1.x] = 'V';
 		}
 		c = dirMap[m2.y][m2.x];
 		if(IS_PASSABLE_FP(c)) {
 			m2.score = aStarDist(m2,p2,start);
 			q.push(m2);
-			dirMap[m2.y][m2.x] = 'v';
+			dirMap[m2.y][m2.x] = 'V';
 		}
 		c = dirMap[m3.y][m3.x];
 		if(IS_PASSABLE_FP(c)) {
 			m3.score = aStarDist(m3,p2,start);
 			q.push(m3);
-			dirMap[m3.y][m3.x] = 'v';
+			dirMap[m3.y][m3.x] = 'V';
 		}
 		c = dirMap[m4.y][m4.x];
 		if(IS_PASSABLE_FP(c)) {
 			m4.score = aStarDist(m4,p2,start);
 			q.push(m4);
-			dirMap[m4.y][m4.x] = 'v';
+			dirMap[m4.y][m4.x] = 'V';
 		}
 
 	}
@@ -283,14 +271,15 @@ bool pathExistsAStar(const pos& p1,const pos& p2,const vector<vector<char> >& bo
 	return false;
 
 }
+*/
 
-int aStarDist(const pos& p1,const pos& p2,const  pos& start) {
+inline int aStarDist(const pos& p1,const pos& p2,const  pos& start) {
 	int f = abs(p1.x-p2.x) + abs(p1.y-p2.y);
 	int h = abs(p1.x-start.x) + abs(p1.y-start.y);
 	return f + (h>>1);
 }
 
-int aStarDist(const posScore& p1,const pos& p2,const posScore& start) {
+inline int aStarDist(const posScore& p1,const pos& p2,const posScore& start) {
 	int f = abs(p1.x-p2.x) + abs(p1.y-p2.y);
 	int h = abs(p1.x-start.x) + abs(p1.y-start.y);
 	return f + (h>>1);

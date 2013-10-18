@@ -31,7 +31,7 @@ struct lex_compare {
 
 vector<GameState*> solve(GameState * gs) {
 	priority_queue<GameState*,vector<GameState*>,lex_compare> queue;
-	map<string,vector<pos> > visited;
+	map<bitString,vector<pos> > visited;
 	vector<pos> tmp;
 	tmp.push_back(gs->player);
 	visited[gs->hash()] = tmp;
@@ -47,6 +47,7 @@ vector<GameState*> solve(GameState * gs) {
 #endif
 	//int numGameStatesVisited = 0;
 	while(!queue.empty()) {
+		//fprintf(stderr, "Starting loop iteration\n");
 		GameState* next = queue.top(); 
 		queue.pop();
 		//numGameStatesVisited++;
@@ -85,6 +86,11 @@ vector<GameState*> solve(GameState * gs) {
 		double start = omp_get_wtime();
 #endif
 		vector<GameState*> nextMoves = next->findNextMoves();
+		
+		if (nextMoves.size() == 0) {
+			//fprintf(stderr, "No next moves\n");
+		}
+		
 #ifdef MEASURE_TIME_YES
 		double end = omp_get_wtime();
 		findNextMovesTime += (end-start);
@@ -95,13 +101,13 @@ vector<GameState*> solve(GameState * gs) {
 #ifdef MEASURE_TIME_YES
 			start = omp_get_wtime();
 #endif
-			string hash = g->hash();
+			bitString hash = g->hash();
 #ifdef MEASURE_TIME_YES
 			end = omp_get_wtime();
 			hashingTime += (end-start);
 #endif
 			bool forQueue = false;
-			map<string,vector<pos> >::iterator iter = visited.find(hash);
+			map<bitString,vector<pos> >::iterator iter = visited.find(hash);
 			//unordered_map<string,vector<pos> >::iterator iter = visited.find(hash);
 			if(visited.end() == iter) {
 				//Not in visited. Push.
@@ -159,7 +165,7 @@ vector<GameState*> solve(GameState * gs) {
 
 
 		            //if (g->player == p || pathExists(g->player,p,g->board)) {
-					if (g->player == p || pathExistsAStar(g->player,p,g->board)) {
+					if (g->player == p || pathExistsAStar(g->player,p,g)) {
 		                //Already in visited. Don't add to queue.
 		                //fprintf(stderr,"Visited, in the same zone\n");
 		                forQueue = false;
@@ -224,7 +230,8 @@ string answer(vector<GameState*> path){
 }
 
 
-vector<GameState*> solution(vector<vector<char> > board){
+vector<GameState*> solution(){
+    /*
     for (int i = 0;i<board[0].size();i++) {
 		board[0][i] = WALL;
 		board[board.size()-1][i] = WALL;
@@ -233,9 +240,19 @@ vector<GameState*> solution(vector<vector<char> > board){
 		board[i][0] = WALL;
 		board[i][board[0].size()-1] = WALL;
 	}
+	*/
+
+    for (int i = 0;i<NR_COLUMNS;i++) {
+    	WALLS.set(0,i);
+    	WALLS.set(NR_ROWS-1,i);
+	}
+    for (int i = 0;i<NR_ROWS;i++) {
+    	WALLS.set(i,0);
+    	WALLS.set(i,NR_COLUMNS-1);
+	}
 
 	// Create gamestate
-	GameState* gs = new GameState(board);
+	GameState* gs = new GameState(PLAYER_START);
     //cerr << "Initial GameState hash = " << gs.hash() << endl;
     //cerr << "Initial heuristic = " << gs.heuristic() << endl;
     //cerr << "Initial GameState appearence =\n" << gs << endl;
@@ -255,7 +272,7 @@ vector<GameState*> solution(vector<vector<char> > board){
     return solution;
 }
 
-string sokoban(vector<vector<char> > board){
+string sokoban(){
 #ifdef MEASURE_TIME_YES
 	double start = omp_get_wtime();
 	vector<GameState*> ans = solution(board);
@@ -269,7 +286,7 @@ string sokoban(vector<vector<char> > board){
 
 	return s;
 #else
-    return answer(solution(board));
+    return answer(solution());
 #endif
 }
 

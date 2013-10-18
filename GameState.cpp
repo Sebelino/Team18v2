@@ -16,7 +16,8 @@
 
 using namespace std;
 
-GameState::GameState(vector<vector<char> > b) {
+GameState::GameState(pos player_start) {
+    /*
     bool found = false;
 	for (int y = 0;y < b.size();y++) {
         for (int x = 0;x < b[y].size();x++) {
@@ -36,8 +37,10 @@ GameState::GameState(vector<vector<char> > b) {
             }
         }
 	}
+	*/
+	player = player_start;
 	boxes = BOXES;
-	board = b;
+	//board = b;
 	boxMove s;
 	s.start.x = -1;
 	s.start.y = -1;
@@ -46,7 +49,8 @@ GameState::GameState(vector<vector<char> > b) {
 	depth = 0;
 	src = s;
     parent = NULL;
-    findStaticDeadLocks(board);
+    //findStaticDeadLocks(board);
+	findStaticDeadLocks();
 	score = 0;
 	//cerr << boxes;
 	//heuristicEvenBetter(*this);
@@ -61,7 +65,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	player = box_move->start;
 	src = *box_move;
     parent = prev;
-    board = prev->board;
+    //board = prev->board;
 	depth = prev->depth + 1;
 	boxes = prev->boxes;
 	
@@ -74,6 +78,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	boxes.reset(src.start.y, src.start.x);
 	//fprintf(stderr, "After reset: %d\n", boxes.get(src.start.y, src.start.x));
 	
+	/*
     if (board[src.start.y][src.start.x] == BOX) {
     	board[src.start.y][src.start.x] = FREE;
     } else if (board[src.start.y][src.start.x] == BOX_ON_GOAL) {
@@ -85,6 +90,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	} else if (board[src.end.y][src.end.x] == FREE) {
 		board[src.end.y][src.end.x] = BOX;
 	}
+	*/
 	
 	//Detect dynamic deadlocks:
 	/*
@@ -114,12 +120,20 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 GameState::~GameState(){}
 
 /* Just a way to sort the GameStates. */
-bool GameState::operator<(GameState other) const {
-    return score < other.score;
-}
+//bool GameState::operator<(GameState other) const {
+//    return score < other.score;
+//}
 
 /* Returns true if the gamestate is a solution */
 bool GameState::isSolution() {
+
+	if (boxes == GOALS) {
+		return true;
+	} else {
+		return false;
+	}
+
+	/*
 	for (int i = 0;i<(int)board.size();i++) {
 		for (int j = 0;j<(int)board[i].size();j++) {
 			if (board[i][j] == BOX || board[i][j] == GOAL) {
@@ -128,11 +142,13 @@ bool GameState::isSolution() {
 		}
 	}
 	return true;
+	*/
 }
 
 /* Enables you to do cout << gamestate;. */
 ostream& operator<<(ostream &strm, const GameState &state) {
-    std::ostream& stream = strm;
+	std::ostream& stream = strm;
+	/*
     for(int i = 0;i < state.board.size();i++){
 		for(int j = 0;j < state.board[i].size();j++){
 			if (state.player.x == j && state.player.y == i) {
@@ -147,6 +163,8 @@ ostream& operator<<(ostream &strm, const GameState &state) {
 		}
         stream << endl;
     }
+    */
+    stream << "Cannot print GameStates anymore..." << endl;
     return stream;
 }
 
@@ -155,19 +173,19 @@ vector<GameState*> GameState::findNextMoves(){
 	vector<GameState*> successors;
 	vector<boxMove> moves;
 	
-	vector<vector<char> > dirMap = board;
+	//vector<vector<char> > dirMap = board;
 	
 	//new stuff
 	bitString obstacles = boxes | WALLS;
 	bitString dlsAndObstacles = obstacles | DEADLOCKS;
-	bitString visitedList = dlsAndObstacles;
+	bitString visitedList = obstacles;
 	visitedList.set(player.y, player.x);
 	bool va, vb, vc;
 	//cerr << visitedList << endl;
 	//cerr << WALLS << endl;
 	//cerr << boxes << endl;
 	//cerr << obstacles << endl;
-	//cerr << dlsAndObstacles << endl;
+	//cerr << "dlsAndObstacles: \n" << dlsAndObstacles << endl;
 	//________
 	
 	vector<pos> directions;
@@ -222,8 +240,8 @@ vector<GameState*> GameState::findNextMoves(){
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
 	        } else if (vc) {	//If there is a box here...
 	        	vb = dlsAndObstacles.get(curPos.y+d.y+d.y,curPos.x+d.x+d.x);
-	        	b = board[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
-				if (!vb && b != DEADLOCK) { // ...and a free position behind...
+	        	//b = board[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
+				if (!vb) { // ...and a free position behind...
 					//add move
 	        		bm.start = curPos+d;
 	        		bm.end = bm.start+d;
@@ -248,6 +266,7 @@ vector<GameState*> GameState::findNextMoves(){
     return successors;
 }
 
+/*
 int GameState::heuristic() const{
     int score;
     for (int i = 0;i<board.size();i++) {
@@ -262,6 +281,7 @@ int GameState::heuristic() const{
     }
     return score;
 }
+*/
 
 
 /**
@@ -269,7 +289,12 @@ int GameState::heuristic() const{
  * "<player.x><player.y><segment>...<segment>"
  * where <segment>...<segment> constitue a bit map for all boxes.
  **/
-string GameState::hash() const {
+bitString GameState::hash() const {
+	return boxes;
+}
+
+/*
+string GameState::hash(bool s) const {
     string hash;
     int bsize = (board.size()-2)*(board[0].size()-2);
     hash.reserve(bsize+2);
@@ -298,4 +323,5 @@ string GameState::hash() const {
     }
     return hash;
 }
+*/
 

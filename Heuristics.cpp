@@ -13,25 +13,31 @@ int heuristicEvenBetter(GameState& g) {
 
 	//if(debug)
 	//	cerr << "=========================" << endl;
-	vector<pos> boxes;
-	vector<pos> goals;
-	vector<int> binds; //each index is the goal which is bound to the box which is the value of that index.
 
-	int numPairs = 0;
-	int score = 0;
+	//each index is the goal which is bound to the box which is the value of that index.
 	//double start = omp_get_wtime();
 	//do some counting first, find all boxes and goals.
-	for(int i = 1; i < g.board.size() -1; i++) {
-		for(int j = 1; j < g.board[i].size()-1;j++) {
-			if(g.board[i][j] == GOAL || g.board[i][j] == PLAYER_ON_GOAL || g.board[i][j] == BOX_ON_GOAL) {
-				goals.push_back(pos(i,j));
-			} 
-
-			if(g.board[i][j] == BOX || g.board[i][j] == BOX_ON_GOAL) {
-				boxes.push_back(pos(i,j));
-			}
-		}
+	vector<pos> boxes = g.boxes.getPosVector(NR_BOXES);
+	vector<pos> goals = VEC_GOALS;
+	vector<int> binds;
+	
+	int numPairs = 0;
+	int score = 0;
+	
+	
+	/*
+	if (boxes2 == boxes) {
+		fprintf(stderr,"Boxes Equal\n");
+	} else {
+		fprintf(stderr,"Boxes Not equal\n");
 	}
+	if (goals2 == goals) {
+		fprintf(stderr,"Goals Equal\n");
+	} else {
+		fprintf(stderr,"Goals Not equal\n");
+	}
+	*/
+	
 	//double end = omp_get_wtime();
 	//cerr << "Part 1 took " << (end-start) * 1000000 << endl;
 	
@@ -44,7 +50,6 @@ int heuristicEvenBetter(GameState& g) {
 	vector<vector<int> > dists(numPairs);
 	for(int i = 0; i < numPairs; i++) {
 		dists[i].reserve(numPairs);
-		//dists[i].reserve(numPairs);
 	}
 	binds.reserve(numPairs);
 
@@ -143,7 +148,7 @@ int heuristicEvenBetter(GameState& g) {
 		if(g.src.start == g.parent->src.end)  {//same box
 			score = score/1.5;
 			//if(debug)
-			//cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
+			//  cerr << "Same Box! g.src = " << g.src.start.x << " " << g.src.start.y << " g.parent.end " 
 			//	<< g.parent->src.end.x << g.parent->src.end.y << endl;
 		}
 	}
@@ -153,7 +158,7 @@ int heuristicEvenBetter(GameState& g) {
 	return -score;
 }
 
-int aStarDistance(GameState& g) {
+inline int aStarDistance(GameState& g) {
 	return g.depth>>2;
 }
 
@@ -163,12 +168,13 @@ Note: the reference to the GameState is not a const because two things may
 change value in the given gamestate: the score and some boxes that are pushed into
 corners will become walls.
 */
+/*
 void heuristicSmarter(GameState& g) {
-	/*
-	1.Sort all goals by some heuristic
-2.For each goal, find closest box, that is not taken already.
-3.Mark box as taken
-4.Add to score the distance (or subtract)*/
+	
+//1.Sort all goals by some heuristic
+//2.For each goal, find closest box, that is not taken already.
+//3.Mark box as taken
+//4.Add to score the distance (or subtract)
 
 	//4 classes of goals
 	vector<pos> buckets[4]; //puts each goal in a bucket.
@@ -243,6 +249,7 @@ void heuristicSmarter(GameState& g) {
 
 	g.score = -score;
 }
+*/
 
 /*
 * Private function for the heuristic function - return the class of a specific goal.
@@ -252,7 +259,8 @@ void heuristicSmarter(GameState& g) {
 * 2 - Goals with 1 wall next to them.
 * 3 - Goals with 0 walls next to them or 2 opposite walls.
 */
-int checkGoalClass(GameState& g, int i, int j) {
+/*
+inline int checkGoalClass(GameState& g, int i, int j) {
 	int clas = 0;
 	bool topWall = false;
 	bool leftWall = false;
@@ -288,12 +296,14 @@ int checkGoalClass(GameState& g, int i, int j) {
 	return 3-clas; //reverse, so that high priority gets class 0.
 
 }
+*/
 
 /*
 * Check if the box on the current position (not checked that it is a box btw)
 * has 2 walls next to it so that it cannot be moved. Will do at maximum 4 comparisions.
 */
-bool isBoxWall(GameState& g, int i, int j) {
+/*
+inline bool isBoxWall(GameState& g, int i, int j) {
 	bool northWall = false;
 	if(g.board[i-1][j] == WALL) {
 		northWall = true;
@@ -316,8 +326,9 @@ bool isBoxWall(GameState& g, int i, int j) {
 		}
 	}
 }
+*/
 
-int heuristicDistance(const pos& p1, const pos& p2) {
+inline int heuristicDistance(const pos& p1, const pos& p2) {
 	int dist = abs(p1.x-p2.x)+abs(p1.y-p2.y);
 	//int extra_dist = 0;
 	//if(dist >= DIM_RETURN_DISTANCE)
@@ -327,3 +338,4 @@ int heuristicDistance(const pos& p1, const pos& p2) {
 	//return dist+extra_dist;
 	return dist;
 }
+

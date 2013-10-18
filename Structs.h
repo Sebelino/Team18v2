@@ -55,16 +55,19 @@ struct bitString {
 	void setTo(int i, int j, bool val);
 	void clear();
 	int sum();
+	std::vector<pos> getPosVector(int am);
 	bitString operator&(const bitString& other) const;
 	bitString operator|(const bitString& other) const;
 	bitString operator^(const bitString& other) const;
 	bitString operator~() const;
+	std::string toString();
 	bool operator<(const bitString& other) const;
 	bool operator>(const bitString& other) const;
 	bool operator==(const bitString& other) const;
 	bitString& operator=(const bitString& src);
 };
 
+inline int ilog2(register unsigned int x);
 std::ostream& operator<<(std::ostream &strm, bitString& bs);
 
 

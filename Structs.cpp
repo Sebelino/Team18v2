@@ -267,20 +267,74 @@ bitString& bitString::operator=(const bitString& src) {
 	return *this;
 }
 
+
+inline int ilog2(register unsigned int x) {
+    register unsigned int l=0;
+    if(x >= 1<<16) { x>>=16; l|=16; }
+    if(x >= 1<<8) { x>>=8; l|=8; }
+    if(x >= 1<<4) { x>>=4; l|=4; }
+    if(x >= 1<<2) { x>>=2; l|=2; }
+    if(x >= 1<<1) l|=1;
+    return l;
+}
+
+std::vector<pos> bitString::getPosVector(int am) {
+	std::vector<pos> res = std::vector<pos>();
+	res.reserve(am);
+	for (int i = 0;i<data.size();i++) {
+		unsigned int curInt = data[i];
+		for (int n = 0; curInt != 0; n++, curInt &= (curInt - 1)) {
+			int log = ilog2(curInt & ~(curInt-1));
+			int linearPos = i*WORD_SIZE+WORD_SIZE-log-1;
+			res.push_back(pos(linearPos/NR_COLUMNS, linearPos % NR_COLUMNS));
+		}
+	}
+	return res;
+}
+
+std::string bitString::toString() {
+    std::string output;
+    output.reserve(BOARD_SIZE+NR_ROWS+1);
+    
+    std::bitset<8*sizeof(unsigned int)> bitRepr;
+    int i;
+    for (i = 0;i<data.size()-1;i++) {
+    	bitRepr = std::bitset<8*sizeof(unsigned int)>(data[i]);
+    	output.append(bitRepr.to_string());
+    }
+    for (int j = i*8*sizeof(unsigned int);j<BOARD_SIZE;j++) {
+    	output.push_back((char)(get(j)+'0'));
+    }
+
+    return output;
+}
+
 std::ostream& operator<<(std::ostream &strm, bitString& bs) {
     std::ostream& stream = strm;
+    
+    std::string output;
+    output.reserve(BOARD_SIZE+NR_ROWS+1);
+    
     std::bitset<8*sizeof(unsigned int)> bitRepr;
     int i;
     for (i = 0;i<bs.data.size()-1;i++) {
     	bitRepr = std::bitset<8*sizeof(unsigned int)>(bs.data[i]);
     	//stream << "as int: " << bs.data[i];
     	//stream << " as bitset: " << bitRepr << std::endl;
-    	stream << bitRepr;
+    	//stream << bitRepr;
+    	output.append(bitRepr.to_string());
     }
     for (int j = i*8*sizeof(unsigned int);j<BOARD_SIZE;j++) {
-    	stream << (int)(bs.get(j));
+    	//stream << (int)(bs.get(j));
+    	output.push_back((char)(bs.get(j)+'0'));
     }
-    stream << std::endl;
+    
+    for (int i = 0;i<BOARD_SIZE;i+=(NR_COLUMNS+1)) {
+    	output.insert(i,"\n");
+    }
+    
+    stream << output << std::endl;
+    //stream << std::endl;
     return stream;
 }
 

@@ -8,7 +8,7 @@
 #ifndef _SOKOBAN_H__
 #define _SOKOBAN_H__
 std::vector<GameState*> solve(GameState * gs);
-std::string sokoban(std::vector<std::vector<char> > board);
-std::vector<GameState*> solution(std::vector<std::vector<char> > board);
+std::string sokoban();
+std::vector<GameState*> solution();
 #endif
 

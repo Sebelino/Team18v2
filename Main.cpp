@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include "Sokoban.h"
-#include "Tester.h"
+//#include "Tester.h"
 #include "Constants.h"
 
 using namespace std;
@@ -34,6 +34,7 @@ vector<vector<char> > readBoard(){
 	NR_ROWS = board.size();
 	NR_COLUMNS = board[0].size();
 	BOARD_SIZE = NR_ROWS*NR_COLUMNS;
+	NR_GOALS = 0;
 	
 	//new stuff: Construct bitStrings out of the board
 	unsigned int bsWalls = 0, bsBoxes = 0, bsGoals = 0;
@@ -43,24 +44,30 @@ vector<vector<char> > readBoard(){
 			//fprintf(stderr, "%c", board[i][j]);
 			
 			switch (board[i][j]) {
-				case FREE:
 				case PLAYER:
+					PLAYER_START = pos(j,i);
+				case FREE:
 					break;		
 				case DEADLOCK:
 					//Can't happen now anyway
 					break;	
 				case PLAYER_ON_GOAL:
+					PLAYER_START = pos(j,i);
 				case GOAL:
+					NR_GOALS++;
 					bsGoals += bitPos;
 					break;
 				case BOX:
 					bsBoxes += bitPos;
 					break;
 				case BOX_ON_GOAL:
+					NR_GOALS++;
 					bsGoals += bitPos;
 					bsBoxes += bitPos;
+					break;
 				case WALL:
 					bsWalls += bitPos;
+					break;
 			}
 			
 			bitPos = bitPos >> 1;
@@ -70,7 +77,7 @@ vector<vector<char> > readBoard(){
 				BOXES.insert32(bsBoxes);
 				GOALS.insert32(bsGoals);
 				DEADLOCKS.insert32(0);
-				fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
+				//fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
 
 				
 				bsWalls = 0;
@@ -78,24 +85,23 @@ vector<vector<char> > readBoard(){
 				bsGoals = 0;
 			}
 		}
-		fprintf(stderr, "\n");
+		//fprintf(stderr, "\n");
 	}
 	
 	WALLS.insert32(bsWalls);
 	BOXES.insert32(bsBoxes);
 	GOALS.insert32(bsGoals);
 	DEADLOCKS.insert32(0);
-	fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
-	
-	for (int k = 0;k<4;k++){
-		fprintf(stderr, "\nPushed back each time: %u, %u and %u\n", WALLS.data[k], BOXES.data[k], GOALS.data[k]);
-	}
+	//fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
+
+	NR_BOXES = NR_GOALS;	//Otherwise, something is seriously wrong
+	VEC_GOALS = GOALS.getPosVector(NR_GOALS);
 
 	//Test print:
-	cerr << "WALLS bitString looks like this:\n" << WALLS << endl;
-	cerr << "BOXES bitString looks like this:\n" << BOXES << endl;
-	cerr << "GOALS bitString looks like this:\n" << GOALS << endl;
-	cerr << "DEADLOCKS bitString looks like this:\n" << DEADLOCKS << endl;
+	//cerr << "WALLS bitString looks like this:\n" << WALLS << endl;
+	//cerr << "BOXES bitString looks like this:\n" << BOXES << endl;
+	//cerr << "GOALS bitString looks like this:\n" << GOALS << endl;
+	//cerr << "DEADLOCKS bitString looks like this:\n" << DEADLOCKS << endl;
 
     return board;
 }
@@ -113,17 +119,20 @@ vector<vector<char> > readBoard(){
  * ./sokoban < maps/test
  */
 int main(int argc, char **argv) {
-    vector<vector<char> > board = readBoard();
+    readBoard();
+    /*
     if(argc == 2 && argv[1] == string("test")){
         unitTest();
     }else if(argc == 2 && argv[1] == string("verify")){
-        verify(board,false);
+        verify(false);
     }else if(argc == 2 && argv[1] == string("verifyd")){
-        verify(board,true);
+        verify(true);
     }else if(argc == 2 && argv[1] == string("deadlocks")){
-        testDeadlocks(board);
+        testDeadlocks();
     }else{
-        cout << sokoban(board) << endl;
+        cout << sokoban() << endl;
     }
+    */
+    cout << sokoban() << endl;
     return 0;
 }

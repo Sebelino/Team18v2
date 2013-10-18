@@ -1,0 +1,16 @@
+TODO-list, Sokoban:
+
+Implementera bitString färdigt.
+Dynamiska deadlocks: wallcount
+statiska deadlocks: loopvillkor istället för goto/break
+statiska deadlocks: "återvändsgränder"
+vikten av depth
+globala nrOfBoxes /nrOfGoals
+inline functions
+Spara undan nextMoves
+konvertera bitString till set<pos> smidigt
+A* i backtrackingen
+Inget skickande av tunga parametrar; använd referens eller pekare
+Ta bort alla vector<vector> >
+
+
