@@ -92,6 +92,15 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		}
 	}*/
 	
+	bitString localBoxes(20);
+	bitString localWalls(20);
+	bitString localGoals(20);
+	bitString localDeadlocks(20);
+	localBoxes.insert32(0);
+	localWalls.insert32(0);
+	localGoals.insert32(0);
+	localDeadlocks.insert32(0);
+	
 	if (curDir == pos(0,1)) {	//If last move was downwards
 		//fprintf(stderr,"Downwards move\n");
 		refPos = pos(dst.x+2 , dst.y+2);
@@ -99,6 +108,12 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y-i;
 				b = refPos.x-j;
+				
+				localBoxes.setTo(i,j,gs->boxes.getSafe(a,b,0));
+				localWalls.setTo(i,j,WALLS.getSafe(a,b,1));
+				localGoals.setTo(i,j,GOALS.getSafe(a,b,0));
+				localDeadlocks.setTo(i,j,DEADLOCKS.getSafe(a,b,0));
+				
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
 					c[i][j] = WALL;
 				} else {
@@ -113,6 +128,12 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y+i;
 				b = refPos.x+j;
+				
+				localBoxes.setTo(i,j,gs->boxes.getSafe(a,b,0));
+				localWalls.setTo(i,j,WALLS.getSafe(a,b,1));
+				localGoals.setTo(i,j,GOALS.getSafe(a,b,0));
+				localDeadlocks.setTo(i,j,DEADLOCKS.getSafe(a,b,0));
+				
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
 					c[i][j] = WALL;
 				} else {
@@ -127,6 +148,12 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y+j;
 				b = refPos.x-i;
+				
+				localBoxes.setTo(i,j,gs->boxes.getSafe(a,b,0));
+				localWalls.setTo(i,j,WALLS.getSafe(a,b,1));
+				localGoals.setTo(i,j,GOALS.getSafe(a,b,0));
+				localDeadlocks.setTo(i,j,DEADLOCKS.getSafe(a,b,0));
+				
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
 					c[i][j] = WALL;
 				} else {
@@ -141,6 +168,12 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			for (int j = 0;j<5;j++) {
 				a = refPos.y-j;
 				b = refPos.x+i;
+				
+				localBoxes.setTo(i,j,gs->boxes.getSafe(a,b,0));
+				localWalls.setTo(i,j,WALLS.getSafe(a,b,1));
+				localGoals.setTo(i,j,GOALS.getSafe(a,b,0));
+				localDeadlocks.setTo(i,j,DEADLOCKS.getSafe(a,b,0));
+				
 				if (a < 0 || b < 0 || a >= gs->board.size() || b >= gs->board[0].size()) {
 					c[i][j] = WALL;
 				} else {
@@ -150,69 +183,67 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 		}		
 	}
 	
-	/*
-	fprintf(stderr,"The contents are:\n");
-	for (int i = 0;i<4;i++) {
-		for (int j = 0;j<5;j++) {
-			//Print everything
-			fprintf(stderr,"%c", c[i][j]);
-		}
-		fprintf(stderr,"\n");
-	}*/
-
-	//First test. Detect 2x2 deadlock patterns.
-	if (isObstacle(c[1][2])) {
-		if (((c[1][1] == WALL) + (c[2][1] == WALL) + (c[1][3] == WALL) + (c[2][3] == WALL)) > 2) {
+	bitString localObstacles = localBoxes | localWalls;
+	
+	
+	//First test. Detect 2x2 deadlock patterns. WITH bitString
+	if (localObstacles.get(1,2)) {
+		int sw1, sw2, sw3, sw4;
+		sw1 = (int)localWalls.get(1,1);
+		sw2 = (int)localWalls.get(2,1);
+		sw3 = (int)localWalls.get(1,3);
+		sw4 = (int)localWalls.get(2,3);
+		int surWalls = sw1 + sw2 + sw3 + sw4;
+		//fprintf(stderr, "surWalls is:%d\n", surWalls);
+		if (surWalls > 2) {
 			//Deadlock found
 			//fprintf(stderr, "Returned true from here, 1\n");
 			return true;
 		} else {
-			if (isObstacle(c[1][1]) && isObstacle(c[2][1])) {
+			if (localObstacles.get(1,1) && localObstacles.get(2,1)) {
 				//fprintf(stderr, "Returned true from here, 2\n");
 				return true;
 			}
-			if (isObstacle(c[1][3]) && isObstacle(c[2][3])) {
+			if (localObstacles.get(1,3) && localObstacles.get(2,3)) {
 				//fprintf(stderr, "Returned true from here, 3\n");
 				return true;
 			}
 		}
 	}
-	
-	//New attempt at 3x3 deadlock pattern detection
-	if (isOpen(c[2][1]) && isOpen(c[2][3])) {
+		
+	//New attempt at 3x3 deadlock pattern detection. WITH bitString
+	if (!localObstacles.get(2,1) && !localObstacles.get(2,3)) {
 		//Likely not a deadlock, although not certain (TODO)
 		//return false for now
 		return false;
 	}
 
-	
-	if (isOpen(c[1][2])) {
+	if (!localObstacles.get(1,2)) {
 		//Only possible deadlock is with dst as bottom middle tile
-		if (c[1][2] == GOAL) {
+		if (localGoals.get(1,2)) {
 			//Quick fix. Prevents serious mistakes, but might cause others
 			return false;
 		}
-		
-		if (isOpen(c[1][1])) {
+		if (!localObstacles.get(1,1)) {
 			return false;
 		}
-		if (isOpen(c[1][3])) {
+		if (!localObstacles.get(1,3)) {
 			return false;
 		}
-		if (isOpen(c[0][2])) {
+		if (!localObstacles.get(0,2)) {
 			return false;
 		}
 		
 		//All non-corner edges are obstacles.
-		if (isOpen(c[2][1])) {
+		if (!localObstacles.get(2,1)) {
 			//c3 is an obstacle
-			if (isOpen(c[0][1])) {
-				if (c[1][1] != WALL)	 {
+			if (!localObstacles.get(0,1)) {
+				if (!localWalls.get(1,1)) {
 					//Box in c[1][1] can move vertically
 					return false;
 				} else {
-					if (isOpen(c[0][3])) {
-						if (c[0][2] == WALL) {
+					if (!localObstacles.get(0,3)) {
+						if (localWalls.get(0,2)) {
 							return true;
 						} else {
 							return false;
@@ -227,13 +258,13 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 			}
 		} else {
 			//c1 is an obstacle
-			if (isOpen(c[0][3])) {
-				if (c[1][3] != WALL)	 {
+			if (!localObstacles.get(0,3)) {
+				if (!localWalls.get(1,3))	 {
 					//Box in c4 can move vertically
 					return false;
 				} else {
-					if (isOpen(c[0][1])) {
-						if (c[0][2] == WALL) {
+					if (!localObstacles.get(0,1)) {
+						if (localWalls.get(0,2)) {
 							return true;
 						} else {
 							return false;
@@ -250,27 +281,27 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 	} else {
 		//TODO
 		//dst can be bottom corner box or side middle
-		if (isOpen(c[2][1])) {
+		if (!localObstacles.get(2,1)) {
 			//c[2][3] must be obstacle. dst can be bottom left
 			
-			if (isOpen(c[0][3])) {
+			if (!localObstacles.get(0,3)) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (isOpen(c[1][4])) {
+			if (!localObstacles.get(1,4)) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (isOpen(c[0][4])) {
-				if (c[1][4] == WALL || isObstacle(c[2][4])) {
-					if ((c[0][3] == WALL) || isObstacle(c[0][2])) {
-						if (c[1][3] != GOAL) {
+			if (!localObstacles.get(0,4)) {
+				if (localWalls.get(1,4) || localObstacles.get(2,4)) {
+					if (localWalls.get(0,3) || localObstacles.get(0,2)) {
+						if (!localGoals.get(1,3)) {
 							return true;
 						}
 					}
 				}
 			} else {
-				if (c[1][3] != GOAL) {
+				if (!localGoals.get(1,3)) {
 					return true;
 				}
 			}
@@ -285,25 +316,29 @@ bool findDynamicDeadlocks(GameState * gs, pos dst) {
 				//Cannot be deadlock
 				return false;
 			}
-			if (isOpen(c[0][0])) {
-				if (c[1][0] == WALL || isObstacle(c[2][0])) {
-					if ((c[0][1] == WALL) || isObstacle(c[0][2])) {
-						if (c[1][1] != GOAL) {
+			
+			if (!localObstacles.get(0,0)) {
+				if (localWalls.get(1,0) || localObstacles.get(2,0)) {
+					if (localWalls.get(0,1) || localObstacles.get(0,2)) {
+						if (!localGoals.get(1,1)) {
 							return true;
 						}
 					}
 				}
 			} else {
-				if (c[1][1] != GOAL) {
+				if (!localGoals.get(1,1)) {
 					return true;
 				}
 			}
 		}
-	}
-	
+	}	
+
 	//If no deadlocks were found: return false.
 	return false;
 }
+
+
+
 
 /**
  * Detects static deadlocks on the map. 
@@ -350,7 +385,7 @@ void findStaticDeadLocks(vector<vector<char> > &map) {
 					}
 wallRight:			
 					if (dle1) {
-						for (k = 0; (map[i-1][j+k] == WALL || map[i+1][j+k] == WALL) && (map[i][j+k] != GOAL && map[i][j+k] != GOAL);k--) {
+						for (k = 0; (map[i-1][j+k] == WALL || map[i+1][j+k] == WALL) && (map[i][j+k] != GOAL && map[i][j+k] != BOX_ON_GOAL);k--) {
 							if (map[i][j+k] == WALL) {	//Ran into wall, deadlock certain.
 								dle2 = k;
 								if (map[i][j+k+1] == EXAMINED) {
@@ -437,6 +472,162 @@ wallUp:
         	}
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//WITH bitString
+	bitString nonfree = WALLS | GOALS;
+	bitString examined = GOALS;
+	examined.clear();
+	//Aah, it's tricky to get it right
+	for (i = 1;i < NR_ROWS-1;i++) {
+        for (j = 1;j < NR_COLUMNS-1;j++) {
+        	nonfree = nonfree | DEADLOCKS;
+        	if (!nonfree.get(i,j)) { //Only free spaces can be deadlocks
+				
+				//Horizontal search
+				if (WALLS.get(i-1,j) || WALLS.get(i+1,j)) {
+					//It's close to a wall, might be deadlock
+					
+					int dle1 = 0, dle2 = 0;
+					//Walk until no wall on the side, or until you run into a wall
+					for (k = 0; (WALLS.get(i-1, j+k) || WALLS.get(i+1, j+k)) && !GOALS.get(i, j+k) ; k++) {
+						if (WALLS.get(i,j+k)) { //Ran into wall, deadlock possible.
+							dle1 = k;
+							examined.reset(i,j+k-1);
+							goto wallRight2;
+						} else {
+							examined.set(i,j+k);
+						}
+					}
+wallRight2:			
+					if (dle1) {
+						for (k = 0; (WALLS.get(i-1, j+k) || WALLS.get(i+1, j+k)) && !GOALS.get(i, j+k) ; k--) {
+							
+							if (WALLS.get(i,j+k)) { //Ran into wall, deadlock possible.
+								dle2 = k;
+								examined.reset(i,j+k+1);
+								goto wallLeft2;
+							} else {
+								examined.set(i,j+k);
+							}
+						}
+					}
+wallLeft2:			
+					//fprintf(stderr, "HS: dle1 and dle2 have values: %d and %d\n", dle1, dle2);
+					if (dle1 && dle2) {
+						//Mark deadlock zone
+						for (k = dle2+1; k < dle1 ;k++) {
+							DEADLOCKS.set(i,j+k);
+						}
+					}
+				}
+				
+				
+				
+				
+				
+				
+				//I AM HERE TODO TODO TODO
+				
+				
+				
+				
+				
+				
+				
+				
+				//Vertical search
+		        if (map[i][j-1] == WALL || map[i][j+1] == WALL) {
+					//It's close to a wall, might be deadlock
+					int dle1 = 0, dle2 = 0;
+					//Walk until no wall on the side, or until you run into a wall
+					for (k = 0; (map[i+k][j-1] == WALL || map[i+k][j+1] == WALL) && (map[i+k][j] != GOAL && map[i+k][j] != BOX_ON_GOAL) ;k++) {
+						if (map[i+k][j] == WALL) {	//Ran into wall, deadlock possible.
+							dle1 = k;
+							if (map[i+k-1][j] == EXAMINED) {
+								map[i+k-1][j] = FREE;
+							}
+							goto wallDown2;
+						} else {
+							if (map[i+k][j] != BOX && map[i+k][j] != BOX_ON_GOAL) {
+								map[i+k][j] = EXAMINED;
+							}
+						}
+					}
+wallDown2:			
+					if (dle1) {
+						for (k = 0; (map[i+k][j-1] == WALL || map[i+k][j+1] == WALL) && (map[i+k][j] != GOAL && map[i+k][j] != BOX_ON_GOAL) ;k--) {
+							if (map[i+k][j] == WALL) {	//Ran into wall, deadlock certain.
+								dle2 = k;
+								if (map[i+k+1][j] == EXAMINED) {
+									map[i+k+1][j] = FREE;
+								}
+								goto wallUp2;
+							} else {
+								if (map[i+k][j] != BOX && map[i+k][j] != BOX_ON_GOAL) {
+									map[i+k][j] = EXAMINED;
+								}
+							}
+						}
+					}
+wallUp2:				
+					//fprintf(stderr, "VS: dle1 and dle2 have values: %d and %d\n", dle1, dle2);
+					if (dle1 && dle2) {
+						//Mark deadlock zone
+						for (k = dle2+1; k < dle1 ;k++) {
+							map[i+k][j] = DEADLOCK;
+						}
+					}
+				}
+    		}
+    		
+    		if (map[i][j-1] == WALL || map[i][j+1] == WALL) {
+    			if (map[i-1][j] == WALL || map[i+1][j] == WALL) {
+    				if (map[i][j] != GOAL && map[i][j] != BOX && map[i][j] != BOX_ON_GOAL && map[i][j] != WALL) {
+    					map[i][j] = DEADLOCK;
+    				}
+    			}
+    		}
+    		
+        }
+    }
+    
+    for(int i = 0;i < map.size();i++){
+        for(int j = 0;j < map[i].size();j++){
+        	if (map[i][j] == EXAMINED) {
+        		map[i][j] = FREE;
+        	}
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/*
     //Debug print with deadlocks

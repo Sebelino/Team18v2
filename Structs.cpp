@@ -92,15 +92,20 @@ bool posScore::operator<(const posScore& other) const {
 //bitString
 //FIRSTBIT is the number that has a binary representation of
 //a one followed by 31 zeroes.
-//Constructor
+//Constructors
 //Construct a vector with capacity at least 'size' bits
 bitString::bitString(int size) {
 	data = std::vector<unsigned int>();
-	data.reserve(size/(8*sizeof(unsigned int))+1);
+	data.reserve((size/(8*sizeof(unsigned int)))+1);
 }
 
 bitString::bitString() {
 }
+
+bitString::bitString(const bitString& src) {
+	data = src.data;
+}
+
 
 //Functions
 
@@ -114,7 +119,7 @@ bool bitString::get(int i) {
 
 //Get the bit at row i, column j in the matrix
 bool bitString::get(int i, int j) {
-	int arrIndex = i*NR_ROWS+j;
+	int arrIndex = i*NR_COLUMNS+j;
 	return get(arrIndex);
 }
 
@@ -134,7 +139,7 @@ void bitString::insert32(unsigned int value) {
 
 //Set the bit at row i, column j in the matrix to 1
 void bitString::set(int i, int j) {
-	int arrIndex = i*NR_ROWS+j;
+	int arrIndex = i*NR_COLUMNS+j;
 	int vecIndex = arrIndex / (8*sizeof(unsigned int));
 	int intIndex = arrIndex % (8*sizeof(unsigned int));
 	unsigned int bitmask = FIRSTBIT >> intIndex;
@@ -143,7 +148,7 @@ void bitString::set(int i, int j) {
 
 //Set the bit at row i, column j in the matrix to 0
 void bitString::reset(int i, int j) {
-	int arrIndex = i*NR_ROWS+j;
+	int arrIndex = i*NR_COLUMNS+j;
 	int vecIndex = arrIndex / (8*sizeof(unsigned int));
 	int intIndex = arrIndex % (8*sizeof(unsigned int));
 	unsigned int bitmask = FIRSTBIT >> intIndex;
@@ -151,39 +156,67 @@ void bitString::reset(int i, int j) {
 	data[vecIndex] = data[vecIndex] & bitmask;
 }
 
+//Set the bit at row i, column j in the matrix to val
+void bitString::setTo(int i, int j, bool val) {
+	if (val) {
+		set(i,j);
+	} else {
+		reset(i,j);
+	}
+}
+
+//Set all bits to 0
+void bitString::clear() {
+	for (int i = 0;i<data.size();i++) {
+		data[i] = 0;
+	}
+}
+
+int bitString::sum() {
+	int sum = 0;
+	for (int i = 0;i<BOARD_SIZE;i++) {
+		sum += get(i);
+	}
+	return sum;
+}
+
 
 //Operators
 
 //Bitwise AND
 bitString bitString::operator&(const bitString& other) const {
-	bitString res = bitString(data.size());
+	bitString res = bitString(BOARD_SIZE);
 	for (int i = 0;i<data.size();i++) {
-		res.data[i] = data[i] & other.data[i];
+		res.data.push_back(data[i] & other.data[i]);
 	}
+	return res;
 }
 
 //Bitwise OR
 bitString bitString::operator|(const bitString& other) const {
-	bitString res = bitString(data.size());
+	bitString res = bitString(BOARD_SIZE);
 	for (int i = 0;i<data.size();i++) {
-		res.data[i] = data[i] | other.data[i];
+		res.data.push_back(data[i] | other.data[i]);
 	}
+	return res;
 }
 
 //Bitwise XOR
 bitString bitString::operator^(const bitString& other) const {
-	bitString res = bitString(data.size());
+	bitString res = bitString(BOARD_SIZE);
 	for (int i = 0;i<data.size();i++) {
-		res.data[i] = data[i] ^ other.data[i];
+		res.data.push_back(data[i] ^ other.data[i]);
 	}
+	return res;
 }
 
 //Bitwise NOT
 bitString bitString::operator~() const {
-	bitString res = bitString(data.size());
+	bitString res = bitString(BOARD_SIZE);
 	for (int i = 0;i<data.size();i++) {
-		res.data[i] = ~data[i];
+		res.data.push_back(~data[i]);
 	}
+	return res;
 }
 
 //Less-than comparator
@@ -229,6 +262,11 @@ bool bitString::operator==(const bitString& other) const {
 	return true;
 }
 
+bitString& bitString::operator=(const bitString& src) {
+	data = src.data;
+	return *this;
+}
+
 std::ostream& operator<<(std::ostream &strm, bitString& bs) {
     std::ostream& stream = strm;
     std::bitset<8*sizeof(unsigned int)> bitRepr;
@@ -245,6 +283,7 @@ std::ostream& operator<<(std::ostream &strm, bitString& bs) {
     stream << std::endl;
     return stream;
 }
+
 
 
 

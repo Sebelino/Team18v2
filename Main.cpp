@@ -69,6 +69,7 @@ vector<vector<char> > readBoard(){
 				WALLS.insert32(bsWalls);
 				BOXES.insert32(bsBoxes);
 				GOALS.insert32(bsGoals);
+				DEADLOCKS.insert32(0);
 				fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
 
 				
@@ -83,6 +84,7 @@ vector<vector<char> > readBoard(){
 	WALLS.insert32(bsWalls);
 	BOXES.insert32(bsBoxes);
 	GOALS.insert32(bsGoals);
+	DEADLOCKS.insert32(0);
 	fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
 	
 	for (int k = 0;k<4;k++){
@@ -93,8 +95,7 @@ vector<vector<char> > readBoard(){
 	cerr << "WALLS bitString looks like this:\n" << WALLS << endl;
 	cerr << "BOXES bitString looks like this:\n" << BOXES << endl;
 	cerr << "GOALS bitString looks like this:\n" << GOALS << endl;
-
-	
+	cerr << "DEADLOCKS bitString looks like this:\n" << DEADLOCKS << endl;
 
     return board;
 }

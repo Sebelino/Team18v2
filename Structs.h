@@ -43,6 +43,7 @@ struct bitString {
 	//Constructor
 	bitString(int size);
 	bitString();
+	bitString(const bitString& src);
 	
 	//Functions
 	bool get(int i);
@@ -51,6 +52,9 @@ struct bitString {
 	void insert32(unsigned int value);
 	void set(int i, int j);
 	void reset(int i, int j);
+	void setTo(int i, int j, bool val);
+	void clear();
+	int sum();
 	bitString operator&(const bitString& other) const;
 	bitString operator|(const bitString& other) const;
 	bitString operator^(const bitString& other) const;
@@ -58,6 +62,7 @@ struct bitString {
 	bool operator<(const bitString& other) const;
 	bool operator>(const bitString& other) const;
 	bool operator==(const bitString& other) const;
+	bitString& operator=(const bitString& src);
 };
 
 std::ostream& operator<<(std::ostream &strm, bitString& bs);

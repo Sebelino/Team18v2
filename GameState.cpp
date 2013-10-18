@@ -36,6 +36,7 @@ GameState::GameState(vector<vector<char> > b) {
             }
         }
 	}
+	boxes = BOXES;
 	board = b;
 	boxMove s;
 	s.start.x = -1;
@@ -47,6 +48,7 @@ GameState::GameState(vector<vector<char> > b) {
     parent = NULL;
     findStaticDeadLocks(board);
 	score = 0;
+	//cerr << boxes;
 	//heuristicEvenBetter(*this);
 	
 }
@@ -61,7 +63,17 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
     parent = prev;
     board = prev->board;
 	depth = prev->depth + 1;
-
+	boxes = prev->boxes;
+	
+	//fprintf(stderr, "Before moving box: Number of boxes: %d\n", sumbefore);
+	//Alter box configuration
+	//fprintf(stderr, "Before set: %d\n", boxes.get(src.end.y, src.end.x));
+	boxes.set(src.end.y, src.end.x);
+	//fprintf(stderr, "After set: %d\n", boxes.get(src.end.y, src.end.x));
+	//fprintf(stderr, "Before reset: %d\n", boxes.get(src.start.y, src.start.x));
+	boxes.reset(src.start.y, src.start.x);
+	//fprintf(stderr, "After reset: %d\n", boxes.get(src.start.y, src.start.x));
+	
     if (board[src.start.y][src.start.x] == BOX) {
     	board[src.start.y][src.start.x] = FREE;
     } else if (board[src.start.y][src.start.x] == BOX_ON_GOAL) {
@@ -73,7 +85,7 @@ GameState::GameState(GameState * prev, struct boxMove * box_move) {
 	} else if (board[src.end.y][src.end.x] == FREE) {
 		board[src.end.y][src.end.x] = BOX;
 	}
-
+	
 	//Detect dynamic deadlocks:
 	/*
 	if(findDynamicDeadlocks(this,src.end)) {
@@ -145,6 +157,19 @@ vector<GameState*> GameState::findNextMoves(){
 	
 	vector<vector<char> > dirMap = board;
 	
+	//new stuff
+	bitString obstacles = boxes | WALLS;
+	bitString dlsAndObstacles = obstacles | DEADLOCKS;
+	bitString visitedList = dlsAndObstacles;
+	visitedList.set(player.y, player.x);
+	bool va, vb, vc;
+	//cerr << visitedList << endl;
+	//cerr << WALLS << endl;
+	//cerr << boxes << endl;
+	//cerr << obstacles << endl;
+	//cerr << dlsAndObstacles << endl;
+	//________
+	
 	vector<pos> directions;
 	directions.push_back(pos(0,-1));
 	directions.push_back(pos(1, 0));
@@ -155,7 +180,6 @@ vector<GameState*> GameState::findNextMoves(){
 	//fprintf(stderr, "player pos: %d, %d\n", player.x, player.y);
 	//fprintf(stderr, "dirMap size is:%d x %d\n", (int)dirMap.size(), (int)dirMap[0].size());
 	//fprintf(stderr, "f1\n");
-	dirMap[player.y][player.x] = 'V';
 
 	q.push(player);
 	pos curPos;
@@ -186,28 +210,32 @@ vector<GameState*> GameState::findNextMoves(){
         
 	    for (int i = 0;i<4;i++) {
 	    	d = directions[i];
-	        //dir = dirs(d);
-	        
-	        //Check if visited or unreachable
-	        a = dirMap[curPos.y+d.y][curPos.x+d.x];
-	        
-	        if ((a == FREE || a == GOAL || a == DEADLOCK)) { //If space is free
+
+	        //new stuff:
+	        va = visitedList.get(curPos.y+d.y,curPos.x+d.x);
+	        vc = boxes.get(curPos.y+d.y,curPos.x+d.x);
+	        if (!va) { //If space is free and unvisited
 	            //Visit
-	            dirMap[curPos.y+d.y][curPos.x+d.x] = 'V';
+	            //fprintf(stderr, "before:Visited nodes: %d\n", visitedList.sum());
+	            visitedList.set(curPos.y+d.y,curPos.x+d.x);
+	            //fprintf(stderr, "after:Visited nodes: %d\n", visitedList.sum());
 	            q.push(pos(curPos.x+d.x, curPos.y+d.y));
-	        } else if (a == BOX || a == BOX_ON_GOAL) {	//If there is a box here
+	        } else if (vc) {	//If there is a box here...
+	        	vb = dlsAndObstacles.get(curPos.y+d.y+d.y,curPos.x+d.x+d.x);
 	        	b = board[curPos.y+d.y+d.y][curPos.x+d.x+d.x];
-				if (b == FREE || b == GOAL) {
+				if (!vb && b != DEADLOCK) { // ...and a free position behind...
+					//add move
 	        		bm.start = curPos+d;
 	        		bm.end = bm.start+d;
 	        		moves.push_back(bm);
 	        	}
 	        }
+	        //____________
+	        
 	    }
 	}
 	//double end = omp_get_wtime();
 	//cerr << "Findnextmoves search took " << (end-start)*1000000 << endl;
-
 
 	//fprintf(stderr, "f4, moves.size() = %d\n", (int)moves.size());
 	//start = omp_get_wtime();

@@ -33,8 +33,8 @@ public:
 	double score; //TODO
 	GameState * parent;
 	boxMove src;
-	
 	int depth;
+	bitString boxes;
 
 private:
 	void setBoxes(std::vector<std::vector<char> >* stringmap);
