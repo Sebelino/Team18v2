@@ -35,6 +35,10 @@ vector<vector<char> > readBoard(){
 	NR_COLUMNS = board[0].size();
 	BOARD_SIZE = NR_ROWS*NR_COLUMNS;
 	NR_GOALS = 0;
+	WALLS.resize(NR_COLUMNS,NR_ROWS);
+	BOXES.resize(NR_COLUMNS,NR_ROWS);
+	GOALS.resize(NR_COLUMNS,NR_ROWS);
+	DEADLOCKS.resize(NR_COLUMNS,NR_ROWS);
 	
 	//new stuff: Construct bitStrings out of the board
 	unsigned int bsWalls = 0, bsBoxes = 0, bsGoals = 0;
@@ -88,10 +92,13 @@ vector<vector<char> > readBoard(){
 		//fprintf(stderr, "\n");
 	}
 	
-	WALLS.insert32(bsWalls);
-	BOXES.insert32(bsBoxes);
-	GOALS.insert32(bsGoals);
-	DEADLOCKS.insert32(0);
+	//Don't add again if divisible by WORD_SIZE
+	if (BOARD_SIZE % WORD_SIZE != 0) {
+		WALLS.insert32(bsWalls);
+		BOXES.insert32(bsBoxes);
+		GOALS.insert32(bsGoals);
+		DEADLOCKS.insert32(0);	
+	}
 	//fprintf(stderr, "\nPushing back %u, %u and %u\n", bsWalls, bsBoxes, bsGoals);
 
 	NR_BOXES = NR_GOALS;	//Otherwise, something is seriously wrong
@@ -133,6 +140,6 @@ int main(int argc, char **argv) {
         cout << sokoban() << endl;
     }
     */
-    cout << sokoban() << endl;
+    sokoban();
     return 0;
 }

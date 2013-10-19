@@ -12,7 +12,7 @@
 #define FIRSTBIT ( 2147483648 )
 #define ROW_SIZE ( NR_COLUMNS )
 #define COLUMN_SIZE ( NR_ROWS )
-#define WORD_SIZE ( 8*sizeof(unsigned int) )
+#define WORD_SIZE ( 32 )
 
 #include "Structs.h"
 

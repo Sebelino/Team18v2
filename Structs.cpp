@@ -93,39 +93,52 @@ bool posScore::operator<(const posScore& other) const {
 //FIRSTBIT is the number that has a binary representation of
 //a one followed by 31 zeroes.
 //Constructors
-//Construct a vector with capacity at least 'size' bits
-bitString::bitString(int size) {
-	data = std::vector<unsigned int>();
-	data.reserve((size/(8*sizeof(unsigned int)))+1);
+
+bitString::bitString(char w, char h) {
+	width = w;
+	height = h;
 }
 
 bitString::bitString() {
+	width = WORD_SIZE;
+	height = WORD_SIZE;
 }
 
 bitString::bitString(const bitString& src) {
 	data = src.data;
+	width = src.width;
+	height = src.height;
 }
 
 
 //Functions
+void bitString::reserve(int cap) {
+	data.reserve(cap);
+}
+
+//Alter the dimension sizes
+void bitString::resize(int w, int h) {
+	width = w;
+	height = h;
+}
 
 //Get the bit at position i
 bool bitString::get(int i) {
-	int vecIndex = i / (8*sizeof(unsigned int));
-	int intIndex = i % (8*sizeof(unsigned int));
+	int vecIndex = i / (WORD_SIZE);
+	int intIndex = i % (WORD_SIZE);
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	return data[vecIndex] & bitmask;
 }
 
 //Get the bit at row i, column j in the matrix
 bool bitString::get(int i, int j) {
-	int arrIndex = i*NR_COLUMNS+j;
+	int arrIndex = i*width+j;
 	return get(arrIndex);
 }
 
 //Get the bit at row i, column j in the matrix. Return def if out of bounds
 bool bitString::getSafe(int i, int j, bool def) {
-	if (i < 0 || i > NR_COLUMNS || j < 0 || j > NR_ROWS) {
+	if (i < 0 || i >= height || j < 0 || j >= width) {
 		return def;
 	} else {
 		return get(i, j);
@@ -139,18 +152,18 @@ void bitString::insert32(unsigned int value) {
 
 //Set the bit at row i, column j in the matrix to 1
 void bitString::set(int i, int j) {
-	int arrIndex = i*NR_COLUMNS+j;
-	int vecIndex = arrIndex / (8*sizeof(unsigned int));
-	int intIndex = arrIndex % (8*sizeof(unsigned int));
+	int arrIndex = i*width+j;
+	int vecIndex = arrIndex / (WORD_SIZE);
+	int intIndex = arrIndex % (WORD_SIZE);
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	data[vecIndex] = data[vecIndex] | bitmask;
 }
 
 //Set the bit at row i, column j in the matrix to 0
 void bitString::reset(int i, int j) {
-	int arrIndex = i*NR_COLUMNS+j;
-	int vecIndex = arrIndex / (8*sizeof(unsigned int));
-	int intIndex = arrIndex % (8*sizeof(unsigned int));
+	int arrIndex = i*width+j;
+	int vecIndex = arrIndex / (WORD_SIZE);
+	int intIndex = arrIndex % (WORD_SIZE);
 	unsigned int bitmask = FIRSTBIT >> intIndex;
 	bitmask = ~bitmask;	//Invert bits
 	data[vecIndex] = data[vecIndex] & bitmask;
@@ -174,7 +187,8 @@ void bitString::clear() {
 
 int bitString::sum() {
 	int sum = 0;
-	for (int i = 0;i<BOARD_SIZE;i++) {
+	int size = width*height;
+	for (int i = 0;i<size;i++) {
 		sum += get(i);
 	}
 	return sum;
@@ -185,7 +199,7 @@ int bitString::sum() {
 
 //Bitwise AND
 bitString bitString::operator&(const bitString& other) const {
-	bitString res = bitString(BOARD_SIZE);
+	bitString res = bitString(width,height);
 	for (int i = 0;i<data.size();i++) {
 		res.data.push_back(data[i] & other.data[i]);
 	}
@@ -194,7 +208,7 @@ bitString bitString::operator&(const bitString& other) const {
 
 //Bitwise OR
 bitString bitString::operator|(const bitString& other) const {
-	bitString res = bitString(BOARD_SIZE);
+	bitString res = bitString(width,height);
 	for (int i = 0;i<data.size();i++) {
 		res.data.push_back(data[i] | other.data[i]);
 	}
@@ -203,7 +217,7 @@ bitString bitString::operator|(const bitString& other) const {
 
 //Bitwise XOR
 bitString bitString::operator^(const bitString& other) const {
-	bitString res = bitString(BOARD_SIZE);
+	bitString res = bitString(width,height);
 	for (int i = 0;i<data.size();i++) {
 		res.data.push_back(data[i] ^ other.data[i]);
 	}
@@ -212,7 +226,7 @@ bitString bitString::operator^(const bitString& other) const {
 
 //Bitwise NOT
 bitString bitString::operator~() const {
-	bitString res = bitString(BOARD_SIZE);
+	bitString res = bitString(width,height);
 	for (int i = 0;i<data.size();i++) {
 		res.data.push_back(~data[i]);
 	}
@@ -264,6 +278,8 @@ bool bitString::operator==(const bitString& other) const {
 
 bitString& bitString::operator=(const bitString& src) {
 	data = src.data;
+	width = src.width;
+	height = src.height;
 	return *this;
 }
 
@@ -286,7 +302,7 @@ std::vector<pos> bitString::getPosVector(int am) {
 		for (int n = 0; curInt != 0; n++, curInt &= (curInt - 1)) {
 			int log = ilog2(curInt & ~(curInt-1));
 			int linearPos = i*WORD_SIZE+WORD_SIZE-log-1;
-			res.push_back(pos(linearPos/NR_COLUMNS, linearPos % NR_COLUMNS));
+			res.push_back(pos(linearPos/width, linearPos % width));
 		}
 	}
 	return res;
@@ -294,16 +310,21 @@ std::vector<pos> bitString::getPosVector(int am) {
 
 std::string bitString::toString() {
     std::string output;
-    output.reserve(BOARD_SIZE+NR_ROWS+1);
+    output.reserve(data.size()*(WORD_SIZE+1));
     
-    std::bitset<8*sizeof(unsigned int)> bitRepr;
+    std::bitset<WORD_SIZE> bitRepr;
+    int size = width*height;
     int i;
     for (i = 0;i<data.size()-1;i++) {
-    	bitRepr = std::bitset<8*sizeof(unsigned int)>(data[i]);
+    	bitRepr = std::bitset<WORD_SIZE>(data[i]);
     	output.append(bitRepr.to_string());
     }
-    for (int j = i*8*sizeof(unsigned int);j<BOARD_SIZE;j++) {
+    for (int j = i*WORD_SIZE;j<size;j++) {
     	output.push_back((char)(get(j)+'0'));
+    }
+    
+    for (i = width;i<output.length();i+=(width+1)) {
+    	output.insert(i,"\n");
     }
 
     return output;
@@ -313,28 +334,25 @@ std::ostream& operator<<(std::ostream &strm, bitString& bs) {
     std::ostream& stream = strm;
     
     std::string output;
-    output.reserve(BOARD_SIZE+NR_ROWS+1);
+    output.reserve(bs.data.size()*(WORD_SIZE+1));
     
-    std::bitset<8*sizeof(unsigned int)> bitRepr;
+    std::bitset<WORD_SIZE> bitRepr;
+    int size = bs.width*bs.height;
     int i;
     for (i = 0;i<bs.data.size()-1;i++) {
-    	bitRepr = std::bitset<8*sizeof(unsigned int)>(bs.data[i]);
-    	//stream << "as int: " << bs.data[i];
-    	//stream << " as bitset: " << bitRepr << std::endl;
-    	//stream << bitRepr;
+    	bitRepr = std::bitset<WORD_SIZE>(bs.data[i]);
     	output.append(bitRepr.to_string());
     }
-    for (int j = i*8*sizeof(unsigned int);j<BOARD_SIZE;j++) {
-    	//stream << (int)(bs.get(j));
+    for (int j = i*WORD_SIZE;j<size;j++) {
     	output.push_back((char)(bs.get(j)+'0'));
     }
     
-    for (int i = 0;i<BOARD_SIZE;i+=(NR_COLUMNS+1)) {
+    for (i = bs.width;i<output.length();i+=(bs.width+1)) {
     	output.insert(i,"\n");
     }
     
     stream << output << std::endl;
-    //stream << std::endl;
+    
     return stream;
 }
 

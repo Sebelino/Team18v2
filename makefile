@@ -1,5 +1,6 @@
 all:
-	g++ -g -O2 -static *.cpp -o ./sokoban
+	g++ -g -O2 -static *.cpp -std=gnu++0x -o ./sokoban
+
 tester:
 	g++ -g -O2 -static *.cpp -o ./sokoban
 	./sokoban test
