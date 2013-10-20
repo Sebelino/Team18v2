@@ -127,19 +127,6 @@ vector<vector<char> > readBoard(){
  */
 int main(int argc, char **argv) {
     readBoard();
-    /*
-    if(argc == 2 && argv[1] == string("test")){
-        unitTest();
-    }else if(argc == 2 && argv[1] == string("verify")){
-        verify(false);
-    }else if(argc == 2 && argv[1] == string("verifyd")){
-        verify(true);
-    }else if(argc == 2 && argv[1] == string("deadlocks")){
-        testDeadlocks();
-    }else{
-        cout << sokoban() << endl;
-    }
-    */
     sokoban();
     return 0;
 }

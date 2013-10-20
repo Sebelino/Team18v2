@@ -117,19 +117,8 @@ vector<GameState*> solve(GameState * gs) {
 }
 
 
-/** Prints the directions (e.g. "RRURU" ). */
-string answer(vector<GameState*>& path){
-    string directions = "";
-    vector<char> segment;
-    for(int i = 0;i+1 < path.size();i++){
-        segment = moveToPath(path[i],path[i+1]->src);
-        directions = directions+string(segment.begin(),segment.end());
-    }
-    return directions;
-}
 
-
-void solution(){
+void sokoban(){
     for (int i = 0;i<NR_COLUMNS;i++) {
     	WALLS.set(0,i);
     	WALLS.set(NR_ROWS-1,i);
@@ -158,10 +147,6 @@ void solution(){
         }
     }
 	putchar('\n');
-}
-
-void sokoban(){
-	solution();
 }
 
 
