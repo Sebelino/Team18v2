@@ -3,8 +3,6 @@
 #include <vector>
 #include <cstdio>
 #include <ctime>
-#include <map>
-//#include <unordered_map>
 #include <queue>
 #include <algorithm>
 #include "GameState.h"
@@ -23,10 +21,8 @@ struct lex_compare {
 
 vector<GameState*> solve(GameState * gs) {
 	priority_queue<GameState*,vector<GameState*>,lex_compare> queue;
-	map<bitString,vector<pos> > visited;
-	vector<pos> tmp;
-	tmp.push_back(gs->player);
-	visited[gs->hash()] = tmp;
+	set<bitString> visited;
+	visited.insert(gs->hash());
 	queue.push(gs);
 
 	//int numGameStatesVisited = 0;
@@ -65,14 +61,12 @@ vector<GameState*> solve(GameState * gs) {
 			GameState* g = *it;
 			bitString hash = g->hash();
 			bool forQueue = false;
-			map<bitString,vector<pos> >::iterator iter = visited.find(hash);
+			set<bitString>::iterator iter = visited.find(hash);
 			//unordered_map<string,vector<pos> >::iterator iter = visited.find(hash);
 			if(visited.end() == iter) {
 				//Not in visited. Push.
 				//fprintf(stderr,"Not in visited at all\n");
-				vector<pos> tmp;
-				tmp.push_back(gs->player);
-				visited[hash] = tmp;
+				visited.insert(hash);
 				//fprintf(stderr,"visited.size() is: %d\n", (int)visited.size());
 				if(findDynamicDeadlocks(g, g->src.end)) {
 					g->score = -100000000;
@@ -82,31 +76,6 @@ vector<GameState*> solve(GameState * gs) {
 					g->score = heuristicEvenBetter(*g);
 				}
 				queue.push(g);
-			} else {
-				//Found in set. Check poses.
-				forQueue = true;
-				vector<pos> poses = iter->second;
-				for(int i = 0;i < poses.size() &&forQueue;i++){
-		            pos p = poses[i];
-					if (g->player == p || pathExistsAStar(g->player,p,g)) {
-		                //Already in visited. Don't add to queue.
-		                forQueue = false;
-		            }
-            	}
-            	
-            	if (forQueue) {
-            		//Add to list			
-					if(findDynamicDeadlocks(g, g->src.end)) {
-						g->score = -100000000;
-
-						//delete g;
-						//cerr << "Deadlock found in position: " << endl << *g;
-					} else {
-						g->score = heuristicEvenBetter(*g);
-					}         		
-            		visited[hash].push_back(g->player);
-            		queue.push(g);
-            	}
 			}
 		}
 	}

@@ -32,6 +32,7 @@ public:
 
 	//std::vector<std::vector<char> > board;
     pos player;
+    int normPlayer;
 	double score;
 	GameState * parent;
 	boxMove src;

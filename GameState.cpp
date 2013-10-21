@@ -157,6 +157,12 @@ vector<GameState*> GameState::findNextMoves(){
 	//end = omp_get_wtime();
 	//cerr << "Findnextmoves creating gamestates took " << (end-start)*1000000 << endl;
 
+	int npx, npy;
+	vector<pos> vvec = visitedList.getPosVector(BOARD_SIZE);
+	npx = vvec[0].x;
+	npy = vvec[0].y;
+	normPlayer = (npx << 16) + npy;
+
     return successors;
 }
 
@@ -167,6 +173,8 @@ vector<GameState*> GameState::findNextMoves(){
  * where <segment>...<segment> constitue a bit map for all boxes.
  **/
 bitString GameState::hash() const {
+	bitString hash = boxes;
+	hash.insert32(normPlayer);
 	return boxes;
 }
 
